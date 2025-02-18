@@ -88,6 +88,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			fetchGames: async (page) => {
+				if(page === undefined) page = 1;
 				try {
 					const response = await fetch(`${process.env.BACKEND_URL}/api/games?page=${page}`);
 					const data = await response.json()
@@ -104,9 +105,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const response = await fetch(`${process.env.BACKEND_URL}/api/tags`);
 					const data = await response.json()
 					// console.log(data);
-					let tagNames = data.results.map((tag) => tag.tag_name)
+					let tagNames = data.results.map((tag) => [tag.tag_name, tag.number_of_games])
 					setStore({ tags: tagNames })
-					// console.log(getStore().tags);
+					console.log(getStore().tags);
 
 				} catch (error) {
 					console.log(error)
@@ -115,6 +116,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			fetchSearchGames: async (page) => {
 				try {
+					if(page === undefined) page = 1;
 					const response = await fetch(`${process.env.BACKEND_URL}/api/games?page=${page}`);
 					const data = await response.json()
 					console.log(data);
