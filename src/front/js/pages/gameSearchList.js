@@ -7,23 +7,30 @@ import "/workspaces/Fs-Spain_85-AllGamesDB/src/front/styles/gamesearchlist.css";
 
 
 export const GameSearchList = () => {
-    const [tags, setTags] = useState([])
     const { store, actions } = useContext(Context);
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        actions.fetchSearchGames(
+            store.queryParams.search,
+            store.queryParams.tags,
+            store.queryParams.min_rating,
+            store.queryParams.max_rating,
+            store.queryParams.min_price,
+            store.queryParams.max_price,
+            store.queryParams.release_after,
+            store.queryParams.release_before,
+            store.queryParams.order_by,
+            store.queryParams.per_page,
+            store.currentSearchPage
+        );
+    }, [store.currentSearchPage]);
 
     const handleGameClick = (game) => {
         actions.setSpecificVideogameSteamId(game)
         navigate(`/game/${game.id}`);
     };
-
-    useEffect(() => {
-        const fetchTagsData = async () => {
-            const tags = await actions.fetchTags();
-            setTags(tags);
-        };
-        fetchTagsData();
-    }, []);
 
     return (
         <div className="d-flex">

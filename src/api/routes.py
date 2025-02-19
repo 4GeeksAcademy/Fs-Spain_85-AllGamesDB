@@ -8,7 +8,7 @@ from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from flask_cors import CORS
 import requests
 from math import ceil
-from sqlalchemy import and_, func
+from sqlalchemy import and_, func, asc, desc
 from sqlalchemy.orm import aliased
 
 
@@ -39,7 +39,20 @@ def handle_hello():
 
 
 # Example link using all arguments
-# /api/games?filter=action&filter=rpg&min_rating=78&max_rating=95&min_price=20&max_price=60&release_after=2023-01-01T00:00:00.000Z&release_before=2023-12-31T23:59:59.999Z&page=1&per_page=10
+# https://reimagined-chainsaw-jjgpw9qgvjjh79-3001.app.github.dev/api/games?search=lies&filter=action,rpg&min_rating=78&max_rating=95&min_price=20&max_price=60&release_after=2023-01-01T00:00:00.000Z&release_before=2023-12-31T23:59:59.999Z&order_by=rating:asc&page=1&per_page=10
+# Break down
+# /api/games?
+# search=lies
+# filter=action,rpg
+# min_rating=78
+# max_rating=95
+# min_price=20
+# max_price=60
+# release_after=2023-01-01T00:00:00.000Z
+# release_before=2023-12-31T23:59:59.999Z
+# page=1
+# per_page=10
+# order_by=rating:asc
 
 @api.route("/games", methods=['GET'])
 def get_page_games():
@@ -50,15 +63,19 @@ def get_page_games():
     max_rating = request.args.get('max_rating', default=None, type=float)
     min_price = request.args.get('min_price', default=None, type=float)
     max_price = request.args.get('max_price', default=None, type=float)
-
     release_after = request.args.get('release_after', default=None, type=str)
     release_before = request.args.get('release_before', default=None, type=str)
+    order_by = request.args.get('order_by', default=None, type=str)
+    search = request.args.get('search', default=None, type=str)
 
-    tag_names = [tag.strip().lower() for tag in request.args.getlist('filter')]
-    print("Tags to filter:", tag_names)
+    filter_param = request.args.get('filter', default='', type=str)
+    tag_names = [tag.strip().lower() for tag in filter_param.split(',') if tag.strip()]
 
     query = Games.query
 
+    if search:
+        query = query.filter(Games.name.ilike(f'%{search}%'))
+    
     if tag_names:
         for tag in tag_names:
             subq = (
@@ -85,6 +102,23 @@ def get_page_games():
         query = query.filter(Games.release >= release_after)
     if release_before:
         query = query.filter(Games.release <= release_before)
+
+    if order_by:
+        order_field, order_direction = order_by.split(':')
+        if order_field == 'price':
+            order_column = func.least(Games.steam_price, Games.g2a_price)
+        elif order_field == 'release':
+            order_column = Games.release
+        elif order_field == 'rating':
+            order_column = Games.score
+        else:
+            order_column = None
+
+        if order_column is not None:
+            if order_direction.lower() == 'asc':
+                query = query.order_by(asc(order_column))
+            elif order_direction.lower() == 'desc':
+                query = query.order_by(desc(order_column))
 
     per_page = min(per_page, 10)
     pagination = query.paginate(page=page, per_page=per_page, error_out=False)
@@ -163,6 +197,18 @@ def get_all_tags():
     }
     return jsonify(response_body), 200
 
+@api.route("/tags/names", methods=['GET'])
+def get_tag_names():
+    data = db.session.scalars(db.select(Tags)).all()
+    results = list(map(lambda item: {
+        "tag_name": item.tag_name,
+        "number_of_games": len(item.games) if hasattr(item, "games") else 0
+    }, data))
+    
+    if not results:
+        return jsonify({"msg": "No available tags"}), 200
+
+    return jsonify({"results": results}), 200
 
 @api.route("/tags", methods=['POST'])
 def post_tag():
