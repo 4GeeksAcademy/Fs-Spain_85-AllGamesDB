@@ -252,10 +252,16 @@ def signup():
     # Crear nuevo usuario
     new_user = User(email=data["email"])
     new_user.set_password(data["password"])  # Hashear contraseña
+    
+    response = jsonify({"msg": "Usuario registrado con éxito"})
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    
     db.session.add(new_user)
     db.session.commit()
 
-    return jsonify({"msg": "Usuario registrado con éxito"}), 201
+    return response, 201
 
 #login
 @api.route("/login", methods=["POST"])
@@ -267,10 +273,14 @@ def login():
     user = User.query.filter_by(email=data["email"]).first()
     if not user or not user.check_password(data["password"]):
         return jsonify({"msg": "Wrong credentials"}), 401
-
+    
     # Creamos el token de acceso
     access_token = create_access_token(identity=user.email)
-    return jsonify({"token": access_token, "user": user.serialize()}), 200
+    response = jsonify({"token": access_token, "user": user.serialize()})
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    return response, 200
 
 
 #logout
@@ -294,14 +304,19 @@ def profile():
         user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one()
     except NoResultFound:
         return jsonify({"error": "Usuario no encontrado"}), 404
-
-    return jsonify(user.serialize()), 200
+    
+    response = jsonify(user.serialize())
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    return response, 200
 
 # endpoint para añadir favoritos al usuario
-@api.route('/profile/favorites', methods=['POST'])
+@api.route('/profile/favourites', methods=['POST'])
 @jwt_required()
-def post_favorite():
+def post_favourite():
     request_data = request.json
+    print(request_data)
     email = get_jwt_identity()
     if not request_data or not "game_id" in request_data or not email:
         return jsonify({"error": "missing game_id or auth token"}), 400
@@ -315,41 +330,53 @@ def post_favorite():
     except NoResultFound:
         return jsonify({"error": "Game not found"}), 404
     try:
-        favorites = db.session.execute(db.select(Favourites).filter_by(favourite_game=game, user_favourites_id=user.id)).scalar_one()
-        if favorites:
-            return jsonify({"error": "favorite already exist"}), 400
+        favourites = db.session.execute(db.select(Favourites).filter_by(favourite_game=game, user_favourites_id=user.id)).scalar_one()
+        if favourites:
+            return jsonify({"error": "favourite already exist"}), 400
     except NoResultFound:
         pass
     except:
         return jsonify({"error": "Something went wrong while trying to post new favourite"}), 500
-    new_favorite = Favourites(
+    new_favourite = Favourites(
         user_favourites_id = user.id,
         favourite_game = game
     )
-    db.session.add(new_favorite)
+    
+    response = jsonify({"msg": new_favourite.serialize()})
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    
+    db.session.add(new_favourite)
     db.session.commit()
-    return jsonify({"msg": new_favorite.serialize()}), 201
+    return response, 201
 
-# endpoint delete favorites
-@api.route('/profile/favorites', methods=['Delete'])
+# endpoint delete favourites
+@api.route('/profile/favourites', methods=['Delete'])
 @jwt_required()
-def delete_favorite():
+def delete_favourite():
     request_data = request.json
     email = get_jwt_identity()
-    if not request_data or not "favorite_id" in request_data or not email:
-        return jsonify({"error": "missing favorite_id or auth token"}), 400
-    favorite_id = request_data.get('favorite_id')
+    if not request_data or not "game_id" in request_data or not email:
+        return jsonify({"error": "missing game_id or auth token"}), 400
+    game_id = request_data.get('game_id')
     try:
         user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one()
     except NoResultFound:
         return jsonify({"error": "Usuario no encontrado"}), 404
     try:
-        game = db.session.execute(db.select(Favourites).filter_by(id=favorite_id, user_favourites_id=user.id)).scalar_one()
+        favourite = db.session.execute(db.select(Favourites).filter_by(favourite_game_id=game_id, user_favourites_id=user.id)).scalar_one()
     except NoResultFound:
-        return jsonify({"error": "The favorite you are trying to delete doesn't exist"}), 404
+        return jsonify({"error": "The favourite you are trying to delete doesn't exist"}), 404
     except Exception as e:
         return jsonify({"error": f"something went wrong {e}"}), 500
-    db.session.delete(game)
+    
+    response = jsonify({"msg": "favourite game deleted"})
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    
+    db.session.delete(favourite)
     db.session.commit()
-    return jsonify({"msg": "favourite game deleted"}), 200
+    return response, 200
     

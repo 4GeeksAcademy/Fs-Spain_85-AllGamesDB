@@ -9,7 +9,7 @@ import "/workspaces/Fs-Spain_85-AllGamesDB/src/front/styles/gamesearchlist.css";
 export const GameSearchList = () => {
     const [tags, setTags] = useState([])
     const { store, actions } = useContext(Context);
-
+    const [favouriteHeart, setfavouriteHeart] = useState("")
     const navigate = useNavigate();
 
     const handleGameClick = (game) => {
@@ -24,6 +24,26 @@ export const GameSearchList = () => {
         };
         fetchTagsData();
     }, []);
+
+    const addfavouriteClick = async (game) => {
+        await actions.addFavourite(game.id)
+        await actions.fetchFavourites()
+        return
+    }
+
+    const deletefavouriteClick = async (game) => {
+        await actions.deleteFavourite(game.id);
+        await actions.fetchFavourites();
+        return
+    }
+
+    // const handlefavouriteButton = () => {
+
+    // }
+
+    // useEffect (() => {
+    //     handlefavouriteButton();
+    // }, store.favouriteGames)
 
     return (
         <div className="d-flex">
@@ -49,7 +69,19 @@ export const GameSearchList = () => {
                                 <h4 className='game-title'>{game.name}</h4>
                                 <p className='tags'>{game.game_tags.slice(0, 3).map((tag) => tag.tag_name).join(', ')}</p>
                             </div>
-                            {/* <button className="favorite-btn">❤️</button> */}
+                            {store.favouriteGames.some((fav) => fav.favourite_game.app_id === game.app_id) 
+                            ? <button className="favourite-btn me-3 fs-5" onClick={(e) => {
+                                e.stopPropagation(),
+                                deletefavouriteClick(game)}}>
+                                   💔
+                           </button> 
+                           : <button className="favourite-btn me-3 fs-5" onClick={(e) => {
+                                 e.stopPropagation(),
+                                addfavouriteClick(game)}}>
+                                    ❤️
+                            </button> 
+                             
+                            }
                             <button className="price-btn">{game.steam_price > game.g2a_price ? game.g2a_price : game.steam_price} €</button>
                         </div>
                     ))

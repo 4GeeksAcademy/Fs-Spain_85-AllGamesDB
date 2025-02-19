@@ -13,7 +13,7 @@ from api.commands import setup_commands
 from flask_jwt_extended import JWTManager
 
 app = Flask(__name__)
-app.config["JWT_SECRET_KEY"] = "supersecretkey"
+app.config["JWT_SECRET_KEY"] = "manubrio-esternal"
 jwt = JWTManager(app)
 
 from api.routes import api

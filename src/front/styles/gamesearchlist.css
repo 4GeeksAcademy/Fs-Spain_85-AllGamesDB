@@ -5,7 +5,7 @@
     .tags {
         display: none;
     }
-    .favorite-btn {
+    .favourite-btn {
         padding: 0px;
     }
     .game-row {
@@ -97,4 +97,10 @@
 
 .page-item.disabled .page-link {
     cursor: not-allowed;
+}
+
+.favourite-btn {
+    padding: 0px;
+    border: none;
+    background-color: white;
 }

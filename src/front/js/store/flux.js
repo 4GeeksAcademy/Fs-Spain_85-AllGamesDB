@@ -11,12 +11,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 			currentSearchPage: 1,
 			message: null,
 			specificVideogameSteamId: 0,
+			logedIn: true,
+			favouriteGames: [],
 			selectedGame: {}
 		},
 		actions: {
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
-			},
+			// exampleFunction: () => {
+			// 	getActions().changeColor(0, "green");
+			// },
 
 			getMessage: async () => {
 				try {
@@ -30,18 +32,20 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 
-			changeColor: (index, color) => {
-				const store = getStore();
-				const demo = store.demo.map((elm, i) => {
-					if (i === index) return { ...elm, background: color };
-					return elm;
-				});
+			// changeColor: (index, color) => {
+			// 	const store = getStore();
+			// 	const demo = store.demo.map((elm, i) => {
+			// 		if (i === index) return { ...elm, background: color };
+			// 		return elm;
+			// 	});
 
-				setStore({ demo: demo });
-			},
+			// 	setStore({ demo: demo });
+			// },
 			setSpecificVideogameSteamId: (game) => {
 				const store = getStore();
 				setStore({ ...store, selectedGame: game });
+				console.log(store.selectedGame.app_id);
+				
 			},
 			fetchGameDetails: async (appId) => {
 				const store = getStore();
@@ -52,7 +56,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await response.json();
 					// console.log(data);
 					console.log(data[appId].data.name);
-					let resultSteam = data[appId].data
+					let resultSteam = data[appId].data					
 					setStore({
 						...store,
 						selectedGame: {
@@ -189,6 +193,71 @@ const getState = ({ getStore, getActions, setStore }) => {
 				} catch (error) {
 					console.error("Error en la solicitud:", error);
 					return false;
+				}
+			},
+			fetchFavourites: async function fetchFavourites() {
+				const store = getStore();
+				let token = localStorage.getItem("token");
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/profile`, {
+						method: "GET",
+						headers: { Authorization: `Bearer ${token}`}
+					});
+					if (response.status != 200) return;
+					const data = await response.json();
+					if (data.favourites === null) {
+						setStore({...store, favouriteGames: []})
+						return
+					};
+					console.log(data.favourites);
+					setStore({...store, favouriteGames: data.favourites})
+					return
+				} catch (error) {
+					const store = getStore();
+					console.log(error);
+					setStore({...store, favouriteGames: []})
+					
+					return
+				}
+			},
+			addFavourite: async function addFavourite(newFavourite) {
+				let token = localStorage.getItem("token");
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}//api/profile/favourites`, {
+						method: 'POST',
+						headers: { 
+							Authorization: `Bearer ${token}`,
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify({game_id: newFavourite})
+					})
+					console.log(response);
+					const data = await response.json();
+					console.log(data);
+					return
+				} catch (error) {
+					console.log(error);
+					return
+				}
+			},
+			deleteFavourite: async function deleteFavourite(favouriteToDelete) {
+				let token = localStorage.getItem("token");
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}//api/profile/favourites`, {
+						method: 'DELETE',
+						headers: { 
+							Authorization: `Bearer ${token}`,
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify({game_id: favouriteToDelete})
+					})
+					console.log(response);
+					const data = await response.json();
+					console.log(data);
+					return
+				} catch (error) {
+					console.log(error);
+					return
 				}
 			}
 		}
