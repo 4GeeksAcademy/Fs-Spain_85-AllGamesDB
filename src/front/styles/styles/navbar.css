@@ -26,6 +26,44 @@
     border-radius: 5px;
 }
 
+.dropdown-custom {
+    display: block;
+    position: absolute;
+    right: 0;
+    padding: 10px;
+    width: 250px;
+    background: white;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+}
+
+.custom-green-btn {
+    background: linear-gradient(to bottom, #4FB77F, #2E8B57);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background 0.3s ease, transform 0.1s ease;
+}
+
+.custom-green-btn:hover {
+    background: linear-gradient(to bottom, #58C488, #237A4A);
+    transform: scale(1.05);
+}
+
+.btn-price {
+    background: linear-gradient(to bottom, #4FB77F, #2E8B57);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.btn-price:hover {
+    background: linear-gradient(to bottom, #58C488, #237A4A);
+}
+
 .game-image-search {
     width: 100px;
 }
@@ -35,6 +73,16 @@
     border-radius: 0.5rem;
     background-color: #fff;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    right: 0;
+    left: auto;
+    position: absolute;
+    transform: translateX(-10px);
+    z-index: 1050;
+    min-width: 200px;
+}
+
+.nav-buttons .dropdown {
+    position: relative;
 }
 
 /* Styling each list item */
@@ -51,7 +99,6 @@
     transform: scale(1.05);
     transition: transform 0.2s ease;
 }
-
 
 .dropdown-menu li:hover .game-image-search {
     transform: scale(1.1);
@@ -101,4 +148,157 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #222;
+    padding: 10px 20px;
+    color: white;
+}
+
+/* Logo */
+.logo {
+    font-size: 20px;
+    font-weight: bold;
+    text-decoration: none;
+    color: white;
+}
+
+/* Alineación de los elementos a la derecha */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Espaciado entre los elementos */
+}
+
+/* Contenedor de búsqueda */
+.search-container {
+    position: relative;
+}
+
+/* Barra de búsqueda */
+.search-bar {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 250px;
+}
+
+/* Dropdown de búsqueda */
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    min-width: 200px;
+    z-index: 10;
+}
+
+.dropdown-menu .dropdown-item {
+    padding: 8px 12px;
+    color: #333;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-menu .dropdown-item:hover {
+    background: #f1f1f1;
+}
+
+
+.nav-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+/* Degradado verde */
+.btn-green {
+    background: linear-gradient(to bottom, #6DDA9E, #4FB77F);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: background 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+}
+
+.btn-green:hover {
+    background: linear-gradient(to bottom, #5FCB8D, #3E9F6E);
+    transform: scale(1.05);
+}
+
+.btn-green:active {
+    transform: scale(0.95);
+}
+
+
+/* Estilosdropdown y formulario */
+.signup-dropdown, .login-dropdown {
+    background-color: #c8e6c9; /* Fondo verde claro */
+    border-radius: 8px; /* Bordes redondeados */
+    padding: 15px;
+    width: 270px; /*  ancho del dropdown */
+    box-sizing: border-box; 
+}
+
+.signup-form, .login-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    margin-bottom: 10px;
+}
+
+input[type="email"], input[type="text"], input[type="password"] {
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    background-color: #ffffff;
+    width: 100%;
+    box-sizing: border-box; /* Padding que no sobresalga  */
+}
+
+input[type="email"]:focus, input[type="text"]:focus, input[type="password"]:focus {
+    border-color: #4caf50; 
+    outline: none;
+}
+
+input::placeholder {
+    color: #999;
+}
+
+/* Estilos  botones */
+.btn-submit {
+    background-color: #388e3c; /* Verde más oscuro */
+    color: white;
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.btn-submit:hover {
+    background-color: #2e7d32; /* verde oscuro en hover */
+}
+
+.btn-green {
+    background-color: #66bb6a;
+    color: white;
+}
+
+.btn-green:hover {
+    background-color: #4caf50;
 }

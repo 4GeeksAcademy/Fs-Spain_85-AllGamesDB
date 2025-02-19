@@ -18,7 +18,6 @@
     .tags {
         display: none;
     }
-
 }
 
 @media (min-width: 576px) {
@@ -31,6 +30,13 @@
         object-fit: cover;
         border-radius: 5px;
         margin-right: 15px;
+        transition: transform 0.3s ease-in-out; /* Efecto suave */
+        cursor: pointer; /* Indica que es interactivo */
+    }
+    
+    /* Aumenta el tamaño al pasar el mouse */
+    .game-image:hover {
+        transform: scale(1.1); /* 10% más grande */
     }
 }
 
@@ -63,7 +69,6 @@
     padding: 20px;
 }
 
-
 .filters {
     display: flex;
     justify-content: center;
@@ -84,7 +89,6 @@
     background: #ddd;
 }
 
-
 .games-table {
     border: 1px solid #ccc;
     border-radius: 8px;
@@ -92,20 +96,24 @@
     background: #fff;
 }
 
-
 .game-row {
     display: flex;
     align-items: center;
     border-bottom: 1px solid #ddd;
     padding: 15px;
+    transition: background 0.3s ease-in-out;
 }
 
-
+/* Efecto en el nombre del juego */
+.game-row:hover .game-title {
+    color: #ff9800; /* Color de resaltado */
+    font-weight: bold;
+    transition: color 0.3s ease-in-out, font-weight 0.3s ease-in-out;
+}
 
 .game-info {
     flex-grow: 1;
 }
-
 
 .game-buttons {
     display: flex;
@@ -134,22 +142,21 @@
     flex-shrink: 0;
 }
 
-
 /* Container con flexbox */
 .filters {
     display: flex;
-    justify-content: space-between; /* Separe groups left and rigth */
+    justify-content: space-between; /* Separe groups left and right */
     align-items: center;
     margin-bottom: 20px;
 }
 
-/* aligne Left */
+/* align Left */
 .filter-group {
     display: flex;
-    gap: 10px; /* Space between butons */
+    gap: 10px; /* Space between buttons */
 }
 
-/* Bton style */
+/* Button style */
 .filters button {
     padding: 10px 15px;
     border-radius: 5px;
@@ -163,7 +170,7 @@
     background: #ddd;
 }
 
-/* Aligne Rigth */
+/* Align Right */
 .advanced-search {
     margin-left: auto; 
 }
