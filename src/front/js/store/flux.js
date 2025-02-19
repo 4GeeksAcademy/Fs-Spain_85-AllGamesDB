@@ -8,6 +8,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			videogamesSearch: [],
 			videogameSearchNameResult: [],
 			numberOfPagesFromSearch: null,
+			queryParams:[],
 			currentSearchPage: 1,
 			message: null,
 			specificVideogameSteamId: 0,
@@ -94,6 +95,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			fetchGames: async (page) => {
+				if(page === undefined) page = 1;
 				try {
 					const response = await fetch(`${process.env.BACKEND_URL}/api/games?page=${page}`);
 					const data = await response.json()
@@ -107,33 +109,56 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			fetchTags: async () => {
 				try {
-					const response = await fetch(`${process.env.BACKEND_URL}/api/tags`);
+					const response = await fetch(`${process.env.BACKEND_URL}/api/tags/names`);
 					const data = await response.json()
 					// console.log(data);
-					let tagNames = data.results.map((tag) => tag.tag_name)
+					let tagNames = data.results.map((tag) => [tag.tag_name, tag.number_of_games])
 					setStore({ tags: tagNames })
-					// console.log(getStore().tags);
+					console.log(getStore().tags);
 
 				} catch (error) {
 					console.log(error)
 				}
 			},
 
-			fetchSearchGames: async (page) => {
+			fetchSearchGames: async (search = "", tags = "", min_rating = "", max_rating = "", min_price = "", max_price = "", release_after = "", release_before = "", page = null, per_page = 10, order_by = "") => {
 				try {
-					const response = await fetch(`${process.env.BACKEND_URL}/api/games?page=${page}`);
-					const data = await response.json()
-					console.log(data);
+					if(page === null) {
+						page = getStore().currentSearchPage 
+					}
+					
+					const params = new URLSearchParams({
+						search,
+						filter: tags,
+						min_rating,
+						max_rating,
+						min_price,
+						max_price,
+						release_after,
+						release_before,
+						order_by,
+						page,
+						per_page,
+					});
 
-					setStore({ videogamesSearch: data.result, numberOfPagesFromSearch: data.total_pages })
+					const filteredParams = Object.fromEntries(
+						Object.entries(params).filter(([_, value]) => value !== "")
+					);
+				
+					const queryParams = new URLSearchParams(filteredParams);
 
-				} catch (error) {
-					console.log(error)
-				}
-			},
-			handlePagination: async (page) => {
-				getStore().currentSearchPage = page
-				await getActions().fetchSearchGames(page)
+					const response = await fetch(`${process.env.BACKEND_URL}/api/games?page=${page}${queryParams}`);
+					console.log("Fetching data");
+					
+					const data = await response.json();
+				
+					setStore({ videogamesSearch: data.result, numberOfPagesFromSearch: data.total_pages });
+				  } catch (error) {
+					console.log(error);
+				  }
+				},
+			handlePagination: (page) => {
+				setStore({ currentSearchPage: page });
 				
 			},
 			queryGameName: async(gameName) => {

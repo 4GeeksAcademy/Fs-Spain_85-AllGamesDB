@@ -2,12 +2,14 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Games, Tags, Favourites
+from api.models import db, User, Games, Tags, Favourites, tags_games_association_table
 from api.utils import generate_sitemap, APIException
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from flask_cors import CORS
 import requests
 from math import ceil
+from sqlalchemy import and_, func, asc, desc
+from sqlalchemy.orm import aliased
 
 from flask import request, jsonify, Blueprint
 import subprocess
@@ -46,30 +48,100 @@ def handle_hello():
 #     return jsonify(response_body), 200
 
 
+# Example link using all arguments
+# https://reimagined-chainsaw-jjgpw9qgvjjh79-3001.app.github.dev/api/games?search=lies&filter=action,rpg&min_rating=78&max_rating=95&min_price=20&max_price=60&release_after=2023-01-01T00:00:00.000Z&release_before=2023-12-31T23:59:59.999Z&order_by=rating:asc&page=1&per_page=10
+# Break down
+# /api/games?
+# search=lies
+# filter=action,rpg
+# min_rating=78
+# max_rating=95
+# min_price=20
+# max_price=60
+# release_after=2023-01-01T00:00:00.000Z
+# release_before=2023-12-31T23:59:59.999Z
+# page=1
+# per_page=10
+# order_by=rating:asc
+
 @api.route("/games", methods=['GET'])
 def get_page_games():
+
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 10, type=int)
-    if per_page > 10:
-        per_page = 10
-    pagination = Games.query.paginate(page=page, per_page=per_page, error_out=False)
-    total_pages = ceil(pagination.total / per_page)
+    min_rating = request.args.get('min_rating', default=None, type=float)
+    max_rating = request.args.get('max_rating', default=None, type=float)
+    min_price = request.args.get('min_price', default=None, type=float)
+    max_price = request.args.get('max_price', default=None, type=float)
+    release_after = request.args.get('release_after', default=None, type=str)
+    release_before = request.args.get('release_before', default=None, type=str)
+    order_by = request.args.get('order_by', default=None, type=str)
+    search = request.args.get('search', default=None, type=str)
+
+    filter_param = request.args.get('filter', default='', type=str)
+    tag_names = [tag.strip().lower() for tag in filter_param.split(',') if tag.strip()]
+
+    query = Games.query
+
+    if search:
+        query = query.filter(Games.name.ilike(f'%{search}%'))
+    
+    if tag_names:
+        for tag in tag_names:
+            subq = (
+                db.session.query(tags_games_association_table.c.games_id)
+                .join(Tags, Tags.id == tags_games_association_table.c.tags_id)
+                .filter(Tags.tag_name.ilike(tag))
+                .filter(Games.id == tags_games_association_table.c.games_id)
+                .exists()
+            )
+            query = query.filter(subq)
+
+    if min_rating:
+        query = query.filter(Games.score >= min_rating)
+    if max_rating:
+        query = query.filter(Games.score <= max_rating)
+    if min_price or max_price:
+        lower_price = func.least(Games.steam_price, Games.g2a_price)
+        if min_price:
+            query = query.filter(lower_price >= min_price)
+        if max_price:
+            query = query.filter(lower_price <= max_price)
+
+    if release_after:
+        query = query.filter(Games.release >= release_after)
+    if release_before:
+        query = query.filter(Games.release <= release_before)
+
+    if order_by:
+        order_field, order_direction = order_by.split(':')
+        if order_field == 'price':
+            order_column = func.least(Games.steam_price, Games.g2a_price)
+        elif order_field == 'release':
+            order_column = Games.release
+        elif order_field == 'rating':
+            order_column = Games.score
+        else:
+            order_column = None
+
+        if order_column is not None:
+            if order_direction.lower() == 'asc':
+                query = query.order_by(asc(order_column))
+            elif order_direction.lower() == 'desc':
+                query = query.order_by(desc(order_column))
+
+    per_page = min(per_page, 10)
+    pagination = query.paginate(page=page, per_page=per_page, error_out=False)
+    
     result_data = {
         "result": [game.serialize() for game in pagination.items],
-        "total_pages": total_pages
+        "total_pages": pagination.pages
     }
-    # print(result_data[re])
-    if len(result_data["result"]) < 1:
-        response = jsonify({"Error": "no data in the page"})
-        response.headers["Access-Control-Allow-Origin"] = "*"
-        response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
-        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
-        return response, 404
-    response = jsonify(result_data)
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
-    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
-    return response, 200
+
+    if not result_data["result"]:
+        return jsonify({"Error": "No data in the page"}), 404
+
+    return jsonify(result_data), 200
 
 
 @api.route("/games", methods=['POST'])
@@ -124,7 +196,10 @@ def post_game():
 @api.route("/tags", methods=['GET'])
 def get_all_tags():
     data = db.session.scalars(db.select(Tags)).all()
-    results = list(map(lambda item: item.serialize(), data))
+    results = list(map(lambda item: {
+        **item.serialize(),
+        "number_of_games": len(item.games) if hasattr(item, "games") else 0
+    }, data))
     if len(results) < 1:
         return jsonify({"msg": "No available tags"}), 200
     response_body = {
@@ -132,6 +207,18 @@ def get_all_tags():
     }
     return jsonify(response_body), 200
 
+@api.route("/tags/names", methods=['GET'])
+def get_tag_names():
+    data = db.session.scalars(db.select(Tags)).all()
+    results = list(map(lambda item: {
+        "tag_name": item.tag_name,
+        "number_of_games": len(item.games) if hasattr(item, "games") else 0
+    }, data))
+    
+    if not results:
+        return jsonify({"msg": "No available tags"}), 200
+
+    return jsonify({"results": results}), 200
 
 @api.route("/tags", methods=['POST'])
 def post_tag():

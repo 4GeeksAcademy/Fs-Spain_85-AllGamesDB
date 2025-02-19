@@ -7,25 +7,31 @@ import "/workspaces/Fs-Spain_85-AllGamesDB/src/front/styles/gamesearchlist.css";
 
 
 export const GameSearchList = () => {
-    const [tags, setTags] = useState([])
     const { store, actions } = useContext(Context);
     const [favouriteInStore, setfavouriteInStore] = useState([])
     const navigate = useNavigate();
+
+    useEffect(() => {
+        actions.fetchSearchGames(
+            store.queryParams.search,
+            store.queryParams.tags,
+            store.queryParams.min_rating,
+            store.queryParams.max_rating,
+            store.queryParams.min_price,
+            store.queryParams.max_price,
+            store.queryParams.release_after,
+            store.queryParams.release_before,
+            store.queryParams.order_by,
+            store.queryParams.per_page,
+            store.currentSearchPage
+        );
+    }, [store.currentSearchPage]);
 
     const handleGameClick = (game) => {
         actions.setSpecificVideogameSteamId(game)
         navigate(`/game/${game.id}`);
     };
 
-    useEffect(() => {
-        const fetchTagsData = async () => {
-            const tags = await actions.fetchTags();
-            setTags(tags);
-        };
-        fetchTagsData();
-    }, []);
-
-    
 
     const addfavouriteClick = async (game) => {
         actions.addLocalFavourite(game)
@@ -43,13 +49,22 @@ export const GameSearchList = () => {
         <div className="d-flex">
             <div className="search-editor border d-flex row p-2">
                 <h4>Tags: </h4>
-                <div className="d-flex align-content-center row justify-content-around">
-                    {store.tags.length > 0 ? store.tags.slice(0, 20).map((tag, index) => (
-                        <div key={index} className="col-xl-3 col-md-6 border">
-                            <p>{tag}</p>
-                        </div>
-                    ))
-
+                <div className="d-flex row justify-content-around pe-0">
+                {store.tags.length > 0 ? 
+                        <>
+                            {store.tags
+                                .sort((gameA, gameB) => gameB[1] - gameA[1])
+                                .slice(0, 20)
+                                .map((tag, index) => (
+                                    <div key={index} className="col-xl-4 col-md-6 my-1 align-content-center">
+                                        <p className="m-auto">{tag[0]} ({tag[1]})</p>
+                                    </div>
+                                ))
+                            }
+                            <div className="col-xl-4 col-md-6 my-1 align-content-center">
+                                <a className="m-auto">More Tags ({store.tags.length}) ...</a>
+                            </div>
+                        </>
                         :
                         <p> Loading Tags... </p>}
                 </div>
