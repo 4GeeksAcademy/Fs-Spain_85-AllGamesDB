@@ -9,7 +9,7 @@ import "/workspaces/Fs-Spain_85-AllGamesDB/src/front/styles/gamesearchlist.css";
 export const GameSearchList = () => {
     const [tags, setTags] = useState([])
     const { store, actions } = useContext(Context);
-    const [favouriteHeart, setfavouriteHeart] = useState("")
+    const [favouriteInStore, setfavouriteInStore] = useState([])
     const navigate = useNavigate();
 
     const handleGameClick = (game) => {
@@ -25,25 +25,19 @@ export const GameSearchList = () => {
         fetchTagsData();
     }, []);
 
+    
+
     const addfavouriteClick = async (game) => {
-        await actions.addFavourite(game.id)
-        await actions.fetchFavourites()
+        actions.addLocalFavourite(game)
+        actions.addFavourite(game.id)
         return
     }
 
     const deletefavouriteClick = async (game) => {
-        await actions.deleteFavourite(game.id);
-        await actions.fetchFavourites();
+        actions.deleteLocalFavourite(game)
+        actions.deleteFavourite(game.id);
         return
     }
-
-    // const handlefavouriteButton = () => {
-
-    // }
-
-    // useEffect (() => {
-    //     handlefavouriteButton();
-    // }, store.favouriteGames)
 
     return (
         <div className="d-flex">

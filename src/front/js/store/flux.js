@@ -67,7 +67,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 							image: resultSteam.header_image
 						}
 					})
-					console.log("AQUI", store.selectedGame);
+					// console.log(store.selectedGame);
 
 					return data[appId].data
 
@@ -209,7 +209,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						setStore({...store, favouriteGames: []})
 						return
 					};
-					console.log(data.favourites);
+					// console.log(data.favourites);
 					setStore({...store, favouriteGames: data.favourites})
 					return
 				} catch (error) {
@@ -259,7 +259,20 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log(error);
 					return
 				}
-			}
+			},
+			addLocalFavourite: function addLocalFavourite(game) {
+				const store = getStore();
+				let favouriteStandarized = {favourite_game: game}
+				console.log("este es el nuevoooo",store.favouriteGames);
+				setStore({...store, favouriteGames: [...store.favouriteGames, favouriteStandarized]})
+			},
+			deleteLocalFavourite: function deleteLocalFavourite(game) {
+				const store = getStore();
+				let resultantFavourites = store.favouriteGames.filter((favourite) => {
+					return favourite.favourite_game.id !== game.id
+				})
+				setStore({...store, favouriteGames: resultantFavourites})
+			},
 		}
 	};
 };
