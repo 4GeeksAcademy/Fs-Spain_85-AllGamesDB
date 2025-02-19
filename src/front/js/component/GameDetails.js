@@ -58,7 +58,7 @@ export const GameDetails = () => {
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="2">Tags:{gameTags}.</td>
+                            <td colSpan="2">Tags:{gameTags}.</td>
                         </tr>
                     </tbody>
 

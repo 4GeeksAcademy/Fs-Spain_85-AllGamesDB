@@ -17,6 +17,19 @@ export const GameList = () => {
         else return game.steam_price + ` € ${<i class="fa-brands fa-steam"></i>}` ;
     }
 
+    const addfavouriteClick = async (game) => {
+        actions.addLocalFavourite(game)
+        actions.addFavourite(game.id)
+        return
+    }
+
+    const deletefavouriteClick = async (game) => {
+        actions.deleteLocalFavourite(game)
+        actions.deleteFavourite(game.id);
+        return
+    }
+
+
     return (
         <div className="game-list-container d-flex flex-column">
             {/* <div className="filters">
@@ -46,7 +59,19 @@ export const GameList = () => {
                                 <h4 className='game-title'>{game.name}</h4>
                                 <p className='tags'>{game.game_tags.slice(0, 3).map((tag) => tag.tag_name).join(', ')}</p>
                             </div>
-                            {/* <button className="favorite-btn">❤️</button> */}
+                            {store.favouriteGames.some((fav) => fav.favourite_game.app_id === game.app_id) 
+                            ? <button className="favourite-btn me-3 fs-5" onClick={(e) => {
+                                e.stopPropagation(),
+                                deletefavouriteClick(game)}}>
+                                   💔
+                           </button> 
+                           : <button className="favourite-btn me-3 fs-5" onClick={(e) => {
+                                 e.stopPropagation(),
+                                addfavouriteClick(game)}}>
+                                    ❤️
+                            </button> 
+                             
+                            }
                             <button className="price-btn">{gamePriceComparer(game)}</button>
                         </div>
                     ))

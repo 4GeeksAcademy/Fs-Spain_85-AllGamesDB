@@ -2,15 +2,27 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Games, Tags, Favourites
+from api.models import db, User, Games, Tags, Favourites, tags_games_association_table
 from api.utils import generate_sitemap, APIException
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from flask_cors import CORS
 import requests
 from math import ceil
+from sqlalchemy import and_, func, asc, desc
+from sqlalchemy.orm import aliased
+
+from flask import request, jsonify, Blueprint
+import subprocess
+from flask import Blueprint, request, jsonify
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
+from flask_bcrypt import Bcrypt
+from app import jwt
 
 
 api = Blueprint('api', __name__)
+bcrypt = Bcrypt()
+blacklist = set()
+
 
 # Allow CORS requests to this API
 CORS(api)#proteccion solo cuando permito
@@ -36,30 +48,100 @@ def handle_hello():
 #     return jsonify(response_body), 200
 
 
+# Example link using all arguments
+# https://reimagined-chainsaw-jjgpw9qgvjjh79-3001.app.github.dev/api/games?search=lies&filter=action,rpg&min_rating=78&max_rating=95&min_price=20&max_price=60&release_after=2023-01-01T00:00:00.000Z&release_before=2023-12-31T23:59:59.999Z&order_by=rating:asc&page=1&per_page=10
+# Break down
+# /api/games?
+# search=lies
+# filter=action,rpg
+# min_rating=78
+# max_rating=95
+# min_price=20
+# max_price=60
+# release_after=2023-01-01T00:00:00.000Z
+# release_before=2023-12-31T23:59:59.999Z
+# page=1
+# per_page=10
+# order_by=rating:asc
+
 @api.route("/games", methods=['GET'])
 def get_page_games():
+
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 10, type=int)
-    if per_page > 10:
-        per_page = 10
-    pagination = Games.query.paginate(page=page, per_page=per_page, error_out=False)
-    total_pages = ceil(pagination.total / per_page)
+    min_rating = request.args.get('min_rating', default=None, type=float)
+    max_rating = request.args.get('max_rating', default=None, type=float)
+    min_price = request.args.get('min_price', default=None, type=float)
+    max_price = request.args.get('max_price', default=None, type=float)
+    release_after = request.args.get('release_after', default=None, type=str)
+    release_before = request.args.get('release_before', default=None, type=str)
+    order_by = request.args.get('order_by', default=None, type=str)
+    search = request.args.get('search', default=None, type=str)
+
+    filter_param = request.args.get('filter', default='', type=str)
+    tag_names = [tag.strip().lower() for tag in filter_param.split(',') if tag.strip()]
+
+    query = Games.query
+
+    if search:
+        query = query.filter(Games.name.ilike(f'%{search}%'))
+    
+    if tag_names:
+        for tag in tag_names:
+            subq = (
+                db.session.query(tags_games_association_table.c.games_id)
+                .join(Tags, Tags.id == tags_games_association_table.c.tags_id)
+                .filter(Tags.tag_name.ilike(tag))
+                .filter(Games.id == tags_games_association_table.c.games_id)
+                .exists()
+            )
+            query = query.filter(subq)
+
+    if min_rating:
+        query = query.filter(Games.score >= min_rating)
+    if max_rating:
+        query = query.filter(Games.score <= max_rating)
+    if min_price or max_price:
+        lower_price = func.least(Games.steam_price, Games.g2a_price)
+        if min_price:
+            query = query.filter(lower_price >= min_price)
+        if max_price:
+            query = query.filter(lower_price <= max_price)
+
+    if release_after:
+        query = query.filter(Games.release >= release_after)
+    if release_before:
+        query = query.filter(Games.release <= release_before)
+
+    if order_by:
+        order_field, order_direction = order_by.split(':')
+        if order_field == 'price':
+            order_column = func.least(Games.steam_price, Games.g2a_price)
+        elif order_field == 'release':
+            order_column = Games.release
+        elif order_field == 'rating':
+            order_column = Games.score
+        else:
+            order_column = None
+
+        if order_column is not None:
+            if order_direction.lower() == 'asc':
+                query = query.order_by(asc(order_column))
+            elif order_direction.lower() == 'desc':
+                query = query.order_by(desc(order_column))
+
+    per_page = min(per_page, 10)
+    pagination = query.paginate(page=page, per_page=per_page, error_out=False)
+    
     result_data = {
         "result": [game.serialize() for game in pagination.items],
-        "total_pages": total_pages
+        "total_pages": pagination.pages
     }
-    # print(result_data[re])
-    if len(result_data["result"]) < 1:
-        response = jsonify({"Error": "no data in the page"})
-        response.headers["Access-Control-Allow-Origin"] = "*"
-        response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
-        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
-        return response, 404
-    response = jsonify(result_data)
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
-    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
-    return response, 200
+
+    if not result_data["result"]:
+        return jsonify({"Error": "No data in the page"}), 404
+
+    return jsonify(result_data), 200
 
 
 @api.route("/games", methods=['POST'])
@@ -114,7 +196,10 @@ def post_game():
 @api.route("/tags", methods=['GET'])
 def get_all_tags():
     data = db.session.scalars(db.select(Tags)).all()
-    results = list(map(lambda item: item.serialize(), data))
+    results = list(map(lambda item: {
+        **item.serialize(),
+        "number_of_games": len(item.games) if hasattr(item, "games") else 0
+    }, data))
     if len(results) < 1:
         return jsonify({"msg": "No available tags"}), 200
     response_body = {
@@ -122,6 +207,18 @@ def get_all_tags():
     }
     return jsonify(response_body), 200
 
+@api.route("/tags/names", methods=['GET'])
+def get_tag_names():
+    data = db.session.scalars(db.select(Tags)).all()
+    results = list(map(lambda item: {
+        "tag_name": item.tag_name,
+        "number_of_games": len(item.games) if hasattr(item, "games") else 0
+    }, data))
+    
+    if not results:
+        return jsonify({"msg": "No available tags"}), 200
+
+    return jsonify({"results": results}), 200
 
 @api.route("/tags", methods=['POST'])
 def post_tag():
@@ -208,3 +305,165 @@ def get_search_request():
     response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
 
     return response, 200
+
+
+#registro 
+# @api.route('/register', methods=['POST'])
+# def register():
+#     data = request.json
+#     email = data.get("email")
+#     password = data.get("password")
+
+#     if not email or not password:
+#         return jsonify({"error": "Faltan datos"}), 400
+
+#     existing_user = User.query.filter_by(email=email).first()
+#     if existing_user:
+#         return jsonify({"error": "El usuario ya existe"}), 400
+
+#     new_user = User(email=email)
+#     new_user.set_password(password)
+#     db.session.add(new_user)
+#     db.session.commit()
+
+#     return jsonify({"message": "Usuario registrado exitosamente"}), 201
+
+@api.route('/signup', methods=['POST'])
+def signup():
+    data = request.get_json()
+    # Verificar si el email ya está registrado
+    existing_user = User.query.filter_by(email=data["email"]).first()
+    if existing_user:
+        return jsonify({"msg": "El usuario ya existe"}), 400
+
+    # Crear nuevo usuario
+    new_user = User(email=data["email"])
+    new_user.set_password(data["password"])  # Hashear contraseña
+    
+    response = jsonify({"msg": "Usuario registrado con éxito"})
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    
+    db.session.add(new_user)
+    db.session.commit()
+
+    return response, 201
+
+#login
+@api.route("/login", methods=["POST"])
+def login():
+    data = request.get_json()
+    if not data or "email" not in data or "password" not in data:
+        return jsonify({"msg": "Email and password are required"}), 400
+
+    user = User.query.filter_by(email=data["email"]).first()
+    if not user or not user.check_password(data["password"]):
+        return jsonify({"msg": "Wrong credentials"}), 401
+    
+    # Creamos el token de acceso
+    access_token = create_access_token(identity=user.email)
+    response = jsonify({"token": access_token, "user": user.serialize()})
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    return response, 200
+
+
+#logout
+@api.route("/logout", methods=["POST"])
+@jwt_required()
+def logout():
+    jti = get_jwt()["jti"]  # Identificador único del token
+    blacklist.add(jti)  # Agregar a la lista negra
+    return jsonify({"msg": "Cierre de sesión exitoso"}), 200
+
+@jwt.token_in_blocklist_loader
+def check_if_token_in_blacklist(jwt_header, jwt_payload):
+    return jwt_payload["jti"] in blacklist
+
+#profile, obtenemos usuario y favoritos
+@api.route('/profile', methods=['GET'])
+@jwt_required()
+def profile():
+    email = get_jwt_identity()
+    try:
+        user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one()
+    except NoResultFound:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+    
+    response = jsonify(user.serialize())
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    return response, 200
+
+# endpoint para añadir favoritos al usuario
+@api.route('/profile/favourites', methods=['POST'])
+@jwt_required()
+def post_favourite():
+    request_data = request.json
+    print(request_data)
+    email = get_jwt_identity()
+    if not request_data or not "game_id" in request_data or not email:
+        return jsonify({"error": "missing game_id or auth token"}), 400
+    game_id = request_data.get('game_id')
+    try:
+        user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one()
+    except NoResultFound:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+    try:
+        game = db.session.execute(db.select(Games).filter_by(id=game_id)).scalar_one()
+    except NoResultFound:
+        return jsonify({"error": "Game not found"}), 404
+    try:
+        favourites = db.session.execute(db.select(Favourites).filter_by(favourite_game=game, user_favourites_id=user.id)).scalar_one()
+        if favourites:
+            return jsonify({"error": "favourite already exist"}), 400
+    except NoResultFound:
+        pass
+    except:
+        return jsonify({"error": "Something went wrong while trying to post new favourite"}), 500
+    new_favourite = Favourites(
+        user_favourites_id = user.id,
+        favourite_game = game
+    )
+    
+    response = jsonify({"msg": new_favourite.serialize()})
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    
+    db.session.add(new_favourite)
+    db.session.commit()
+    return response, 201
+
+# endpoint delete favourites
+@api.route('/profile/favourites', methods=['Delete'])
+@jwt_required()
+def delete_favourite():
+    request_data = request.json
+    email = get_jwt_identity()
+    if not request_data or not "game_id" in request_data or not email:
+        return jsonify({"error": "missing game_id or auth token"}), 400
+    game_id = request_data.get('game_id')
+    try:
+        user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one()
+    except NoResultFound:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+    try:
+        favourite = db.session.execute(db.select(Favourites).filter_by(favourite_game_id=game_id, user_favourites_id=user.id)).scalar_one()
+    except NoResultFound:
+        return jsonify({"error": "The favourite you are trying to delete doesn't exist"}), 404
+    except Exception as e:
+        return jsonify({"error": f"something went wrong {e}"}), 500
+    
+    response = jsonify({"msg": "favourite game deleted"})
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    
+    db.session.delete(favourite)
+    db.session.commit()
+    return response, 200
+    

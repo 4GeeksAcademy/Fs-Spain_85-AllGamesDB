@@ -1,20 +1,25 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
+			user: null,
+			token: localStorage.getItem("token") || null,
 			videogames: [],
 			tags: [],
 			videogamesSearch: [],
 			videogameSearchNameResult: [],
 			numberOfPagesFromSearch: null,
+			queryParams:[],
 			currentSearchPage: 1,
 			message: null,
 			specificVideogameSteamId: 0,
+			logedIn: true,
+			favouriteGames: [],
 			selectedGame: {}
 		},
 		actions: {
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
-			},
+			// exampleFunction: () => {
+			// 	getActions().changeColor(0, "green");
+			// },
 
 			getMessage: async () => {
 				try {
@@ -28,18 +33,20 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 
-			changeColor: (index, color) => {
-				const store = getStore();
-				const demo = store.demo.map((elm, i) => {
-					if (i === index) return { ...elm, background: color };
-					return elm;
-				});
+			// changeColor: (index, color) => {
+			// 	const store = getStore();
+			// 	const demo = store.demo.map((elm, i) => {
+			// 		if (i === index) return { ...elm, background: color };
+			// 		return elm;
+			// 	});
 
-				setStore({ demo: demo });
-			},
+			// 	setStore({ demo: demo });
+			// },
 			setSpecificVideogameSteamId: (game) => {
 				const store = getStore();
 				setStore({ ...store, selectedGame: game });
+				console.log(store.selectedGame.app_id);
+				
 			},
 			fetchGameDetails: async (appId) => {
 				const store = getStore();
@@ -50,7 +57,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await response.json();
 					// console.log(data);
 					console.log(data[appId].data.name);
-					let resultSteam = data[appId].data
+					let resultSteam = data[appId].data					
 					setStore({
 						...store,
 						selectedGame: {
@@ -61,7 +68,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 							image: resultSteam.header_image
 						}
 					})
-					console.log("AQUI", store.selectedGame);
+					// console.log(store.selectedGame);
 
 					return data[appId].data
 
@@ -88,6 +95,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			fetchGames: async (page) => {
+				if(page === undefined) page = 1;
 				try {
 					const response = await fetch(`${process.env.BACKEND_URL}/api/games?page=${page}`);
 					const data = await response.json()
@@ -101,33 +109,56 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			fetchTags: async () => {
 				try {
-					const response = await fetch(`${process.env.BACKEND_URL}/api/tags`);
+					const response = await fetch(`${process.env.BACKEND_URL}/api/tags/names`);
 					const data = await response.json()
 					// console.log(data);
-					let tagNames = data.results.map((tag) => tag.tag_name)
+					let tagNames = data.results.map((tag) => [tag.tag_name, tag.number_of_games])
 					setStore({ tags: tagNames })
-					// console.log(getStore().tags);
+					console.log(getStore().tags);
 
 				} catch (error) {
 					console.log(error)
 				}
 			},
 
-			fetchSearchGames: async (page) => {
+			fetchSearchGames: async (search = "", tags = "", min_rating = "", max_rating = "", min_price = "", max_price = "", release_after = "", release_before = "", page = null, per_page = 10, order_by = "") => {
 				try {
-					const response = await fetch(`${process.env.BACKEND_URL}/api/games?page=${page}`);
-					const data = await response.json()
-					console.log(data);
+					if(page === null) {
+						page = getStore().currentSearchPage 
+					}
+					
+					const params = new URLSearchParams({
+						search,
+						filter: tags,
+						min_rating,
+						max_rating,
+						min_price,
+						max_price,
+						release_after,
+						release_before,
+						order_by,
+						page,
+						per_page,
+					});
 
-					setStore({ videogamesSearch: data.result, numberOfPagesFromSearch: data.total_pages })
+					const filteredParams = Object.fromEntries(
+						Object.entries(params).filter(([_, value]) => value !== "")
+					);
+				
+					const queryParams = new URLSearchParams(filteredParams);
 
-				} catch (error) {
-					console.log(error)
-				}
-			},
-			handlePagination: async(page) => {
-				getStore().currentSearchPage = page
-				await getActions().fetchSearchGames(page)
+					const response = await fetch(`${process.env.BACKEND_URL}/api/games?page=${page}${queryParams}`);
+					console.log("Fetching data");
+					
+					const data = await response.json();
+				
+					setStore({ videogamesSearch: data.result, numberOfPagesFromSearch: data.total_pages });
+				  } catch (error) {
+					console.log(error);
+				  }
+				},
+			handlePagination: (page) => {
+				setStore({ currentSearchPage: page });
 				
 			},
 			queryGameName: async(gameName) => {
@@ -143,7 +174,130 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			resetVideogameSearchNameResult: () => {
 				setStore({videogameSearchNameResult: []})
-			}
+			},
+
+			login: async (email, password) => {
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/login`, {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ email, password })
+					});
+
+					if (!response.ok) throw new Error("Error en las credenciales");
+
+					const data = await response.json();
+					localStorage.setItem("token", data.token);
+					setStore({ user: data.user, token: data.token });
+
+					return true;
+				} catch (error) {
+					console.error(error);
+					return false;
+				}
+			},
+			logout: () => {
+				localStorage.removeItem("token");
+				setStore({ user: null, token: null });
+			},
+			signup: async (email, password) => {
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "/api/signup", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ email, password }),
+					});
+
+					const data = await response.json();
+					if (response.ok) {
+						return true;  // Registro exitoso
+					} else {
+						console.error("Error en el registro:", data.msg);
+						return false;  // Registro fallido
+					}
+				} catch (error) {
+					console.error("Error en la solicitud:", error);
+					return false;
+				}
+			},
+			fetchFavourites: async function fetchFavourites() {
+				const store = getStore();
+				let token = localStorage.getItem("token");
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/profile`, {
+						method: "GET",
+						headers: { Authorization: `Bearer ${token}`}
+					});
+					if (response.status != 200) return;
+					const data = await response.json();
+					if (data.favourites === null) {
+						setStore({...store, favouriteGames: []})
+						return
+					};
+					// console.log(data.favourites);
+					setStore({...store, favouriteGames: data.favourites})
+					return
+				} catch (error) {
+					const store = getStore();
+					console.log(error);
+					setStore({...store, favouriteGames: []})
+					
+					return
+				}
+			},
+			addFavourite: async function addFavourite(newFavourite) {
+				let token = localStorage.getItem("token");
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}//api/profile/favourites`, {
+						method: 'POST',
+						headers: { 
+							Authorization: `Bearer ${token}`,
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify({game_id: newFavourite})
+					})
+					console.log(response);
+					const data = await response.json();
+					console.log(data);
+					return
+				} catch (error) {
+					console.log(error);
+					return
+				}
+			},
+			deleteFavourite: async function deleteFavourite(favouriteToDelete) {
+				let token = localStorage.getItem("token");
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}//api/profile/favourites`, {
+						method: 'DELETE',
+						headers: { 
+							Authorization: `Bearer ${token}`,
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify({game_id: favouriteToDelete})
+					})
+					console.log(response);
+					const data = await response.json();
+					console.log(data);
+					return
+				} catch (error) {
+					console.log(error);
+					return
+				}
+			},
+			addLocalFavourite: function addLocalFavourite(game) {
+				const store = getStore();
+				let favouriteStandarized = {favourite_game: game}
+				console.log("este es el nuevoooo",store.favouriteGames);
+				setStore({...store, favouriteGames: [...store.favouriteGames, favouriteStandarized]})
+			},
+			deleteLocalFavourite: function deleteLocalFavourite(game) {
+				const store = getStore();
+				let resultantFavourites = store.favouriteGames.filter((favourite) => {
+					return favourite.favourite_game.id !== game.id
+				})
+				setStore({...store, favouriteGames: resultantFavourites})
+			},
 		}
 	};
 };

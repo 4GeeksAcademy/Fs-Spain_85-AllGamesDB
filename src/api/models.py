@@ -3,6 +3,8 @@ from sqlalchemy import ForeignKey, Table, String, DateTime, Integer, Float
 from sqlalchemy.orm import Mapped, relationship, mapped_column 
 from typing import List
 from datetime import datetime
+from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 
@@ -19,13 +21,16 @@ class User(db.Model):
     __tablename__ = "user"
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
-    password: Mapped[str] = mapped_column(String(80), nullable=False)
+    password: Mapped[str] = mapped_column(String(254), nullable=False)
     # relación con favourites
     favourites: Mapped[List["Favourites"]] = relationship()
     # last_login: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
-    def __repr__(self):
-        return f'<User {self.email}>'
+    def set_password(self, password):
+        self.password = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
 
     def serialize(self):
         return {
@@ -38,7 +43,7 @@ class User(db.Model):
 class Favourites(db.Model):
     __tablename__ = "favourites"
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(250), nullable=False)
+    # name: Mapped[str] = mapped_column(String(250), nullable=False)
     # relación con user
     user_favourites_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     # relación con Games
@@ -48,7 +53,7 @@ class Favourites(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "name": self.name,
+            # "name": self.name,
             "favourite_game": self.favourite_game.serialize() if self.favourite_game else None,
         }
 
