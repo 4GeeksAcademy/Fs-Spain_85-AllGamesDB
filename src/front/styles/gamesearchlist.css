@@ -104,3 +104,128 @@
     border: none;
     background-color: white;
 }
+
+/* Buttons for search-box */
+
+.btn-green {
+    background: linear-gradient(to bottom, #6DDA9E, #4FB77F);
+    color: white;
+    border: none;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: background 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.btn-green:hover {
+    background: linear-gradient(to bottom, #5FCB8D, #3E9F6E);
+    transform: scale(1.05);
+}
+
+.btn-green:active {
+    transform: scale(0.95);
+}
+
+.btn-gray {
+    background: linear-gradient(to bottom, #B0B0B0, #8C8C8C);
+    color: black;
+    border: none;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: background 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.btn-gray:hover {
+    background: linear-gradient(to bottom, #A0A0A0, #7C7C7C);
+    transform: scale(1.05);
+}
+
+.btn-gray:active {
+    transform: scale(0.95);
+}
+
+.btn-search-green {
+    background: linear-gradient(to bottom, #6DDA9E, #4FB77F);
+    color: white;
+    border: none;
+    padding: 10px;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: background 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.btn-search-green:hover {
+    background: linear-gradient(to bottom, #5FCB8D, #3E9F6E);
+}
+
+.btn-search-green:active {
+    transform: scale(0.95);
+}
+
+.btn-more-tags {
+    background: linear-gradient(to bottom, #FFA726, #FB8C00);
+    color: white;
+    border: none;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: background 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 6px 12px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-more-tags:hover {
+    background: linear-gradient(to bottom, #FF9800, #F57C00);
+    transform: scale(1.05);
+}
+
+.btn-more-tags:active {
+    transform: scale(0.95);
+}
+
+.btn-offcanvas {
+    width: 100px ;
+    height: 100px ;
+}
+
+
+/* Loader animation */
+.loader {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.75s, visibility 0.75s;
+}
+
+.loader-hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.loader::after {
+    content: "";
+    width: 100%;
+    height: 100%;
+    border: 10px solid #dddddd;
+    border-top-color: #4FB77F;
+    border-radius: 50%;
+    animation: loading 0.75s ease infinite;
+}
+
+@keyframes loading {
+    from {
+        transform: rotate(0turn);
+    }
+    to {
+        transform: rotate(1turn)
+    }
+}
