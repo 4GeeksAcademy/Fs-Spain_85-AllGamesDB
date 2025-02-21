@@ -45,6 +45,7 @@ export const Navbar = () => {
     const handleSignupSubmit = (e) => {
         e.preventDefault();
         console.log("Signup Data", formData);
+        actions.signup(formData.email, formData.password)
         setIsSignupOpen(false);
     };
 

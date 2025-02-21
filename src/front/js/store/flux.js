@@ -12,7 +12,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			currentSearchPage: 1,
 			message: null,
 			specificVideogameSteamId: 0,
-			logedIn: true,
+			logedIn: false,
 			favouriteGames: [],
 			selectedGame: {}
 		},
@@ -186,7 +186,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			signup: async (email, password) => {
 				try {
-					const response = await fetch("https://cuddly-space-doodle-v6gxqw5vpq7rfprv4-3001.app.github.dev/api/signup", {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/signup`, {
 						method: "POST",
 						headers: {
 							"Content-Type": "application/json",
@@ -236,7 +236,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			addFavourite: async function addFavourite(newFavourite) {
 				let token = localStorage.getItem("token");
 				try {
-					const response = await fetch(`${process.env.BACKEND_URL}//api/profile/favourites`, {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/profile/favourites`, {
 						method: 'POST',
 						headers: { 
 							Authorization: `Bearer ${token}`,
