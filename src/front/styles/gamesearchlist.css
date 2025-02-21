@@ -40,7 +40,7 @@
     }
 }
 
-@media (min-width: 768px) and (max-width: 991px) {
+@media (min-width: 426px) and (max-width: 991px) {
     .games-search-table {
         width: 90%;
     }
@@ -167,6 +167,26 @@
     transform: scale(0.95);
 }
 
+.btn-reset-orange {
+    background: linear-gradient(to bottom, #FFA726, #FB8C00);
+    color: white;
+    border: none;
+    padding: 10px;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: background 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.btn-reset-orange:hover {
+    background: linear-gradient(to bottom, #FF9800, #F57C00);
+}
+
+.btn-reset-orange :active {
+    transform: scale(0.95);
+}
+
 .btn-more-tags {
     background: linear-gradient(to bottom, #FFA726, #FB8C00);
     color: white;
@@ -191,8 +211,11 @@
 }
 
 .btn-offcanvas {
-    width: 100px ;
-    height: 100px ;
+    width: 50px ;
+    height: 50px;
+    background-color: #4FB77F;
+    border-radius: 0% 50% 50% 10%;
+    opacity: 70%;
 }
 
 
@@ -228,4 +251,87 @@
     to {
         transform: rotate(1turn)
     }
+}
+
+/* Slider css */
+
+.rc-slider {
+    position: relative;
+    height: 14px;
+    padding: 5px 0;
+    width: 100%;
+    border-radius: 6px;
+    touch-action: none;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.rc-slider-rail {
+    position: absolute;
+    width: 100%;
+    height: 4px;
+    background-color: #A0A0A0;
+    border-radius: 2px;
+}
+
+.rc-slider-track {
+    position: absolute;
+    height: 4px;
+    background-color: #4FB77F;
+    border-radius: 2px;
+}
+
+.rc-slider-handle {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    margin-top: -8px;
+    background-color: #4FB77F;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    touch-action: pan-x;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.rc-slider-handle:active {
+    box-shadow: 0 0 5px #4FB77F;
+}
+
+.rc-slider-handle:hover {
+    border-color: #4FB77F;
+}
+
+.rc-slider-handle-dragging.rc-slider-handle-dragging.rc-slider-handle-dragging {
+    border-color: #4FB77F;
+    box-shadow: 0 0 5px #4FB77F;
+}
+
+.slider-container {
+    width: 70%;
+    margin: auto;
+}
+
+.slider-input {
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin: auto;
+    max-width: 10%;
+    min-width: 40px;
+}
+
+
+/* Dropdown arrow (custom) */
+select {
+    padding: 10px 15px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    background-color: #fff;
+    border: 2px solid #3E9F6E;
+    border-radius: 8px;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease;
 }

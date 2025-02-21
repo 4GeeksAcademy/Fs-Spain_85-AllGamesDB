@@ -15,9 +15,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 				max_rating: 100,
 				min_price: 0,
 				max_price: 100,
-				release_after: "",
-				release_before: "",
-				order_by: "",
+				release_after: "2000-01-01T00:00:00Z",
+				release_before: "2025-12-31T23:59:59Z",
+				order_by: "relevant:asc",
 				per_page: 10
 			},
 			currentSearchPage: 1,
@@ -185,29 +185,37 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ currentSearchPage: page });
 
 			},
-			updateSearchParameters: async (activeTags) => {
+			updateSearchParameters: async (page, activeTags, minPrice, maxPrice, minRating, maxRating, releaseAfter, releaseBefore, orderBy) => {
 				let store = getStore()
 				let actions = getActions()
 				await setStore({
 					...store,
+					currentSearchPage: page,
 					queryParams: {
 						...store.queryParams,
-						tags: activeTags
+						tags: activeTags,
+						min_price: minPrice,
+						max_price: maxPrice,
+						min_rating: minRating,
+						max_rating: maxRating,
+						release_after: `${releaseAfter}-01-01T00:00:00Z`,
+						release_before: `${releaseBefore}-12-31T23:59:59Z`,
+						order_by: orderBy
 					}
 				})
 
 				await actions.fetchSearchGames(
 					store.queryParams.search,
 					activeTags,
-					store.queryParams.min_rating,
-					store.queryParams.max_rating,
-					store.queryParams.min_price,
-					store.queryParams.max_price,
-					store.queryParams.release_after,
-					store.queryParams.release_before,
+					minRating,
+					maxRating,
+					minPrice,
+					maxPrice,
+					`${releaseAfter}-01-01T00:00:00Z`,
+					`${releaseBefore}-12-31T23:59:59Z`,
 					store.currentSearchPage,
 					store.queryParams.per_page,
-					store.queryParams.order_by
+					orderBy,
 				);
 			},
 			queryGameName: async (gameName) => {
