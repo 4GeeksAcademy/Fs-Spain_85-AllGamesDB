@@ -8,7 +8,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 			videogamesSearch: [],
 			videogameSearchNameResult: [],
 			numberOfPagesFromSearch: null,
-			queryParams:[],
+			queryParams: {
+				search: "",
+				tags: [],
+				min_rating: 0,
+				max_rating: 100,
+				min_price: 0,
+				max_price: 100,
+				release_after: "2000-01-01T00:00:00Z",
+				release_before: "2025-12-31T23:59:59Z",
+				order_by: "relevant:asc",
+				per_page: 10
+			},
 			currentSearchPage: 1,
 			message: null,
 			specificVideogameSteamId: 0,
@@ -46,7 +57,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const store = getStore();
 				setStore({ ...store, selectedGame: game });
 				console.log(store.selectedGame.app_id);
-				
+
 			},
 			fetchGameDetails: async (appId) => {
 				const store = getStore();
@@ -57,7 +68,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await response.json();
 					// console.log(data);
 					console.log(data[appId].data.name);
-					let resultSteam = data[appId].data					
+					let resultSteam = data[appId].data
 					setStore({
 						...store,
 						selectedGame: {
@@ -95,7 +106,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			fetchGames: async (page) => {
-				if(page === undefined) page = 1;
+				if (page === undefined) page = 1;
 				try {
 					const response = await fetch(`${process.env.BACKEND_URL}/api/games?page=${page}`);
 					const data = await response.json()
@@ -121,15 +132,24 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 
-			fetchSearchGames: async (search = "", tags = "", min_rating = "", max_rating = "", min_price = "", max_price = "", release_after = "", release_before = "", page = null, per_page = 10, order_by = "") => {
+			fetchSearchGames: async (
+				search = "",
+				tags = [],
+				min_rating = "",
+				max_rating = "",
+				min_price = "",
+				max_price = "",
+				release_after = "",
+				release_before = "",
+				page = null,
+				per_page = 10,
+				order_by = ""
+			) => {
 				try {
-					if(page === null) {
-						page = getStore().currentSearchPage 
-					}
-					
+					const tagsString = tags.join(",");
 					const params = new URLSearchParams({
 						search,
-						filter: tags,
+						filter: tagsString,
 						min_rating,
 						max_rating,
 						min_price,
@@ -137,43 +157,80 @@ const getState = ({ getStore, getActions, setStore }) => {
 						release_after,
 						release_before,
 						order_by,
-						page,
+						page: page || 1,
 						per_page,
 					});
 
 					const filteredParams = Object.fromEntries(
-						Object.entries(params).filter(([_, value]) => value !== "")
+						Object.entries(Object.fromEntries(params)).filter(([_, value]) => value !== "")
 					);
-				
+
 					const queryParams = new URLSearchParams(filteredParams);
 
-					const response = await fetch(`${process.env.BACKEND_URL}/api/games?page=${page}${queryParams}`);
-					console.log("Fetching data");
-					
+					const url = `${process.env.BACKEND_URL}/api/games?${queryParams.toString()}`;
+					console.log("Fetching data from:", url);
+
+					const response = await fetch(url);
 					const data = await response.json();
-				
-					setStore({ videogamesSearch: data.result, numberOfPagesFromSearch: data.total_pages });
-				  } catch (error) {
-					console.log(error);
-				  }
-				},
+
+					setStore({
+						videogamesSearch: data.result,
+						numberOfPagesFromSearch: data.total_pages
+					});
+				} catch (error) {
+					console.log("Error fetching games:", error);
+				}
+			},
 			handlePagination: (page) => {
 				setStore({ currentSearchPage: page });
-				
+
 			},
-			queryGameName: async(gameName) => {
+			updateSearchParameters: async (page, activeTags, minPrice, maxPrice, minRating, maxRating, releaseAfter, releaseBefore, orderBy) => {
+				let store = getStore()
+				let actions = getActions()
+				await setStore({
+					...store,
+					currentSearchPage: page,
+					queryParams: {
+						...store.queryParams,
+						tags: activeTags,
+						min_price: minPrice,
+						max_price: maxPrice,
+						min_rating: minRating,
+						max_rating: maxRating,
+						release_after: `${releaseAfter}-01-01T00:00:00Z`,
+						release_before: `${releaseBefore}-12-31T23:59:59Z`,
+						order_by: orderBy
+					}
+				})
+
+				await actions.fetchSearchGames(
+					store.queryParams.search,
+					activeTags,
+					minRating,
+					maxRating,
+					minPrice,
+					maxPrice,
+					`${releaseAfter}-01-01T00:00:00Z`,
+					`${releaseBefore}-12-31T23:59:59Z`,
+					store.currentSearchPage,
+					store.queryParams.per_page,
+					orderBy,
+				);
+			},
+			queryGameName: async (gameName) => {
 				try {
 					const response = await fetch(`${process.env.BACKEND_URL}/api/search?filter=${gameName}`);
 					const data = await response.json()
 					console.log(data);
-					setStore({videogameSearchNameResult: data})
+					setStore({ videogameSearchNameResult: data })
 				} catch (error) {
 					console.log(error);
-					
+
 				}
 			},
 			resetVideogameSearchNameResult: () => {
-				setStore({videogameSearchNameResult: []})
+				setStore({ videogameSearchNameResult: [] })
 			},
 
 			login: async (email, password) => {
@@ -226,22 +283,22 @@ const getState = ({ getStore, getActions, setStore }) => {
 				try {
 					const response = await fetch(`${process.env.BACKEND_URL}/api/profile`, {
 						method: "GET",
-						headers: { Authorization: `Bearer ${token}`}
+						headers: { Authorization: `Bearer ${token}` }
 					});
 					if (response.status != 200) return;
 					const data = await response.json();
 					if (data.favourites === null) {
-						setStore({...store, favouriteGames: []})
+						setStore({ ...store, favouriteGames: [] })
 						return
 					};
 					// console.log(data.favourites);
-					setStore({...store, favouriteGames: data.favourites})
+					setStore({ ...store, favouriteGames: data.favourites })
 					return
 				} catch (error) {
 					const store = getStore();
 					console.log(error);
-					setStore({...store, favouriteGames: []})
-					
+					setStore({ ...store, favouriteGames: [] })
+
 					return
 				}
 			},
@@ -250,11 +307,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 				try {
 					const response = await fetch(`${process.env.BACKEND_URL}//api/profile/favourites`, {
 						method: 'POST',
-						headers: { 
+						headers: {
 							Authorization: `Bearer ${token}`,
 							"Content-Type": "application/json"
 						},
-						body: JSON.stringify({game_id: newFavourite})
+						body: JSON.stringify({ game_id: newFavourite })
 					})
 					console.log(response);
 					const data = await response.json();
@@ -270,11 +327,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 				try {
 					const response = await fetch(`${process.env.BACKEND_URL}//api/profile/favourites`, {
 						method: 'DELETE',
-						headers: { 
+						headers: {
 							Authorization: `Bearer ${token}`,
 							"Content-Type": "application/json"
 						},
-						body: JSON.stringify({game_id: favouriteToDelete})
+						body: JSON.stringify({ game_id: favouriteToDelete })
 					})
 					console.log(response);
 					const data = await response.json();
@@ -287,16 +344,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			addLocalFavourite: function addLocalFavourite(game) {
 				const store = getStore();
-				let favouriteStandarized = {favourite_game: game}
-				console.log("este es el nuevoooo",store.favouriteGames);
-				setStore({...store, favouriteGames: [...store.favouriteGames, favouriteStandarized]})
+				let favouriteStandarized = { favourite_game: game }
+				console.log("este es el nuevoooo", store.favouriteGames);
+				setStore({ ...store, favouriteGames: [...store.favouriteGames, favouriteStandarized] })
 			},
 			deleteLocalFavourite: function deleteLocalFavourite(game) {
 				const store = getStore();
 				let resultantFavourites = store.favouriteGames.filter((favourite) => {
 					return favourite.favourite_game.id !== game.id
 				})
-				setStore({...store, favouriteGames: resultantFavourites})
+				setStore({ ...store, favouriteGames: resultantFavourites })
 			},
 		}
 	};

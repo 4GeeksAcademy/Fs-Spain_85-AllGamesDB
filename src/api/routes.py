@@ -8,15 +8,13 @@ from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from flask_cors import CORS
 import requests
 from math import ceil
-from sqlalchemy import and_, func, asc, desc
+from sqlalchemy import func, asc, desc, cast, DateTime
 from sqlalchemy.orm import aliased
 
-from flask import request, jsonify, Blueprint
-import subprocess
-from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
 from flask_bcrypt import Bcrypt
 from app import jwt
+from datetime import datetime
 
 
 api = Blueprint('api', __name__)
@@ -109,10 +107,19 @@ def get_page_games():
             query = query.filter(lower_price <= max_price)
 
     if release_after:
-        query = query.filter(Games.release >= release_after)
-    if release_before:
-        query = query.filter(Games.release <= release_before)
+        try:
+            release_after_date = datetime.fromisoformat(release_after.replace('Z', '+00:00'))
+            query = query.filter(cast(Games.release, DateTime) >= release_after_date)
+        except ValueError:
+            return jsonify({"error": "Invalid date format for release_after"}), 400
 
+    if release_before:
+        try:
+            release_before_date = datetime.fromisoformat(release_before.replace('Z', '+00:00'))
+            query = query.filter(cast(Games.release, DateTime) <= release_before_date)
+        except ValueError:
+            return jsonify({"error": "Invalid date format for release_before"}), 400
+        
     if order_by:
         order_field, order_direction = order_by.split(':')
         if order_field == 'price':
@@ -121,21 +128,28 @@ def get_page_games():
             order_column = Games.release
         elif order_field == 'rating':
             order_column = Games.score
+        elif order_field == 'relevant':
+            pass
         else:
             order_column = None
 
-        if order_column is not None:
+        if order_field != 'relevant' and order_column is not None:
             if order_direction.lower() == 'asc':
                 query = query.order_by(asc(order_column))
             elif order_direction.lower() == 'desc':
                 query = query.order_by(desc(order_column))
+
+    total_pages = query.paginate(page=1, per_page=per_page, error_out=False).pages
+
+    if order_by and order_field == 'relevant' and order_direction.lower() == 'desc':
+        page = total_pages - page + 1
 
     per_page = min(per_page, 10)
     pagination = query.paginate(page=page, per_page=per_page, error_out=False)
     
     result_data = {
         "result": [game.serialize() for game in pagination.items],
-        "total_pages": pagination.pages
+        "total_pages": total_pages
     }
 
     if not result_data["result"]:
