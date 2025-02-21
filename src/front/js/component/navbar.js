@@ -1,18 +1,51 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
-import "../../styles/styles/navbar.css"
+import "../../styles/styles/navbar.css";
 import { Context } from '../store/appContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 export const Navbar = () => {
-    const [query, setQuery] = useState("")
+    const [query, setQuery] = useState("");
     const { store, actions } = useContext(Context);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [isSignupOpen, setIsSignupOpen] = useState(false);
+    const [isLoginOpen, setIsLoginOpen] = useState(false);
+    const [formData, setFormData] = useState({
+        email: "",
+        username: "",
+        password: ""
+    });
+    const [isFavouritesOpen, setIsFavouritesOpen] = useState(false)
+    const [favouriteOverflowClass, setFavouriteOverflowClass] = useState("")
     const navigate = useNavigate();
     const location = useLocation();
 
+
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
+    };
+
+    const toggleSignup = () => {
+        setIsSignupOpen(!isSignupOpen);
+        setIsLoginOpen(false);
+    };
+
+    const toggleLogin = () => {
+        setIsLoginOpen(!isLoginOpen);
+        setIsSignupOpen(false);
+    };
+
+    const handleInputChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        });
+    };
+
+    const handleSignupSubmit = (e) => {
+        e.preventDefault();
+        console.log("Signup Data", formData);
+        setIsSignupOpen(false);
     };
 
     const handleGameClick = (game) => {
@@ -20,27 +53,27 @@ export const Navbar = () => {
             setQuery("")
             return;
         }
-        actions.setSpecificVideogameSteamId(game)
+        actions.setSpecificVideogameSteamId(game);
         navigate(`/game/${game.id}`);
-        setQuery("")
-        actions.resetVideogameSearchNameResult()
+        setQuery("");
+        actions.resetVideogameSearchNameResult();
     };
 
     useEffect(() => {
         if (query === "") {
-            actions.resetVideogameSearchNameResult()
-            return
+            actions.resetVideogameSearchNameResult();
+            return;
         }
         const debounceAPI = setTimeout(() => {
             const handleQuery = async () => {
                 if (query.trim() !== "") {
-                    await actions.queryGameName(query)
+                    await actions.queryGameName(query);
                 }
-            }
-            handleQuery()
-        }, 400)
-        return () => clearTimeout(debounceAPI)
-    }, [query])
+            };
+            handleQuery();
+        }, 400);
+        return () => clearTimeout(debounceAPI);
+    }, [query]);
 
 
     const handlefavouriteClick = (favourite) => {
@@ -49,83 +82,392 @@ export const Navbar = () => {
         navigate(`/game/${favourite.id}`);
     }
 
-    let liFavouriteGames = store.favouriteGames != null
-        ? store.favouriteGames.map((favourite) => {
-            // console.log(favourite.favourite_game);
-            return <li key={favourite.favourite_game.id}>
-                <a className="dropdown-item" onClick={() => handlefavouriteClick(favourite.favourite_game)}>
-                    <img src={`https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${favourite.favourite_game.app_id}/capsule_184x69.jpg`}
-                        alt={favourite.favourite_game.name} className="game-image-search my-auto" />
-                    <p className="game-name my-auto me-2">{favourite.favourite_game.name} </p>
-                    <p className="price my-auto">{favourite.favourite_game.steam_price > favourite.favourite_game.g2a_price ? favourite.favourite_game.g2a_price : favourite.favourite_game.steam_price} €</p>
-                </a>
-            </li>
-        })
-        : <li className="d-flex justify-content-center">No favourites yet</li>
+    const deletefavouriteClick = async (game) => {
+        actions.deleteLocalFavourite(game.favourite_game)
+        actions.deleteFavourite(game.favourite_game.id);
+        return
+    }
 
-    useState(() => {
+    let liFavouriteGames = store.favouriteGames.map((favourite) => {
+        // console.log(favourite.favourite_game);
+        return <li key={favourite.favourite_game.id}>
+            <a className="dropdown-item" onClick={() => handlefavouriteClick(favourite.favourite_game)}>
+                <img src={`https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${favourite.favourite_game.app_id}/capsule_184x69.jpg`}
+                    alt={favourite.favourite_game.name} className="game-image-search my-auto" />
+                <p className="game-name my-auto me-2">{favourite.favourite_game.name} </p>
+                <p className="price my-auto">{favourite.favourite_game.steam_price > favourite.favourite_game.g2a_price ? favourite.favourite_game.g2a_price : favourite.favourite_game.steam_price} €</p>
+                <button type="button" className="favourite-btn fs-5" onClick={(e) => {
+                    e.stopPropagation(),
+                    e.preventDefault(),
+                    deletefavouriteClick(favourite)
+                }}>
+                    💔
+                </button>
+            </a>
+        </li>
+    })
+
+    // useEffect para el manejo del cierre del dropdown de favoritos al clicar fuera
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (isFavouritesOpen && e.target.parentElement.className !== "dropdown-item" 
+                || e.target.className !== "favourite-btn fs-5" && e.target.parentElement.className == "dropdown-item" && isFavouritesOpen) {
+                setIsFavouritesOpen(false);
+            }
+        };
+        document.addEventListener('click', handleClickOutside);
+        return () => document.removeEventListener('click', handleClickOutside);
+    }, [isFavouritesOpen]);
+
+    useEffect(() => {
         if (store.logedIn) actions.fetchFavourites();
-
     }, [store.logedIn])
+
+    useEffect(()=> {
+        if (store.favouriteGames.length < 6) setFavouriteOverflowClass("dropdown-menu-end-no-overflow");
+        else setFavouriteOverflowClass("dropdown-menu-end")
+    }, [store.favouriteGames])
 
     return (
         <nav className="navbar">
             <div className="container">
                 <Link to="/" className="logo">All <span>Games DB</span></Link>
-                <div className="justify-content-center">
-                    <input type="text" className="search-bar m-auto" placeholder="Search games" data-bs-toggle="dropdown" aria-expanded={isDropdownOpen ? "true" : "false"} value={query} onBlur={() => setTimeout(toggleDropdown, 100)} onFocus={toggleDropdown} onChange={e => setQuery(e.target.value)} />
-                    <ul className={`dropdown-menu dropdown-menu-end d-flex flex-column ${isDropdownOpen ? "show" : "visually-hidden"}`}>
+                {/* inicio de searchbar */}
+                <div className="search-container my-1">
+                    <input
+                        type="text"
+                        className="search-bar mt-0"
+                        placeholder="Search games"
+                        data-bs-toggle="dropdown"
+                        aria-expanded={isDropdownOpen ? "true" : "false"}
+                        value={query}
+                        onBlur={() => setTimeout(toggleDropdown, 100)}
+                        onFocus={toggleDropdown}
+                        onChange={e => setQuery(e.target.value)}
+                    />
+
+                    <ul className={`dropdown-menu w-100 ${isDropdownOpen ? "show" : "visually-hidden"}`}>
                         {store.videogameSearchNameResult && store.videogameSearchNameResult.length > 0 ?
                             store.videogameSearchNameResult.map((game) => (
                                 <li key={game.id}>
-                                    <a className="dropdown-item d-flex flex-row" onClick={() => handleGameClick(game)}>
-                                        <img src={`https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${game.app_id}/capsule_184x69.jpg`} alt={game.name} className="game-image-search my-auto" />
-                                        <p className="game-name my-auto me-2">{game.name} </p>
-                                        <p className="price my-auto">{game.steam_price > game.g2a_price ? game.g2a_price : game.steam_price} €</p>
+                                    <a className="dropdown-item" onClick={() => handleGameClick(game)}>
+                                        <img src={`https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${game.app_id}/capsule_184x69.jpg`} alt={game.name} className="game-image-search" />
+                                        <p className="game-name">{game.name} </p>
+                                        <p className="price">{game.steam_price > game.g2a_price ? game.g2a_price : game.steam_price} €</p>
                                     </a>
                                 </li>
                             ))
-                            :
-                            ""
-                        }
+                            : ""}
                     </ul>
                 </div>
-                <div className="nav-buttons d-flex flex-row">
-                    {store.favouriteGames.length > 0
-                        ? <div className="dropdown">
-                            <button className="favourites dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                ⭐ Favoritos
-                            </button>
-                            <ul className="dropdown-menu">
-                                {/* <li><a className="dropdown-item" href="#">Action</a></li> */}
-                                {liFavouriteGames}
-                            </ul> 
+                {/* fin de searchbar */}
+                {/* botones de signup, login, favourites y logout */}
+                <div className="nav-right">
+                    {store.logedIn == false ?
+                        // para cuando no se está logado
+                        <div className="nav-buttons">
+                            <div className="dropdown">
+                                <button className="btn btn-green" onClick={toggleSignup}>Signup</button>
+                                {isSignupOpen && (
+                                    <div className="dropdown-menu show signup-dropdown dropdown-menu-end-no-overflow">
+                                        <form onSubmit={handleSignupSubmit} className="signup-form">
+                                            <div className="form-group">
+                                                <label htmlFor="email">Email:</label>
+                                                <input
+                                                    type="email"
+                                                    id="email"
+                                                    name="email"
+                                                    value={formData.email}
+                                                    onChange={handleInputChange}
+                                                    placeholder="Enter your email"
+                                                    required
+                                                />
+                                            </div>
+
+                                            <div className="form-group">
+                                                <label htmlFor="password">Password:</label>
+                                                <input
+                                                    type="password"
+                                                    id="password"
+                                                    name="password"
+                                                    value={formData.password}
+                                                    onChange={handleInputChange}
+                                                    placeholder="Enter your password"
+                                                    required
+                                                />
+                                            </div>
+                                            <button type="submit" className="btn btn-submit">Register</button>
+                                        </form>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="dropdown">
+                                <button className="btn btn-green" onClick={toggleLogin}>Login</button>
+                                {isLoginOpen && (
+                                    <div className="dropdown-menu dropdown-menu-end-no-overflow show login-dropdown">
+                                        <form className="login-form">
+                                            <div className="form-group">
+                                                <label htmlFor="login-email">Email:</label>
+                                                <input
+                                                    type="email"
+                                                    id="login-email"
+                                                    placeholder="Enter your email"
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="form-group">
+                                                <label htmlFor="login-password">Password:</label>
+                                                <input
+                                                    type="password"
+                                                    id="login-password"
+                                                    placeholder="Enter your password"
+                                                    required
+                                                />
+                                            </div>
+                                            <button type="submit" className="btn btn-submit">Login</button>
+                                        </form>
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                        : ""}
-                    <button className="logout">🔴 Logout</button>
+                        // para cuando se está logado
+                        : <div className="nav-buttons d-flex flex-row">
+                            {store.favouriteGames.length > 0
+                                ? <div className="dropdown position-relative">
+                                    <button className="btn btn-green dropdown-toggle" 
+                                    type="button" 
+                                    onClick={() => setIsFavouritesOpen(!isFavouritesOpen)} 
+                                    aria-expanded={isFavouritesOpen} 
+                                    data-bs-boundary="viewport">
+                                        ⭐ Favoritos
+                                    </button>
+                                    <ul data-bs-boundary="viewport" className={`dropdown-menu ${favouriteOverflowClass} ${isFavouritesOpen ? "show" : ""} `}>
+                                        {liFavouriteGames}
+                                    </ul>
+                                </div>
+                                : <button className="btn btn-green dropdown-toggle invisible" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    ⭐ Favoritos
+                                </button>}
+                            <button className="btn btn-green">🔴 Logout</button>
+                        </div>
+                    }
                 </div>
+
             </div>
         </nav>
     );
 };
 
+export default Navbar;
 
-// import React from "react";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import React, { useState, useContext, useEffect } from "react";
 // import { Link } from "react-router-dom";
+// import "../../styles/styles/navbar.css";
+// import { Context } from "../store/appContext";
+// import { useNavigate } from "react-router-dom";
 
 // export const Navbar = () => {
-// 	return (
-// 		<nav className="navbar navbar-light bg-light">
-// 			<div className="container">
-// 				<Link to="/">
-// 					<span className="navbar-brand mb-0 h1">React Boilerplate</span>
-// 				</Link>
-// 				<div className="ml-auto">
-// 					<Link to="/demo">
-// 						<button className="btn btn-primary">Check the Context in action</button>
-// 					</Link>
-// 				</div>
-// 			</div>
-// 		</nav>
-// 	);
+//     const [query, setQuery] = useState("");
+//     const { store, actions } = useContext(Context);
+//     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+//     const [isSignupOpen, setIsSignupOpen] = useState(false);
+//     const [isLoginOpen, setIsLoginOpen] = useState(false);
+//     const [formData, setFormData] = useState({
+//         email: "",
+//         username: "",
+//         password: ""
+//     });
+//     const navigate = useNavigate();
+
+//     const toggleDropdown = () => {
+//         setIsDropdownOpen(!isDropdownOpen);
+//     };
+
+//     const toggleSignup = () => {
+//         setIsSignupOpen(!isSignupOpen);
+//         setIsLoginOpen(false);
+//     };
+
+//     const toggleLogin = () => {
+//         setIsLoginOpen(!isLoginOpen);
+//         setIsSignupOpen(false);
+//     };
+
+//     const handleInputChange = (e) => {
+//         setFormData({
+//             ...formData,
+//             [e.target.name]: e.target.value
+//         });
+//     };
+
+//     const handleSignupSubmit = (e) => {
+//         e.preventDefault();
+//         console.log("Signup Data", formData);
+//         setIsSignupOpen(false);
+//     };
+
+//     const handleGameClick = (game) => {
+//         actions.setSpecificVideogameSteamId(game);
+//         navigate(`/game/${game.id}`);
+//         setQuery("");
+//         actions.resetVideogameSearchNameResult();
+//     };
+
+//     useEffect(() => {
+//         if (query === "") {
+//             actions.resetVideogameSearchNameResult();
+//             return;
+//         }
+//         const debounceAPI = setTimeout(() => {
+//             const handleQuery = async () => {
+//                 if (query.trim() !== "") {
+//                     await actions.queryGameName(query);
+//                 }
+//             };
+//             handleQuery();
+//         }, 400);
+//         return () => clearTimeout(debounceAPI);
+//     }, [query]);
+
+//     return (
+//         <nav className="navbar">
+//             <div className="container">
+//                 <Link to="/" className="logo">All <span>Games DB</span></Link>
+
+//                 <div className="nav-right">
+//                     <div className="search-container">
+//                         <input
+//                             type="text"
+//                             className="search-bar"
+//                             placeholder="Search games"
+//                             data-bs-toggle="dropdown"
+//                             aria-expanded={isDropdownOpen ? "true" : "false"}
+//                             value={query}
+//                             onBlur={() => setTimeout(toggleDropdown, 100)}
+//                             onFocus={toggleDropdown}
+//                             onChange={e => setQuery(e.target.value)}
+//                         />
+
+//                         <ul className={`dropdown-menu dropdown-menu-end ${isDropdownOpen ? "show" : "visually-hidden"}`}>
+//                             {store.videogameSearchNameResult && store.videogameSearchNameResult.length > 0 ?
+//                                 store.videogameSearchNameResult.map((game) => (
+//                                     <li key={game.id}>
+//                                         <a className="dropdown-item" onClick={() => handleGameClick(game)}>
+//                                             <img src={`https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${game.app_id}/capsule_184x69.jpg`} alt={game.name} className="game-image-search" />
+//                                             <p className="game-name">{game.name} </p>
+//                                             <p className="price">{game.steam_price > game.g2a_price ? game.g2a_price : game.steam_price} €</p>
+//                                         </a>
+//                                     </li>
+//                                 ))
+//                                 : ""}
+//                         </ul>
+//                     </div>
+
+//                     <div className="nav-buttons">
+//                         <div className="dropdown">
+//                             <button className="btn btn-green" onClick={toggleSignup}>Signup</button>
+//                             {isSignupOpen && (
+//                                 <div className="dropdown-menu show signup-dropdown">
+//                                     <form onSubmit={handleSignupSubmit} className="signup-form">
+//                                         <div className="form-group">
+//                                             <label htmlFor="email">Email:</label>
+//                                             <input
+//                                                 type="email"
+//                                                 id="email"
+//                                                 name="email"
+//                                                 value={formData.email}
+//                                                 onChange={handleInputChange}
+//                                                 placeholder="Enter your email"
+//                                                 required
+//                                             />
+//                                         </div>
+
+//                                         <div className="form-group">
+//                                             <label htmlFor="password">Password:</label>
+//                                             <input
+//                                                 type="password"
+//                                                 id="password"
+//                                                 name="password"
+//                                                 value={formData.password}
+//                                                 onChange={handleInputChange}
+//                                                 placeholder="Enter your password"
+//                                                 required
+//                                             />
+//                                         </div>
+//                                         <button type="submit" className="btn btn-submit">Register</button>
+//                                     </form>
+//                                 </div>
+//                             )}
+//                         </div>
+
+
+//                         <div className="dropdown">
+//                             <button className="btn btn-green" onClick={toggleLogin}>Login</button>
+//                             {isLoginOpen && (
+//                                 <div className="dropdown-menu dropdown-menu-end show login-dropdown">
+//                                     <form className="login-form">
+//                                         <div className="form-group">
+//                                             <label htmlFor="login-email">Email:</label>
+//                                             <input
+//                                                 type="email"
+//                                                 id="login-email"
+//                                                 placeholder="Enter your email"
+//                                                 required
+//                                             />
+//                                         </div>
+//                                         <div className="form-group">
+//                                             <label htmlFor="login-password">Password:</label>
+//                                             <input
+//                                                 type="password"
+//                                                 id="login-password"
+//                                                 placeholder="Enter your password"
+//                                                 required
+//                                             />
+//                                         </div>
+//                                         <button type="submit" className="btn btn-submit">Login</button>
+//                                     </form>
+//                                 </div>
+//                             )}
+//                         </div>
+//                     </div>
+//                 </div>
+//             </div>
+//         </nav>
+//     );
 // };
+
+// export default Navbar;
+
+
+
+
+
+

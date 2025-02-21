@@ -71,24 +71,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					// console.log(store.selectedGame);
 
 					return data[appId].data
-
-
-
-
-
-					// if (data) {
-					// 	const gameData = data["730"].data;
-					// 	setStore({
-					// 		videogames: [{
-					// 			id: gameData.steam_appid,
-					// 			name: gameData.name,
-					// 			image: gameData.header_image,
-					// 			price: gameData.price_overview ? gameData.price_overview.final_formatted : "Gratis",
-					// 		}]
-					// 	});
-					// } else {
-					// 	console.error("La API no devolvió datos válidos.");
-					// }
 				} catch (error) {
 					console.error("Error al obtener los juegos:", error);
 				}
@@ -161,19 +143,19 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ currentSearchPage: page });
 				
 			},
-			queryGameName: async(gameName) => {
+			queryGameName: async (gameName) => {
 				try {
 					const response = await fetch(`${process.env.BACKEND_URL}/api/search?filter=${gameName}`);
 					const data = await response.json()
 					console.log(data);
-					setStore({videogameSearchNameResult: data})
+					setStore({ videogameSearchNameResult: data })
 				} catch (error) {
 					console.log(error);
-					
+
 				}
 			},
 			resetVideogameSearchNameResult: () => {
-				setStore({videogameSearchNameResult: []})
+				setStore({ videogameSearchNameResult: [] })
 			},
 
 			login: async (email, password) => {
@@ -198,11 +180,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			logout: () => {
 				localStorage.removeItem("token");
-				setStore({ user: null, token: null });
+				setStore({ user: null, token: null });//borra token cierra sesion
 			},
+
 			signup: async (email, password) => {
 				try {
-					const response = await fetch(process.env.BACKEND_URL + "/api/signup", {
+					const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/api/signup", {
 						method: "POST",
 						headers: { "Content-Type": "application/json" },
 						body: JSON.stringify({ email, password }),
@@ -210,11 +193,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 					const data = await response.json();
 					if (response.ok) {
-						return true;  // Registro exitoso
+						console.log("Usuario registrado con éxito", data);
+						return data;
 					} else {
-						console.error("Error en el registro:", data.msg);
-						return false;  // Registro fallido
+						console.error("Error en el registro:", data);
+						return false;
 					}
+
 				} catch (error) {
 					console.error("Error en la solicitud:", error);
 					return false;
@@ -293,7 +278,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			deleteLocalFavourite: function deleteLocalFavourite(game) {
 				const store = getStore();
+				console.log("game", game);
+				
 				let resultantFavourites = store.favouriteGames.filter((favourite) => {
+					console.log(favourite.favourite_game);
+					
 					return favourite.favourite_game.id !== game.id
 				})
 				setStore({...store, favouriteGames: resultantFavourites})

@@ -26,11 +26,11 @@ class User(db.Model):
     favourites: Mapped[List["Favourites"]] = relationship()
     # last_login: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
-    def set_password(self, password):
-        self.password = generate_password_hash(password)
+    # def set_password(self, password):
+    #     self.password = generate_password_hash(password)
 
-    def check_password(self, password):
-        return check_password_hash(self.password, password)
+    # def check_password(self, password):
+    #     return check_password_hash(self.password, password)
 
     def serialize(self):
         return {

@@ -100,7 +100,11 @@
 }
 
 .favourite-btn {
-    padding: 0px;
+    background: none;
     border: none;
-    background-color: white;
-}
+    font-size: 20px;
+    }
+
+.favourite-btn:hover {
+    transform: scale(1.1);
+    }

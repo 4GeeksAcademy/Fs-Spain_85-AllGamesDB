@@ -28,6 +28,18 @@ export const GameDetails = () => {
         return
     }
 
+    const addfavouriteClick = async (game) => {
+        actions.addLocalFavourite(game)
+        actions.addFavourite(game.id)
+        return
+    }
+
+    const deletefavouriteClick = async (game) => {
+        actions.deleteLocalFavourite(game)
+        actions.deleteFavourite(game.id);
+        return
+    }
+
     return (
         <div className='row w-100 mx-auto text-center justify-content-center'>
             <div className='mt-5 d-flex flex-column col-lg-5 col-11 mx-auto d-none d-lg-block'>
@@ -36,7 +48,23 @@ export const GameDetails = () => {
                 {/* Details*/}
             </div>
             <div className='mt-5 d-flex flex-column col-lg-5 col-11 mx-auto'>
-                <h1>{game.name}</h1>
+                <div className='d-flex flex-rowd-flex flex-row justify-content-around align-items-center'>
+                    <h1>{game.name}</h1>
+                    {store.logedIn == true 
+                            ? store.favouriteGames.some((fav) => fav.favourite_game.app_id === game.app_id) 
+                            ? <button className="favourite-btn" onClick={(e) => {
+                                e.stopPropagation(),
+                                deletefavouriteClick(game)}}>
+                                   💔
+                           </button> 
+                           : <button className="favourite-btn" onClick={(e) => {
+                                 e.stopPropagation(),
+                                addfavouriteClick(game)}}>
+                                    ❤️
+                            </button> 
+                             
+                            : ""}
+                </div>
                 <table className='table table-bordered border-primary mt-3'>
                     <thead>
                         <tr>
