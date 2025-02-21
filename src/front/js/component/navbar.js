@@ -16,8 +16,10 @@ export const Navbar = () => {
         password: ""
     });
     const [isFavouritesOpen, setIsFavouritesOpen] = useState(false)
+    const [favouriteOverflowClass, setFavouriteOverflowClass] = useState("")
     const navigate = useNavigate();
     const location = useLocation();
+
 
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
@@ -117,19 +119,24 @@ export const Navbar = () => {
         return () => document.removeEventListener('click', handleClickOutside);
     }, [isFavouritesOpen]);
 
-    useState(() => {
+    useEffect(() => {
         if (store.logedIn) actions.fetchFavourites();
     }, [store.logedIn])
+
+    useEffect(()=> {
+        if (store.favouriteGames.length < 6) setFavouriteOverflowClass("dropdown-menu-end-no-overflow");
+        else setFavouriteOverflowClass("dropdown-menu-end")
+    }, [store.favouriteGames])
 
     return (
         <nav className="navbar">
             <div className="container">
                 <Link to="/" className="logo">All <span>Games DB</span></Link>
                 {/* inicio de searchbar */}
-                <div className="search-container">
+                <div className="search-container my-1">
                     <input
                         type="text"
-                        className="search-bar"
+                        className="search-bar mt-0"
                         placeholder="Search games"
                         data-bs-toggle="dropdown"
                         aria-expanded={isDropdownOpen ? "true" : "false"}
@@ -162,7 +169,7 @@ export const Navbar = () => {
                             <div className="dropdown">
                                 <button className="btn btn-green" onClick={toggleSignup}>Signup</button>
                                 {isSignupOpen && (
-                                    <div className="dropdown-menu show signup-dropdown">
+                                    <div className="dropdown-menu show signup-dropdown dropdown-menu-end-no-overflow">
                                         <form onSubmit={handleSignupSubmit} className="signup-form">
                                             <div className="form-group">
                                                 <label htmlFor="email">Email:</label>
@@ -198,7 +205,7 @@ export const Navbar = () => {
                             <div className="dropdown">
                                 <button className="btn btn-green" onClick={toggleLogin}>Login</button>
                                 {isLoginOpen && (
-                                    <div className="dropdown-menu dropdown-menu-end show login-dropdown">
+                                    <div className="dropdown-menu dropdown-menu-end-no-overflow show login-dropdown">
                                         <form className="login-form">
                                             <div className="form-group">
                                                 <label htmlFor="login-email">Email:</label>
@@ -227,11 +234,15 @@ export const Navbar = () => {
                         // para cuando se está logado
                         : <div className="nav-buttons d-flex flex-row">
                             {store.favouriteGames.length > 0
-                                ? <div className="dropdown">
-                                    <button className="btn btn-green dropdown-toggle" type="button" onClick={() => setIsFavouritesOpen(!isFavouritesOpen)} aria-expanded={isFavouritesOpen} data-bs-boundary="viewport">
+                                ? <div className="dropdown position-relative">
+                                    <button className="btn btn-green dropdown-toggle" 
+                                    type="button" 
+                                    onClick={() => setIsFavouritesOpen(!isFavouritesOpen)} 
+                                    aria-expanded={isFavouritesOpen} 
+                                    data-bs-boundary="viewport">
                                         ⭐ Favoritos
                                     </button>
-                                    <ul data-bs-boundary="viewport" className={`dropdown-menu dropdown-menu-end ${isFavouritesOpen ? "show" : ""} `}>
+                                    <ul data-bs-boundary="viewport" className={`dropdown-menu ${favouriteOverflowClass} ${isFavouritesOpen ? "show" : ""} `}>
                                         {liFavouriteGames}
                                     </ul>
                                 </div>

@@ -205,3 +205,23 @@ input::placeholder {
 .btn-green:hover {
     background-color: #4caf50;
 }
+
+.dropdown-menu-end {
+    left: auto;
+    right: 0;
+    max-height: 40vh;
+    overflow-y: auto; 
+    overflow-x: hidden;
+    width: 300px;
+    scrollbar-width: thin;
+}
+
+.dropdown-menu::-webkit-scrollbar {
+    width: 6px;
+}
+
+.dropdown-menu-end-no-overflow {
+    left: auto;
+    right: 0;
+    width: 300px;
+}
