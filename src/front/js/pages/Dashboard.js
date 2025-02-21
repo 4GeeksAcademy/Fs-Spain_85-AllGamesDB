@@ -1,30 +1,26 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
+import { Favorites } from "../component/Favorites";
 
 const Dashboard = () => {
-    const { actions } = useContext(Context);
+    const { store, actions } = useContext(Context);
     const navigate = useNavigate();
     const [userData, setUserData] = useState(null);
 
-    // ejecuta cuando el componente se monta no olvidar
     useEffect(() => {
-        const token = localStorage.getItem('token');
-
+        const token = localStorage.getItem("token");
         if (!token) {
-            navigate('/login');  // Si no hay token al login
+            navigate("/login");
         } else {
             setUserData({ email: "user@example.com", username: "Username" });
+            actions.fetchFavourites();
         }
-    }, [navigate]);
+    }, [navigate, actions]);
 
-    // Función logout
     const handleLogout = () => {
-        // Action de logout store
         actions.logout();
-
-        // login después de cerrar sesión
-        navigate('/login');
+        navigate("/");// modificado para redirigir a home
     };
 
     return (
@@ -32,7 +28,11 @@ const Dashboard = () => {
             <h1>Welcome</h1>
             {userData ? (
                 <div>
-                    <button onClick={handleLogout} className="btn btn-danger">Logout</button>
+                    <button onClick={handleLogout} className="btn btn-danger">
+                        Logout
+                    </button>
+                    <h2></h2>
+                    <Favorites /> {/* componente */}
                 </div>
             ) : (
                 <p>Loading...</p>
@@ -48,21 +48,52 @@ export default Dashboard;
 
 
 
-
-
-
-// import React, { useContext } from "react";
+// import React, { useEffect, useState, useContext } from "react";
+// import { useNavigate } from "react-router-dom";
 // import { Context } from "../store/appContext";
 
 // const Dashboard = () => {
-//     const { store, actions } = useContext(Context);
+//     const { actions } = useContext(Context);
+//     const navigate = useNavigate();
+//     const [userData, setUserData] = useState(null);
+
+//     // ejecuta cuando el componente se monta no olvidar
+//     useEffect(() => {
+//         const token = localStorage.getItem('token');
+
+//         if (!token) {
+//             navigate('/login');  // Si no hay token al login
+//         } else {
+//             setUserData({ email: "user@example.com", username: "Username" });
+//         }
+//     }, [navigate]);
+
+//     // Función logout
+//     const handleLogout = () => {
+//         // Action de logout store
+//         actions.logout();
+
+//         // login después de cerrar sesión
+//         navigate('/login');
+//     };
 
 //     return (
 //         <div>
-//             <h2>Welcome, {store.user ? store.user.name : "Usuario"}</h2>
-//             <button className="btn btn-danger" onClick={actions.logout}>Close Sesion</button>
+//             <h1>Welcome</h1>
+//             {userData ? (
+//                 <div>
+//                     <button onClick={handleLogout} className="btn btn-danger">Logout</button>
+//                 </div>
+//             ) : (
+//                 <p>Loading...</p>
+//             )}
 //         </div>
 //     );
 // };
 
 // export default Dashboard;
+
+
+
+
+
