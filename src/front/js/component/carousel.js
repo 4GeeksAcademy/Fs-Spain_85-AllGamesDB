@@ -12,7 +12,7 @@ export const Carousel = ({ title, games }) => {
                         <div key={index} className="carousel-item">
                             <img src={game.image} alt={game.name} />
                         </div>
-                    ))||[]} 
+                    )) || []}
                 </div>
                 <button className="carousel-btn right">{">"}</button>
             </div>
