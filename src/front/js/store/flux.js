@@ -71,24 +71,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					// console.log(store.selectedGame);
 
 					return data[appId].data
-
-
-
-
-
-					// if (data) {
-					// 	const gameData = data["730"].data;
-					// 	setStore({
-					// 		videogames: [{
-					// 			id: gameData.steam_appid,
-					// 			name: gameData.name,
-					// 			image: gameData.header_image,
-					// 			price: gameData.price_overview ? gameData.price_overview.final_formatted : "Gratis",
-					// 		}]
-					// 	});
-					// } else {
-					// 	console.error("La API no devolvió datos válidos.");
-					// }
 				} catch (error) {
 					console.error("Error al obtener los juegos:", error);
 				}
@@ -296,7 +278,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			deleteLocalFavourite: function deleteLocalFavourite(game) {
 				const store = getStore();
+				console.log("game", game);
+				
 				let resultantFavourites = store.favouriteGames.filter((favourite) => {
+					console.log(favourite.favourite_game);
+					
 					return favourite.favourite_game.id !== game.id
 				})
 				setStore({...store, favouriteGames: resultantFavourites})

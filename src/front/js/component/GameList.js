@@ -53,18 +53,18 @@ export const GameList = () => {
             <div className="games-table">
                 {Array.isArray(store.videogames) && store.videogames.length > 0 ? (
                     store.videogames.map((game) => (
-                        <div key={game.id} className="game-row">
+                        <div key={game.id} className="game-row" onClick={() => handleGameClick(game)}>
                             <img
                                 src={`https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${game.app_id}/capsule_231x87.jpg`}
                                 alt={game.name}
                                 className="game-image hover-effect"
-                                onClick={() => handleGameClick(game)}
                             />
                             <div className="game-info">
                                 <h4 className='game-title'>{game.name}</h4>
                                 <p className='tags'>{game.game_tags.slice(0, 3).map((tag) => tag.tag_name).join(', ')}</p>
                             </div>
-                            {store.favouriteGames.some((fav) => fav.favourite_game.app_id === game.app_id) 
+                            {store.logedIn == true 
+                            ? store.favouriteGames.some((fav) => fav.favourite_game.app_id === game.app_id) 
                             ? <button className="favourite-btn me-3 fs-5" onClick={(e) => {
                                 e.stopPropagation(),
                                 deletefavouriteClick(game)}}>
@@ -76,7 +76,7 @@ export const GameList = () => {
                                     ❤️
                             </button> 
                              
-                            }
+                            : ""}
                             <button className="price-btn">{gamePriceComparer(game)}</button>
                         </div>
                     ))

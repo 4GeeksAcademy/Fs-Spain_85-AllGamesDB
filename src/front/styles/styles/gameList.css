@@ -2,9 +2,6 @@
     .tags {
         display: none;
     }
-    .favorite-btn {
-        padding: 0px;
-    }
     .game-row {
         flex-direction: column;
     }
@@ -121,18 +118,17 @@
     gap: 10px;
 }
 
-.favorite-btn,
-.price-btn {
-    padding: 8px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-}
 
-.favorite-btn {
+
+.favourite-btn {
     background: none;
     border: none;
     font-size: 20px;
-}
+    }
+
+.favourite-btn:hover {
+    transform: scale(1.1);
+    }
 
 .price-btn {
     border: 1px solid #000;
@@ -140,6 +136,9 @@
     font-weight: bold;
     width: 105px;
     flex-shrink: 0;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 /* Container con flexbox */

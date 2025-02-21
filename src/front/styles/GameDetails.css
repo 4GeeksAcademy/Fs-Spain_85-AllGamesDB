@@ -5,3 +5,13 @@
     aspect-ratio: 1/1;
     text-align: center;
 }
+
+.favourite-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    }
+
+.favourite-btn:hover {
+    transform: scale(1.1);
+    }

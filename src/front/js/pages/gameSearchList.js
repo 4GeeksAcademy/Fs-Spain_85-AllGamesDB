@@ -78,7 +78,8 @@ export const GameSearchList = () => {
                                 <h4 className='game-title'>{game.name}</h4>
                                 <p className='tags'>{game.game_tags.slice(0, 3).map((tag) => tag.tag_name).join(', ')}</p>
                             </div>
-                            {store.favouriteGames.some((fav) => fav.favourite_game.app_id === game.app_id) 
+                            {store.logedIn == true 
+                            ? store.favouriteGames.some((fav) => fav.favourite_game.app_id === game.app_id) 
                             ? <button className="favourite-btn me-3 fs-5" onClick={(e) => {
                                 e.stopPropagation(),
                                 deletefavouriteClick(game)}}>
@@ -90,7 +91,7 @@ export const GameSearchList = () => {
                                     ❤️
                             </button> 
                              
-                            }
+                            : ""}
                             <button className="price-btn">{game.steam_price > game.g2a_price ? game.g2a_price : game.steam_price} €</button>
                         </div>
                     ))
