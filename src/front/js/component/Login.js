@@ -12,16 +12,16 @@ const Login = () => {
         e.preventDefault();
         const success = await actions.login(email, password);
         if (success) navigate("/dashboard");
-        else alert("Error en las credenciales");
+        else alert("Error credencials");
     };
 
     return (
         <div>
-            <h2>Iniciar Sesión</h2>
+            <h2>Login</h2>
             <form onSubmit={handleSubmit}>
                 <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Contraseña" />
-                <button type="submit">Iniciar Sesión</button>
+                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" />
+                <button type="submit">Login</button>
             </form>
         </div>
     );

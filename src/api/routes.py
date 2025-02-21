@@ -19,7 +19,7 @@ from datetime import datetime
 
 api = Blueprint('api', __name__)
 bcrypt = Bcrypt()
-blacklist = set()
+
 
 
 # Allow CORS requests to this API
@@ -321,27 +321,6 @@ def get_search_request():
     return response, 200
 
 
-#registro 
-# @api.route('/register', methods=['POST'])
-# def register():
-#     data = request.json
-#     email = data.get("email")
-#     password = data.get("password")
-
-#     if not email or not password:
-#         return jsonify({"error": "Faltan datos"}), 400
-
-#     existing_user = User.query.filter_by(email=email).first()
-#     if existing_user:
-#         return jsonify({"error": "El usuario ya existe"}), 400
-
-#     new_user = User(email=email)
-#     new_user.set_password(password)
-#     db.session.add(new_user)
-#     db.session.commit()
-
-#     return jsonify({"message": "Usuario registrado exitosamente"}), 201
-
 @api.route('/signup', methods=['POST'])
 def signup():
     data = request.get_json()
@@ -364,37 +343,26 @@ def signup():
 
     return response, 201
 
-#login
+#login modificado el login 
 @api.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
     if not data or "email" not in data or "password" not in data:
         return jsonify({"msg": "Email and password are required"}), 400
-
     user = User.query.filter_by(email=data["email"]).first()
-    if not user or not user.check_password(data["password"]):
-        return jsonify({"msg": "Wrong credentials"}), 401
+    # if not user or not user.check_password(data["password"]):
+    #     return jsonify({"msg": "Wrong credentials"}), 401
     
     # Creamos el token de acceso
     access_token = create_access_token(identity=user.email)
     response = jsonify({"token": access_token, "user": user.serialize()})
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
-    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    # response.headers["Access-Control-Allow-Origin"] = "*"
+    # response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    # response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
     return response, 200
 
 
-#logout
-@api.route("/logout", methods=["POST"])
-@jwt_required()
-def logout():
-    jti = get_jwt()["jti"]  # Identificador único del token
-    blacklist.add(jti)  # Agregar a la lista negra
-    return jsonify({"msg": "Cierre de sesión exitoso"}), 200
 
-@jwt.token_in_blocklist_loader
-def check_if_token_in_blacklist(jwt_header, jwt_payload):
-    return jwt_payload["jti"] in blacklist
 
 #profile, obtenemos usuario y favoritos
 @api.route('/profile', methods=['GET'])
@@ -480,4 +448,20 @@ def delete_favourite():
     db.session.delete(favourite)
     db.session.commit()
     return response, 200
+
+
+# #enpoint para el carrusel de juegos mas populares
+# @api.route("/games/popular", methods=['GET'])
+# def get_popular_games():
+#     """Retunr 10 most popular games"""
+#     try:
+#         popular_games = db.session.scalars(
+#             db.select(Games).order_by(Games.score.desc()).limit(10)#filtra de 10
+#         ).all()
+#         results = [game.serialize() for game in popular_games]
+
+#         return jsonify({"results": results}), 200
+#     except Exception as e:
+#         return jsonify({"error": f"Error obtaining games: {str(e)}"}), 500
+
     

@@ -8,13 +8,13 @@ export const GameList = () => {
     const navigate = useNavigate();
 
     const handleGameClick = (game) => {
-        actions.setSpecificVideogameSteamId(game)
+        actions.setSpecificVideogameSteamId(game);
         navigate(`/game/${game.id}`);
     };
 
-    function gamePriceComparer(game){
+    function gamePriceComparer(game) {
         if (game.steam_price > game.g2a_price) return game.g2a_price + " €";
-        else return game.steam_price + ` € ${<i class="fa-brands fa-steam"></i>}` ;
+        else return game.steam_price + ` € ${<i className="fa-brands fa-steam"></i>}`;
     }
 
     const addfavouriteClick = async (game) => {
@@ -32,34 +32,39 @@ export const GameList = () => {
 
     return (
         <div className="game-list-container d-flex flex-column">
-            {/* <div className="filters">
+            <div className="filters">
                 <ul className="nav nav-tabs">
                     <li className="nav-item">
                         <a className="nav-link active" href="#">Rating</a>
                     </li>
                     <li className="nav-item">
-                        <a className="nav-link" href="#">Relevancia</a>
+                        <a className="nav-link" href="#">Relevance</a>
                     </li>
                     <li className="nav-item">
-                        <a className="nav-link" href="#">Precio</a>
+                        <a className="nav-link" href="#">Price</a>
                     </li>
                     <li className="nav-item">
-                        <a className="nav-link" href="#">Sorpréndeme</a>
+                        <a className="nav-link" href="#">Surprise me</a>
                     </li>
                 </ul>
-                <button className="btn btn-secondary advanced-search">Búsqueda avanzada</button>
-            </div> */}
+                <button className="btn btn-secondary advanced-search">Advance search</button>
+            </div>
 
             <div className="games-table">
                 {Array.isArray(store.videogames) && store.videogames.length > 0 ? (
                     store.videogames.map((game) => (
                         <div key={game.id} className="game-row" onClick={() => handleGameClick(game)}>
-                            <img src={`https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${game.app_id}/capsule_231x87.jpg`} alt={game.name} className="game-image"/>
+                            <img
+                                src={`https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${game.app_id}/capsule_231x87.jpg`}
+                                alt={game.name}
+                                className="game-image hover-effect"
+                            />
                             <div className="game-info">
                                 <h4 className='game-title'>{game.name}</h4>
                                 <p className='tags'>{game.game_tags.slice(0, 3).map((tag) => tag.tag_name).join(', ')}</p>
                             </div>
-                            {store.favouriteGames.some((fav) => fav.favourite_game.app_id === game.app_id) 
+                            {store.logedIn == true 
+                            ? store.favouriteGames.some((fav) => fav.favourite_game.app_id === game.app_id) 
                             ? <button className="favourite-btn me-3 fs-5" onClick={(e) => {
                                 e.stopPropagation(),
                                 deletefavouriteClick(game)}}>
@@ -71,7 +76,7 @@ export const GameList = () => {
                                     ❤️
                             </button> 
                              
-                            }
+                            : ""}
                             <button className="price-btn">{gamePriceComparer(game)}</button>
                         </div>
                     ))

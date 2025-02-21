@@ -23,7 +23,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			currentSearchPage: 1,
 			message: null,
 			specificVideogameSteamId: 0,
-			logedIn: true,
+			logedIn: false,
 			favouriteGames: [],
 			selectedGame: {}
 		},
@@ -82,24 +82,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					// console.log(store.selectedGame);
 
 					return data[appId].data
-
-
-
-
-
-					// if (data) {
-					// 	const gameData = data["730"].data;
-					// 	setStore({
-					// 		videogames: [{
-					// 			id: gameData.steam_appid,
-					// 			name: gameData.name,
-					// 			image: gameData.header_image,
-					// 			price: gameData.price_overview ? gameData.price_overview.final_formatted : "Gratis",
-					// 		}]
-					// 	});
-					// } else {
-					// 	console.error("La API no devolvió datos válidos.");
-					// }
 				} catch (error) {
 					console.error("Error al obtener los juegos:", error);
 				}
@@ -241,11 +223,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 						body: JSON.stringify({ email, password })
 					});
 
+
 					if (!response.ok) throw new Error("Error en las credenciales");
 
 					const data = await response.json();
 					localStorage.setItem("token", data.token);
-					setStore({ user: data.user, token: data.token });
+					setStore({ user: data.user, token: data.token, logedIn: true });
 
 					return true;
 				} catch (error) {
@@ -255,25 +238,34 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			logout: () => {
 				localStorage.removeItem("token");
-				setStore({ user: null, token: null });
+				setStore({ user: null, 
+					token: null, 
+					logedIn: false,
+					currentSearchPage: 1
+				});//borra token cierra sesion, resetea la búsqueda
 			},
+
 			signup: async (email, password) => {
 				try {
-					const response = await fetch(process.env.BACKEND_URL + "/api/signup", {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/signup`, {
 						method: "POST",
-						headers: { "Content-Type": "application/json" },
+						headers: {
+							"Content-Type": "application/json",
+						},
 						body: JSON.stringify({ email, password }),
 					});
 
-					const data = await response.json();
-					if (response.ok) {
-						return true;  // Registro exitoso
-					} else {
-						console.error("Error en el registro:", data.msg);
-						return false;  // Registro fallido
+					if (!response.ok) {
+						const errorData = await response.json();
+						console.error("Error en el registro:", errorData);
+						return false;
 					}
+
+					const data = await response.json();
+					console.log("Registro exitoso:", data);
+					return true;
 				} catch (error) {
-					console.error("Error en la solicitud:", error);
+					console.error("Error en la petición:", error);
 					return false;
 				}
 			},
@@ -305,7 +297,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			addFavourite: async function addFavourite(newFavourite) {
 				let token = localStorage.getItem("token");
 				try {
-					const response = await fetch(`${process.env.BACKEND_URL}//api/profile/favourites`, {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/profile/favourites`, {
 						method: 'POST',
 						headers: {
 							Authorization: `Bearer ${token}`,
@@ -314,6 +306,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 						body: JSON.stringify({ game_id: newFavourite })
 					})
 					console.log(response);
+					if (response.status == 422) {
+						setStore({logedIn: false}),
+						alert("Your session has expired, please, log in again.")
+					}
 					const data = await response.json();
 					console.log(data);
 					return
@@ -334,6 +330,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 						body: JSON.stringify({ game_id: favouriteToDelete })
 					})
 					console.log(response);
+					if (response.status == 422) {
+						setStore({logedIn: false}),
+						alert("Your session has expired, please, log in again.")
+					}
 					const data = await response.json();
 					console.log(data);
 					return
@@ -350,7 +350,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			deleteLocalFavourite: function deleteLocalFavourite(game) {
 				const store = getStore();
+				console.log("game", game);
+				
 				let resultantFavourites = store.favouriteGames.filter((favourite) => {
+					console.log(favourite.favourite_game);
+					
 					return favourite.favourite_game.id !== game.id
 				})
 				setStore({ ...store, favouriteGames: resultantFavourites })

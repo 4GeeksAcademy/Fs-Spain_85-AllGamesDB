@@ -1,35 +1,44 @@
+
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: black;
+    background: #222;
     padding: 10px 20px;
+    color: white;
     width: 100%;
+    /* position: fixed; */
 }
 
+/* Logo */
 .logo {
-    color: yellow;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: bold;
+    text-decoration: none;
+    color: white;
 }
 
+/* Alineación de los elementos a la derecha */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Espaciado entre los elementos */
+}
+
+/* Contenedor de búsqueda */
+.search-container {
+    position: relative;
+    width: 30%;
+}
+
+/* Barra de búsqueda */
 .search-bar {
-    flex: 1;
-    margin: 0 20px;
-    padding: 8px;
-    border-radius: 5px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
 }
 
-.nav-buttons button {
-    margin-left: 10px;
-    padding: 8px 15px;
-    border-radius: 5px;
-}
-
-.game-image-search {
-    width: 100px;
-}
-
+/* Dropdown de búsqueda */
 .dropdown-menu {
     padding: 0;
     border-radius: 0.5rem;
@@ -37,7 +46,6 @@
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Styling each list item */
 .dropdown-menu li {
     display: flex;
     align-items: center;
@@ -47,20 +55,31 @@
     transition: background-color 0.2s ease;
 }
 
+
 .dropdown-menu li:hover {
     transform: scale(1.05);
     transition: transform 0.2s ease;
 }
-
 
 .dropdown-menu li:hover .game-image-search {
     transform: scale(1.1);
     transition: transform 0.2s ease;
 }
 
-.dropdown-menu li:hover .dropdown-item .game-name {
+.dropdown-menu li:hover .game-name {
     transform: scale(1.05);
     transition: transform 0.2s ease;
+}
+
+.game-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+    line-height: 1.3;
+    max-width: 250px; 
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .game-image-search {
@@ -78,13 +97,6 @@
     line-height: 1.3;
 }
 
-.price {
-    font-size: 14px;
-    font-weight: 600;
-    margin-top: 5px;
-    text-align: left;
-}
-
 .dropdown-item {
     display: flex;
     width: 100%;
@@ -92,13 +104,124 @@
     justify-content: space-between;
 }
 
-.game-name {
-    font-weight: 600;
-    font-size: 14px;
+/* .dropdown-menu .dropdown-item {
+    padding: 8px 12px;
     color: #333;
-    line-height: 1.3;
-    max-width: 250px; 
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    text-decoration: none;
+    display: block;
+} */
+
+/* .dropdown-menu .dropdown-item:hover {
+    background: #f1f1f1;
+} */
+
+
+.nav-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+/* Degradado verde */
+.btn-green {
+    background: linear-gradient(to bottom, #6DDA9E, #4FB77F);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: background 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+}
+
+.btn-green:hover {
+    background: linear-gradient(to bottom, #5FCB8D, #3E9F6E);
+    transform: scale(1.05);
+}
+
+.btn-green:active {
+    transform: scale(0.95);
+}
+
+
+/* Estilosdropdown y formulario */
+.signup-dropdown, .login-dropdown {
+    background-color: #c8e6c9; /* Fondo verde claro */
+    border-radius: 8px; /* Bordes redondeados */
+    padding: 15px;
+    width: 270px; /*  ancho del dropdown */
+    box-sizing: border-box; 
+}
+
+.signup-form, .login-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    margin-bottom: 10px;
+}
+
+input[type="email"], input[type="text"], input[type="password"] {
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    background-color: #ffffff;
+    width: 100%;
+    box-sizing: border-box; /* Padding que no sobresalga  */
+}
+
+input[type="email"]:focus, input[type="text"]:focus, input[type="password"]:focus {
+    border-color: #4caf50; 
+    outline: none;
+}
+
+input::placeholder {
+    color: #999;
+}
+
+/* Estilos  botones */
+.btn-submit {
+    background-color: #388e3c; /* Verde más oscuro */
+    color: white;
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.btn-submit:hover {
+    background-color: #2e7d32; /* verde oscuro en hover */
+}
+
+.btn-green {
+    background-color: #66bb6a;
+    color: white;
+}
+
+.btn-green:hover {
+    background-color: #4caf50;
+}
+
+.dropdown-menu-end {
+    left: auto;
+    right: 0;
+    max-height: 40vh;
+    overflow-y: auto; 
+    overflow-x: hidden;
+    width: 300px;
+    scrollbar-width: thin;
+}
+
+.dropdown-menu::-webkit-scrollbar {
+    width: 6px;
+}
+
+.dropdown-menu-end-no-overflow {
+    left: auto;
+    right: 0;
+    width: 300px;
 }
