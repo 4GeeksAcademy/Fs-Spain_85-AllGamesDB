@@ -310,13 +310,14 @@ def get_search_request():
 @api.route('/signup', methods=['POST'])
 def signup():
     data = request.get_json()
-    # Verifica si el usuario ya existe
+    # Verificar si el email ya está registrado
     existing_user = User.query.filter_by(email=data["email"]).first()
     if existing_user:
-        return jsonify({"msg": "Existing user"}), 400
+        return jsonify({"msg": "El usuario ya existe"}), 400
 
-    # Crear el nuevo usuario
-    new_user = User(email=data["email"], password=data["password"])  
+    # Crear nuevo usuario
+    new_user = User(email=data["email"])
+    new_user.set_password(data["password"])  # Hashear contraseña
     
     response = jsonify({"msg": "Usuario registrado con éxito"})
     response.headers["Access-Control-Allow-Origin"] = "*"

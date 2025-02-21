@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, act } from "react";
 import { Link } from "react-router-dom";
 import "../../styles/styles/navbar.css";
 import { Context } from '../store/appContext';
@@ -42,12 +42,29 @@ export const Navbar = () => {
         });
     };
 
-    const handleSignupSubmit = (e) => {
+
+    const handleSignupSubmit = async (e) => {
         e.preventDefault();
-        console.log("Signup Data", formData);
-        actions.signup(formData.email, formData.password)
-        setIsSignupOpen(false);
+        const result = await actions.signup(formData.email, formData.password);
+        if (result) {
+            console.log("Redirigiendo al login...");
+            // navigate("/login");
+        } else {
+            console.error("Error en el registro, no se pudo redirigir.");
+        }
     };
+
+    const handleloginSubmit = async (e) => {
+        e.preventDefault();
+        const success = await actions.login(formData.email, formData.password);
+        if (success) navigate("/dashboard");
+        else alert("Error credencials");
+    };
+
+    const handleLogout = () => {
+        actions.logout(),
+        navigate("/")
+    }
 
     const handleGameClick = (game) => {
         if (store.selectedGame.app_id == game.app_id && location.pathname == `/game/${game.id}`) {
@@ -111,6 +128,7 @@ export const Navbar = () => {
     // useEffect para el manejo del cierre del dropdown de favoritos al clicar fuera
     useEffect(() => {
         const handleClickOutside = (e) => {
+            if (e.target.parentElement == null) return;
             if (isFavouritesOpen && e.target.parentElement.className !== "dropdown-item" 
                 || e.target.className !== "favourite-btn fs-5" && e.target.parentElement.className == "dropdown-item" && isFavouritesOpen) {
                 setIsFavouritesOpen(false);
@@ -120,14 +138,21 @@ export const Navbar = () => {
         return () => document.removeEventListener('click', handleClickOutside);
     }, [isFavouritesOpen]);
 
+    // usse effect para llamar a los favoritos del usuario en backend cuando se loga
     useEffect(() => {
         if (store.logedIn) actions.fetchFavourites();
     }, [store.logedIn])
 
+    // useeffect apra manejar la existencia de overflow el dropdown de favoritos
     useEffect(()=> {
         if (store.favouriteGames.length < 6) setFavouriteOverflowClass("dropdown-menu-end-no-overflow");
         else setFavouriteOverflowClass("dropdown-menu-end")
     }, [store.favouriteGames])
+
+    // useeffect para evitar que puedan acceder a la vista /dashboard si no se está logado
+    useEffect(() => {
+        if (!store.logedIn && location.pathname == "/dashboard") navigate("/");
+    }, [location.pathname])
 
     return (
         <nav className="navbar">
@@ -206,30 +231,36 @@ export const Navbar = () => {
                             <div className="dropdown">
                                 <button className="btn btn-green" onClick={toggleLogin}>Login</button>
                                 {isLoginOpen && (
-                                    <div className="dropdown-menu dropdown-menu-end-no-overflow show login-dropdown">
-                                        <form className="login-form">
-                                            <div className="form-group">
-                                                <label htmlFor="login-email">Email:</label>
-                                                <input
-                                                    type="email"
-                                                    id="login-email"
-                                                    placeholder="Enter your email"
-                                                    required
-                                                />
-                                            </div>
-                                            <div className="form-group">
-                                                <label htmlFor="login-password">Password:</label>
-                                                <input
-                                                    type="password"
-                                                    id="login-password"
-                                                    placeholder="Enter your password"
-                                                    required
-                                                />
-                                            </div>
-                                            <button type="submit" className="btn btn-submit">Login</button>
-                                        </form>
-                                    </div>
-                                )}
+                                <div className="dropdown-menu dropdown-menu-end show login-dropdown">
+                                    <form onSubmit={handleloginSubmit} className="login-form">
+                                        <div className="form-group">
+                                            <label htmlFor="login-email">Email:</label>
+                                            <input
+                                                type="email"
+                                                name="email"
+                                                value={formData.email}
+                                                onChange={handleInputChange}
+                                                id="login-email"
+                                                placeholder="Enter your email"
+                                                required
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label htmlFor="login-password">Password:</label>
+                                            <input
+                                                type="password"
+                                                id="login-password"
+                                                name="password"
+                                                value={formData.password}
+                                                onChange={handleInputChange}
+                                                placeholder="Enter your password"
+                                                required
+                                            />
+                                        </div>
+                                        <button type="submit" className="btn btn-submit">Login</button>
+                                    </form>
+                                </div>
+                            )}
                             </div>
                         </div>
                         // para cuando se está logado
@@ -250,7 +281,9 @@ export const Navbar = () => {
                                 : <button className="btn btn-green dropdown-toggle invisible" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     ⭐ Favoritos
                                 </button>}
-                            <button className="btn btn-green">🔴 Logout</button>
+                            <button className="btn btn-green" 
+                            onClick={handleLogout}
+                            >🔴 Logout</button>
                         </div>
                     }
                 </div>

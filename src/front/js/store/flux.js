@@ -171,7 +171,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 					const data = await response.json();
 					localStorage.setItem("token", data.token);
-					setStore({ user: data.user, token: data.token });
+					setStore({ user: data.user, token: data.token, logedIn: true });
 
 					return true;
 				} catch (error) {
@@ -181,7 +181,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			logout: () => {
 				localStorage.removeItem("token");
-				setStore({ user: null, token: null });//borra token cierra sesion
+				setStore({ user: null, 
+					token: null, 
+					logedIn: false,
+					currentSearchPage: 1
+				});//borra token cierra sesion, resetea la búsqueda
 			},
 
 			signup: async (email, password) => {
@@ -245,6 +249,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 						body: JSON.stringify({game_id: newFavourite})
 					})
 					console.log(response);
+					if (response.status == 422) {
+						setStore({logedIn: false}),
+						alert("Your session has expired, please, log in again.")
+					}
 					const data = await response.json();
 					console.log(data);
 					return
@@ -265,6 +273,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 						body: JSON.stringify({game_id: favouriteToDelete})
 					})
 					console.log(response);
+					if (response.status == 422) {
+						setStore({logedIn: false}),
+						alert("Your session has expired, please, log in again.")
+					}
 					const data = await response.json();
 					console.log(data);
 					return
