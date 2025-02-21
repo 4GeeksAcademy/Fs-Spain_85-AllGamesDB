@@ -449,6 +449,33 @@ def delete_favourite():
     db.session.commit()
     return response, 200
 
+@api.route("/api/update-password", methods=["POST"])
+@jwt_required()
+def update_password():
+    current_user_email = get_jwt_identity()
+    user = User.query.filter_by(email=current_user_email).first()
+
+    if not user:
+        return jsonify({"message": "Usuario no encontrado"}), 404
+
+    data = request.get_json()
+    old_password = data.get("old_password")
+    new_password = data.get("new_password")
+
+    if not old_password or not new_password:
+        return jsonify({"message": "Contraseña actual y nueva son requeridas"}), 400
+
+    if not bcrypt.check_password_hash(user.password, old_password):
+        return jsonify({"message": "Contraseña actual incorrecta"}), 401
+
+    hashed_password = bcrypt.generate_password_hash(new_password).decode('utf-8')
+    user.password = hashed_password
+    db.session.commit()
+
+    return jsonify({"message": "Contraseña actualizada con éxito"}), 200
+
+
+
 
 # #enpoint para el carrusel de juegos mas populares
 # @api.route("/games/popular", methods=['GET'])
