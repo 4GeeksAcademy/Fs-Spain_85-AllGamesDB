@@ -3,6 +3,17 @@ import click
 from api.models import db, User, Games, Tags
 from sqlalchemy.sql import text
 import json
+from dotenv import load_dotenv
+import requests
+import os
+import time
+import json
+
+
+
+load_dotenv()
+
+BACKEND_URL = os.getenv("BACKEND_URL")
 
 """
 In this file, you can add as many commands as you want using the @app.cli.command decorator
@@ -10,7 +21,6 @@ Flask commands are usefull to run cronjobs or tasks outside of the API but sill 
 with youy database, for example: Import the price of bitcoin every night as 12am
 """
 def setup_commands(app):
-    
     """ 
     This is an example command "insert-test-users" that you can run from the command line
     by typing: $ flask insert-test-users 5
@@ -145,6 +155,54 @@ def setup_commands(app):
             db.session.query(Tags).delete()
             db.session.commit()
             print("Tags y relaciones eliminados")
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error: {e}")
+
+    @app.cli.command("get-carrousel-info")
+    def get_carrousel_info():
+        try:
+            carrousel_games = f"{BACKEND_URL}/api/games/carrousel"
+            response = requests.get(carrousel_games)
+            response.raise_for_status()
+            carrousel_json = response.json()
+
+            all_games_carrousel = {
+                "new_games": [],
+                "relevant_games": []
+            }
+
+            for game in carrousel_json["new_games"]:
+                try:
+                    detailed_info_url = f"{BACKEND_URL}/api/steam/{game['app_id']}"
+                    detailed_response = requests.get(detailed_info_url)
+
+                    detailed_info = detailed_response.json()
+                    game["detailed_info"] = detailed_info.get(str(game['app_id']), {}).get("data", {})
+                    all_games_carrousel["new_games"].append(game)
+                    print(f"New game added: {game['app_id']}")
+                except Exception as e:
+                    print(f"Error fetching detailed info for game {game['app_id']}: {e}")
+                time.sleep(0.4)
+
+            for game in carrousel_json["relevant_games"]:
+                try:
+                    detailed_info_url = f"{BACKEND_URL}/api/steam/{game['app_id']}"
+                    detailed_response = requests.get(detailed_info_url)
+
+                    detailed_info = detailed_response.json()
+                    game["detailed_info"] = detailed_info.get(str(game['app_id']), {}).get("data", {})
+                    all_games_carrousel["relevant_games"].append(game)
+                    print(f"Relevant game added: {game['app_id']}")
+                except Exception as e:
+                    print(f"Error fetching detailed info for game {game['app_id']}: {e}")
+                time.sleep(0.4)
+
+            with open("all_games_carrousel.json", "w") as f:
+                json.dump(all_games_carrousel, f, indent=4)
+
+            print("Data saved to all_games_carrousel.json")
+
         except Exception as e:
             db.session.rollback()
             print(f"Error: {e}")

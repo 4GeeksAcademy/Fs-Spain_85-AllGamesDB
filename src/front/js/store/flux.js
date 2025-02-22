@@ -20,6 +20,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				order_by: "relevant:asc",
 				per_page: 10
 			},
+			carousel: [],
 			currentSearchPage: 1,
 			message: null,
 			specificVideogameSteamId: 0,
@@ -215,6 +216,17 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ videogameSearchNameResult: [] })
 			},
 
+			getCarrouselInfo: async() => {
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/carrousel`);
+					const data = await response.json()
+					setStore({ carousel: data })
+					console.log(getStore().carousel);
+				} catch (error) {
+					console.log(error);
+
+				}
+			},
 			login: async (email, password) => {
 				try {
 					const response = await fetch(`${process.env.BACKEND_URL}/api/login`, {

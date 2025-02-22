@@ -1,7 +1,112 @@
-/*
-    home.css: This website contains selectors only used in home.css
+.carousel-item {
+    background: #222222;
+}
 
-    All pages share the styles on index.css but you should create 
-    one more css for each page that will contain the selected used 
-    on that page only (the ones not reused in other pages).
-*/
+.slide {
+    width: 70%;
+}
+
+.carousel-screenshot {
+    width: 85%;
+    height: auto;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    opacity: 50%;
+    transition: opacity 0.3s ease, transform 0.3s ease
+}
+
+.carousel-screenshot:hover {
+    opacity: 100%;
+}
+
+.carousel-main-image-container {
+    position: relative;
+    width: 70%;
+    height: 500px;
+}
+
+.carousel-main-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.45s ease;
+}
+
+.carousel-main-image.hidden {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.carousel-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    z-index: 2;
+}
+
+.carousel-info-panel {
+    background-color: #222222;
+    padding: 20px;
+    color: white;
+    width: 35%;
+    text-align: center;
+    height: inherit;
+    position: relative;
+}
+
+.carousel-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.carousel-price {
+    font-size: 22px;
+    font-weight: bold;
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    margin: 0;
+}
+
+.carousel-wrapper {
+    position: relative;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    border: none;
+    padding: 10px;
+    height: fit-content;
+    border-radius: 30%;
+}
+
+.carousel-control-prev {
+    left: -60px;
+}
+
+.carousel-control-next {
+    right: -60px;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    filter: invert(1);
+}
+
+.carousel-tags {
+
+}
