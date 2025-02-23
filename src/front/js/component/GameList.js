@@ -14,7 +14,7 @@ export const GameList = () => {
 
     function gamePriceComparer(game) {
         if (game.steam_price > game.g2a_price) return game.g2a_price + " €";
-        else return game.steam_price + ` € ${<i className="fa-brands fa-steam"></i>}`;
+        else return game.steam_price + ` €`;
     }
 
     const addfavouriteClick = async (game) => {
