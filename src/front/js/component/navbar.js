@@ -56,7 +56,7 @@ export const Navbar = () => {
             setSignupMessage({ type: "error", text: "Invalid email!" })
         }
         else if (result.error === "password isn't valid") {
-            setSignupMessage({ type: "error", text: "Password must be, at least, 8 characters long." })
+            setSignupMessage({ type: "error", text: "Password must have: a letter, a capital letter and be, at least 8 characters long." })
         }
         else if (result.msg === "El usuario ya existe") {
             setSignupMessage({ type: "error", text: "User already exists!" })
@@ -81,7 +81,6 @@ export const Navbar = () => {
                 })
                 setSignupMessage({ type: "", text: "" });
                 setIsSignupOpen(false);
-                setIsOffcanvasVisible(false);
             }, 2000);
             return () => clearTimeout(signupToLoginTimer);
         }
@@ -121,7 +120,6 @@ export const Navbar = () => {
                 });
                 setLoginMessage({ type: "", text: "" });
                 setIsLoginOpen(false);
-                setIsOffcanvasVisible(false);
             }, 500);
             return () => clearTimeout(loginTimer);
         }
@@ -135,8 +133,7 @@ export const Navbar = () => {
 
     // manejo del logout
     const handleLogout = () => {
-        setIsOffcanvasVisible(false),
-            actions.logout(),
+        actions.logout(),
             navigate("/")
     }
 
@@ -150,7 +147,6 @@ export const Navbar = () => {
         navigate(`/game/${game.id}`);
         setQuery("");
         actions.resetVideogameSearchNameResult();
-        setIsOffcanvasVisible(false);
     };
 
     useEffect(() => {
@@ -235,35 +231,31 @@ export const Navbar = () => {
         else setSignupInputType("password")
     }
 
-    // use effect para que el dropdown de profile se cierre si se clica fuera del mismo
     useEffect(() => {
-        const handleClickOutside = (e) => {
-            if (isProfileOpen) {
-                setIsProfileOpen(false);
-            }
-        };
+        const handleClickOutside = () => {
+            if (isProfileOpen) setIsProfileOpen(false)
+        }
         document.addEventListener('click', handleClickOutside);
         return () => document.removeEventListener('click', handleClickOutside);
-    }, [isProfileOpen]);
-
-    const [isOffcanvasVisible, setIsOffcanvasVisible] = useState(false)
-
-
+    })
 
     return (
         <nav className="navbar">
             <div className="container">
                 <Link to="/" className="logo">All <span>Games DB</span></Link>
-                <button class="d-lg-none" onClick={() => setIsOffcanvasVisible(!isOffcanvasVisible)}>
-                    <span className="fa-solid fa-bars"></span>
+                {/* botón habilitador del offcanvas */}
+                <button className="navbar-toggler d-lg-none fa-solid fa-bars text-grey" 
+                type="button" 
+                data-bs-toggle="offcanvas" 
+                data-bs-target="#offcanvasDarkNavbar" 
+                aria-controls="offcanvasDarkNavbar" 
+                aria-label="Toggle navigation">
                 </button>
-                <div className={`d-lg-none ${isOffcanvasVisible ? "offcanvas-custom-show" : "d-none"}`}>
-                    {isOffcanvasVisible && (
-                        <div className="modal-backdrop-0" onClick={() => setIsOffcanvasVisible(!isOffcanvasVisible)}></div>
-                    )}
-                    {/* inicio de los botones del off canvas */}
-                    <button className="custom-close-button fa-solid fa-xmark" onClick={() => setIsOffcanvasVisible(!isOffcanvasVisible)}></button>
-                    <div className={`nav-right d-lg-none mt-5 mb-4 justify-content-around ${isOffcanvasVisible ? "" : "d-none"}`}>
+                {/* inicio del tab del offcanvas */}
+                <div className="offcanvas offcanvas-end offcanvas-bg" tabIndex="-1" id="offcanvasDarkNavbar" aria-labelledby="offcanvasDarkNavbarLabel">
+                    {/* inicio de los botones del offcanvas */}
+                    <button className="custom-close-button fa-solid fa-xmark" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    <div className={`nav-right d-lg-none mt-5 mb-4 justify-content-around `}>
                         {store.logedIn == false ?
                             // para cuando no se está logado
                             <div className="nav-buttons">
@@ -407,7 +399,7 @@ export const Navbar = () => {
                     </div>
                     {/* fin de los botones del offcanvas */}
                     {/* inicio del searchbar para el offcanvas */}
-                    <div className={`search-container my-1 w-75 mx-auto d-lg-none ${isOffcanvasVisible ? "" : "d-none"}`}>
+                    <div className={`search-container my-1 w-75 mx-auto `}>
                         <input
                             type="text"
                             className="search-bar mt-0"
@@ -419,7 +411,6 @@ export const Navbar = () => {
                             onFocus={toggleDropdown}
                             onChange={e => setQuery(e.target.value)}
                         />
-
                         <ul className={`dropdown-menu w-100 ${isDropdownOpen ? "show" : "visually-hidden"}`}>
                             {store.videogameSearchNameResult && store.videogameSearchNameResult.length > 0 ?
                                 store.videogameSearchNameResult.map((game) => (
@@ -434,8 +425,9 @@ export const Navbar = () => {
                                 : ""}
                         </ul>
                     </div>
-
+                {/* fin del searchbar del offcanvas */}
                 </div>
+                {/* fin del offcanvas */}
                 {/* inicio de searchbar */}
                 <div className="search-container my-1 d-lg-block d-none">
                     <input
@@ -449,7 +441,6 @@ export const Navbar = () => {
                         onFocus={toggleDropdown}
                         onChange={e => setQuery(e.target.value)}
                     />
-
                     <ul className={`dropdown-menu w-100 ${isDropdownOpen ? "show" : "visually-hidden"}`}>
                         {store.videogameSearchNameResult && store.videogameSearchNameResult.length > 0 ?
                             store.videogameSearchNameResult.map((game) => (
@@ -491,7 +482,6 @@ export const Navbar = () => {
                                                     required
                                                 />
                                             </div>
-
                                             <div className="form-group position-relative">
                                                 <label htmlFor="password">Password:</label>
                                                 <input
@@ -596,7 +586,7 @@ export const Navbar = () => {
                                     aria-expanded={isProfileOpen}>
                                     Profile
                                 </button>
-                                <ul className={`dropdown-menu dropdown-menu-end-no-overflow ${isProfileOpen ? "show" : ""}`}>
+                                <ul className={`dropdown-menu dropdown-menu-end-small ${isProfileOpen ? "show" : ""}`}>
                                     <li className="orange-hover"><a className="mx-auto" onClick={(e) => { e.preventDefault(), navigate("/dashboard") }}>dashboard</a></li>
                                     <li className="red-hover"><a className="mx-auto"
                                         onClick={() => { setIsProfileOpen(false), handleLogout() }}
@@ -604,13 +594,9 @@ export const Navbar = () => {
 
                                 </ul>
                             </div>
-                            {/* <button className="btn btn-green" 
-                            onClick={handleLogout}
-                            >🔴 Logout</button> */}
                         </div>
                     }
                 </div>
-
             </div>
         </nav>
     );

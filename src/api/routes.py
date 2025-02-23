@@ -339,7 +339,8 @@ def signup():
     if existing_user:
         return jsonify({"msg": "El usuario ya existe"}), 400
     # Validar longitud de contraseña
-    if not re.fullmatch(r'[A-Za-z0-9@#$%^&+=]{8,}', password):
+    password_regex = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@#$%^&+=]{8,}$'
+    if not re.fullmatch(password_regex, password):
         return jsonify({"error": "password isn't valid"}), 400
 
     # Crear nuevo usuario
