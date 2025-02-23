@@ -6,7 +6,7 @@
     padding: 10px 20px;
     color: white;
     width: 100%;
-    /* position: fixed; */
+    height: 71px;
 }
 
 /* Logo */
@@ -79,6 +79,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    margin-bottom: 0px;
 }
 
 .game-image-search {
@@ -266,10 +267,10 @@ input::placeholder {
 
 @media (max-width: 991px) {
     .dropdown-menu-end {
-        right: -100px;
+        right: -137px;
     };
     .dropdown-menu-end-no-overflow {
-        right: -100px;
+        right: -137px;
     }
 }
 

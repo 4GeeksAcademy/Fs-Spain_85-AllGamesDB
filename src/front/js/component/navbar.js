@@ -182,10 +182,10 @@ export const Navbar = () => {
         // console.log(favourite.favourite_game);
         return <li key={favourite.favourite_game.id}>
             <a className="dropdown-item" onClick={() => handlefavouriteClick(favourite.favourite_game)}>
-                <img src={`https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${favourite.favourite_game.app_id}/capsule_184x69.jpg`}
+                <img data-bs-dismiss="offcanvas" aria-label="Close" src={`https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${favourite.favourite_game.app_id}/capsule_184x69.jpg`}
                     alt={favourite.favourite_game.name} className="game-image-search my-auto" />
-                <p className="game-name my-auto me-2">{favourite.favourite_game.name} </p>
-                <p className="price my-auto">{favourite.favourite_game.steam_price > favourite.favourite_game.g2a_price ? favourite.favourite_game.g2a_price : favourite.favourite_game.steam_price} €</p>
+                <p data-bs-dismiss="offcanvas" aria-label="Close" className="game-name my-auto me-2">{favourite.favourite_game.name} </p>
+                <p data-bs-dismiss="offcanvas" aria-label="Close" className="price mb-0 my-auto">{favourite.favourite_game.steam_price > favourite.favourite_game.g2a_price ? favourite.favourite_game.g2a_price : favourite.favourite_game.steam_price} €</p>
                 <button type="button" className="favourite-btn fs-5" onClick={(e) => {
                     e.stopPropagation(),
                         e.preventDefault(),
@@ -240,16 +240,16 @@ export const Navbar = () => {
     })
 
     return (
-        <nav className="navbar">
+        <nav className="navbar fixed-top">
             <div className="container">
                 <Link to="/" className="logo">All <span>Games DB</span></Link>
                 {/* botón habilitador del offcanvas */}
-                <button className="navbar-toggler d-lg-none fa-solid fa-bars text-grey" 
-                type="button" 
-                data-bs-toggle="offcanvas" 
-                data-bs-target="#offcanvasDarkNavbar" 
-                aria-controls="offcanvasDarkNavbar" 
-                aria-label="Toggle navigation">
+                <button className="navbar-toggler d-lg-none fa-solid fa-bars text-grey"
+                    type="button"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasDarkNavbar"
+                    aria-controls="offcanvasDarkNavbar"
+                    aria-label="Toggle navigation">
                 </button>
                 {/* inicio del tab del offcanvas */}
                 <div className="offcanvas offcanvas-end offcanvas-bg" tabIndex="-1" id="offcanvasDarkNavbar" aria-labelledby="offcanvasDarkNavbarLabel">
@@ -371,7 +371,7 @@ export const Navbar = () => {
                                             data-bs-boundary="viewport">
                                             ⭐ Favoritos
                                         </button>
-                                        <ul data-bs-boundary="viewport" className={`dropdown-menu ${favouriteOverflowClass} ${isFavouritesOpen ? "show" : ""} `}>
+                                        <ul className={`dropdown-menu ${favouriteOverflowClass} ${isFavouritesOpen ? "show" : ""} `}>
                                             {liFavouriteGames}
                                         </ul>
                                     </div>
@@ -411,21 +411,21 @@ export const Navbar = () => {
                             onFocus={toggleDropdown}
                             onChange={e => setQuery(e.target.value)}
                         />
-                        <ul className={`dropdown-menu w-100 ${isDropdownOpen ? "show" : "visually-hidden"}`}>
+                        <ul data-bs-dismiss="offcanvas" aria-label="Close" className={`dropdown-menu w-100 ${isDropdownOpen ? "show" : "visually-hidden"}`}>
                             {store.videogameSearchNameResult && store.videogameSearchNameResult.length > 0 ?
                                 store.videogameSearchNameResult.map((game) => (
                                     <li key={game.id}>
                                         <a className="dropdown-item" onClick={() => handleGameClick(game)}>
                                             <img src={`https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${game.app_id}/capsule_184x69.jpg`} alt={game.name} className="game-image-search" />
                                             <p className="game-name">{game.name} </p>
-                                            <p className="price">{game.steam_price > game.g2a_price ? game.g2a_price : game.steam_price} €</p>
+                                            <p className="price mb-0">{game.steam_price > game.g2a_price ? game.g2a_price : game.steam_price} €</p>
                                         </a>
                                     </li>
                                 ))
                                 : ""}
                         </ul>
                     </div>
-                {/* fin del searchbar del offcanvas */}
+                    {/* fin del searchbar del offcanvas */}
                 </div>
                 {/* fin del offcanvas */}
                 {/* inicio de searchbar */}
@@ -448,7 +448,7 @@ export const Navbar = () => {
                                     <a className="dropdown-item" onClick={() => handleGameClick(game)}>
                                         <img src={`https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${game.app_id}/capsule_184x69.jpg`} alt={game.name} className="game-image-search" />
                                         <p className="game-name">{game.name} </p>
-                                        <p className="price">{game.steam_price > game.g2a_price ? game.g2a_price : game.steam_price} €</p>
+                                        <p className="price mb-0">{game.steam_price > game.g2a_price ? game.g2a_price : game.steam_price} €</p>
                                     </a>
                                 </li>
                             ))
@@ -587,11 +587,10 @@ export const Navbar = () => {
                                     Profile
                                 </button>
                                 <ul className={`dropdown-menu dropdown-menu-end-small ${isProfileOpen ? "show" : ""}`}>
-                                    <li className="orange-hover"><a className="mx-auto" onClick={(e) => { e.preventDefault(), navigate("/dashboard") }}>dashboard</a></li>
-                                    <li className="red-hover"><a className="mx-auto"
+                                    <li className="grey-hover justify-content-center" onClick={(e) => { e.preventDefault(), navigate("/dashboard") }}>dashboard</li>
+                                    <li className="grey-hover justify-content-center border-0"
                                         onClick={() => { setIsProfileOpen(false), handleLogout() }}
-                                    >Logout</a></li>
-
+                                    >Logout</li>
                                 </ul>
                             </div>
                         </div>
