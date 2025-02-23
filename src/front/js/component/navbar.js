@@ -81,6 +81,7 @@ export const Navbar = () => {
                 })
                 setSignupMessage({ type: "", text: "" });
                 setIsSignupOpen(false);
+                setIsOffcanvasVisible(false);
             }, 2000);
             return () => clearTimeout(signupToLoginTimer);
         }
@@ -120,6 +121,7 @@ export const Navbar = () => {
                 });
                 setLoginMessage({ type: "", text: "" });
                 setIsLoginOpen(false);
+                setIsOffcanvasVisible(false);
             }, 500);
             return () => clearTimeout(loginTimer);
         }
@@ -133,8 +135,9 @@ export const Navbar = () => {
 
     // manejo del logout
     const handleLogout = () => {
-        actions.logout(),
-        navigate("/")
+        setIsOffcanvasVisible(false),
+            actions.logout(),
+            navigate("/")
     }
 
     // manejo de clic en listado de barra de búsqueda
@@ -147,6 +150,7 @@ export const Navbar = () => {
         navigate(`/game/${game.id}`);
         setQuery("");
         actions.resetVideogameSearchNameResult();
+        setIsOffcanvasVisible(false);
     };
 
     useEffect(() => {
@@ -233,7 +237,7 @@ export const Navbar = () => {
 
     // use effect para que el dropdown de profile se cierre si se clica fuera del mismo
     useEffect(() => {
-        const handleClickOutside = (e) => { 
+        const handleClickOutside = (e) => {
             if (isProfileOpen) {
                 setIsProfileOpen(false);
             }
@@ -242,12 +246,198 @@ export const Navbar = () => {
         return () => document.removeEventListener('click', handleClickOutside);
     }, [isProfileOpen]);
 
+    const [isOffcanvasVisible, setIsOffcanvasVisible] = useState(false)
+
+
+
     return (
         <nav className="navbar">
             <div className="container">
                 <Link to="/" className="logo">All <span>Games DB</span></Link>
+                <button class="d-lg-none" onClick={() => setIsOffcanvasVisible(!isOffcanvasVisible)}>
+                    <span className="fa-solid fa-bars"></span>
+                </button>
+                <div className={`d-lg-none ${isOffcanvasVisible ? "offcanvas-custom-show" : "d-none"}`}>
+                    {isOffcanvasVisible && (
+                        <div className="modal-backdrop-0" onClick={() => setIsOffcanvasVisible(!isOffcanvasVisible)}></div>
+                    )}
+                    {/* inicio de los botones del off canvas */}
+                    <button className="custom-close-button fa-solid fa-xmark" onClick={() => setIsOffcanvasVisible(!isOffcanvasVisible)}></button>
+                    <div className={`nav-right d-lg-none mt-5 mb-4 justify-content-around ${isOffcanvasVisible ? "" : "d-none"}`}>
+                        {store.logedIn == false ?
+                            // para cuando no se está logado
+                            <div className="nav-buttons">
+                                {/* inicio botón signup */}
+                                <div className="dropdown">
+                                    <button className="btn btn-orange" onClick={toggleSignup}>Signup</button>
+                                    {isSignupOpen && (
+                                        <div className="modal-backdrop" onClick={toggleSignup}></div>
+                                    )}
+                                    {isSignupOpen && (
+                                        <div className="dropdown-menu show signup-dropdown menu-modal">
+                                            <form onSubmit={handleSignupSubmit} className="signup-form">
+                                                <div className="form-group">
+                                                    <label htmlFor="email">Email:</label>
+                                                    <input
+                                                        type="email"
+                                                        id="email"
+                                                        name="email"
+                                                        value={formData.email}
+                                                        onChange={handleInputChange}
+                                                        placeholder="Enter your email"
+                                                        required
+                                                    />
+                                                </div>
+
+                                                <div className="form-group position-relative">
+                                                    <label htmlFor="password">Password:</label>
+                                                    <input
+                                                        type={`${signupInputType}`}
+                                                        id="password"
+                                                        name="password"
+                                                        value={formData.password}
+                                                        onChange={handleInputChange}
+                                                        placeholder="Enter your password"
+                                                        required
+                                                    />
+                                                    <button className={`fa-regular ${signupInputType === "password"
+                                                        ? "fa-eye-slash"
+                                                        : "fa-eye"} 
+                                                    eye-button`}
+                                                        type="button" onClick={handleShowPassword}></button>
+                                                </div>
+                                                {/* manejo de mensaje al hacer el signup */}
+                                                <div className={`alert ${signupMessage.type === ""
+                                                    ? ""
+                                                    : signupMessage.type === "error"
+                                                        ? "alert-danger"
+                                                        : "alert-success"}
+                                                p-2 m-0`} role="alert">
+                                                    {signupMessage.text}
+                                                </div>
+                                                <button type="submit" className="btn btn-submit-signup">Register</button>
+                                            </form>
+                                        </div>
+                                    )}
+                                </div>
+                                {/* fin botón signup */}
+                                {/* inicio botón login */}
+                                <div className="dropdown">
+                                    <button className="btn btn-green" onClick={toggleLogin}>Login</button>
+                                    {isLoginOpen && (
+                                        <div className="modal-backdrop" onClick={toggleLogin}></div>
+                                    )}
+                                    {isLoginOpen && (
+                                        <div className="dropdown-menu menu-modal show login-dropdown">
+                                            <form onSubmit={handleloginSubmit} className="login-form">
+                                                <div className="form-group">
+                                                    <label htmlFor="login-email">Email:</label>
+                                                    <input
+                                                        type="email"
+                                                        name="email"
+                                                        value={formData.email}
+                                                        onChange={handleInputChange}
+                                                        id="login-email"
+                                                        placeholder="Enter your email"
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="form-group">
+                                                    <label htmlFor="login-password">Password:</label>
+                                                    <input
+                                                        type="password"
+                                                        id="login-password"
+                                                        name="password"
+                                                        value={formData.password}
+                                                        onChange={handleInputChange}
+                                                        placeholder="Enter your password"
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className={`alert ${loginMessage.type === ""
+                                                    ? ""
+                                                    : loginMessage.type === "error"
+                                                        ? "alert-danger"
+                                                        : "alert-success"}
+                                                p-2 m-0`} role="alert">
+                                                    {loginMessage.text}
+                                                </div>
+                                                <button type="submit" className="btn btn-submit">Login</button>
+                                            </form>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                            // para cuando se está logado
+                            : <div className="nav-buttons d-flex flex-row">
+                                {store.favouriteGames.length > 0
+                                    ? <div className="dropdown position-relative">
+                                        <button className="btn btn-green dropdown-toggle"
+                                            type="button"
+                                            onClick={() => setIsFavouritesOpen(!isFavouritesOpen)}
+                                            aria-expanded={isFavouritesOpen}
+                                            data-bs-boundary="viewport">
+                                            ⭐ Favoritos
+                                        </button>
+                                        <ul data-bs-boundary="viewport" className={`dropdown-menu ${favouriteOverflowClass} ${isFavouritesOpen ? "show" : ""} `}>
+                                            {liFavouriteGames}
+                                        </ul>
+                                    </div>
+                                    : <button className="btn btn-green dropdown-toggle invisible" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        ⭐ Favoritos
+                                    </button>}
+                                <div className="dropdown">
+                                    <button className="btn btn-green dropdown-toggle"
+                                        type="button"
+                                        onClick={() => setIsProfileOpen(!isProfileOpen)}
+                                        aria-expanded={isProfileOpen}>
+                                        Profile
+                                    </button>
+                                    <ul className={`dropdown-menu dropdown-menu-end-small ${isProfileOpen ? "show" : ""}`}>
+                                        <li className="grey-hover justify-content-center" onClick={(e) => { e.preventDefault(), navigate("/dashboard") }}>dashboard</li>
+                                        <li className="grey-hover justify-content-center border-0"
+                                            onClick={() => { setIsProfileOpen(false), handleLogout() }}
+                                        >Logout</li>
+
+                                    </ul>
+                                </div>
+
+                            </div>
+                        }
+                    </div>
+                    {/* fin de los botones del offcanvas */}
+                    {/* inicio del searchbar para el offcanvas */}
+                    <div className={`search-container my-1 w-75 mx-auto d-lg-none ${isOffcanvasVisible ? "" : "d-none"}`}>
+                        <input
+                            type="text"
+                            className="search-bar mt-0"
+                            placeholder="Search games"
+                            data-bs-toggle="dropdown"
+                            aria-expanded={isDropdownOpen ? "true" : "false"}
+                            value={query}
+                            onBlur={() => setTimeout(toggleDropdown, 100)}
+                            onFocus={toggleDropdown}
+                            onChange={e => setQuery(e.target.value)}
+                        />
+
+                        <ul className={`dropdown-menu w-100 ${isDropdownOpen ? "show" : "visually-hidden"}`}>
+                            {store.videogameSearchNameResult && store.videogameSearchNameResult.length > 0 ?
+                                store.videogameSearchNameResult.map((game) => (
+                                    <li key={game.id}>
+                                        <a className="dropdown-item" onClick={() => handleGameClick(game)}>
+                                            <img src={`https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${game.app_id}/capsule_184x69.jpg`} alt={game.name} className="game-image-search" />
+                                            <p className="game-name">{game.name} </p>
+                                            <p className="price">{game.steam_price > game.g2a_price ? game.g2a_price : game.steam_price} €</p>
+                                        </a>
+                                    </li>
+                                ))
+                                : ""}
+                        </ul>
+                    </div>
+
+                </div>
                 {/* inicio de searchbar */}
-                <div className="search-container my-1">
+                <div className="search-container my-1 d-lg-block d-none">
                     <input
                         type="text"
                         className="search-bar mt-0"
@@ -276,7 +466,7 @@ export const Navbar = () => {
                 </div>
                 {/* fin de searchbar */}
                 {/* botones de signup, login, favourites y logout */}
-                <div className="nav-right">
+                <div className="nav-right d-lg-block d-none">
                     {store.logedIn == false ?
                         // para cuando no se está logado
                         <div className="nav-buttons">
@@ -400,16 +590,16 @@ export const Navbar = () => {
                                     ⭐ Favoritos
                                 </button>}
                             <div className="dropdown">
-                                <button className="btn btn-green dropdown-toggle" 
-                                    type="button" 
-                                    onClick={() => setIsProfileOpen(!isProfileOpen)} 
+                                <button className="btn btn-green dropdown-toggle"
+                                    type="button"
+                                    onClick={() => setIsProfileOpen(!isProfileOpen)}
                                     aria-expanded={isProfileOpen}>
                                     Profile
                                 </button>
                                 <ul className={`dropdown-menu dropdown-menu-end-no-overflow ${isProfileOpen ? "show" : ""}`}>
                                     <li className="orange-hover"><a className="mx-auto" onClick={(e) => { e.preventDefault(), navigate("/dashboard") }}>dashboard</a></li>
                                     <li className="red-hover"><a className="mx-auto"
-                                        onClick={() => {setIsProfileOpen(false) ,handleLogout()}}
+                                        onClick={() => { setIsProfileOpen(false), handleLogout() }}
                                     >Logout</a></li>
 
                                 </ul>

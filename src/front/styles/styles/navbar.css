@@ -265,16 +265,17 @@ input::placeholder {
     width: 300px;
 }
 
-.orange-hover:hover {
-    transform: scale(1.1);
-    border-radius: 5px;
-    background: linear-gradient(to bottom, #FFA726, #FB8C00);
+.dropdown-menu-end-small {
+    left: auto;
+    right: 0;
+    width: 100px;
 }
 
-.red-hover:hover {
-    transform: scale(1.1);
+
+.grey-hover:hover {
+    /* transform: scale(1.1); */
     border-radius: 5px;
-    background: linear-gradient(to bottom, #FFA726, #FB8C00);
+    background: lightgray;
 }
 
 @keyframes fadeIn {
@@ -319,3 +320,43 @@ input::placeholder {
 .eye-button:hover {
     transform: scale(1.05);
 }
+
+.offcanvas-custom-show {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 100%;
+    background-color: #333;
+    transition: right 0.3s ease;
+    transition: 0.3s ease-in-out;
+    z-index: 1001
+  }
+  
+  
+
+  .modal-backdrop-0 {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: calc(100% - 300px);
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    animation: fadeIn 0.2s ease-in-out;
+
+  }
+
+  .custom-close-button {
+    right: 0;
+    position: absolute;
+    background: #333;
+    border: none;
+    color: gray;
+    margin: 20px;
+    border-radius: 5px;
+  }
+
+.custom-close-button:hover {
+    color: lightgray;
+}  
