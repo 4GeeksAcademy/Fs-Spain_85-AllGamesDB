@@ -185,7 +185,7 @@ export const Navbar = () => {
                 <img data-bs-dismiss="offcanvas" aria-label="Close" src={`https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${favourite.favourite_game.app_id}/capsule_184x69.jpg`}
                     alt={favourite.favourite_game.name} className="game-image-search my-auto" />
                 <p data-bs-dismiss="offcanvas" aria-label="Close" className="game-name my-auto me-2">{favourite.favourite_game.name} </p>
-                <p data-bs-dismiss="offcanvas" aria-label="Close" className="price mb-0 my-auto">{favourite.favourite_game.steam_price > favourite.favourite_game.g2a_price ? favourite.favourite_game.g2a_price : favourite.favourite_game.steam_price} €</p>
+                <p data-bs-dismiss="offcanvas" aria-label="Close" className="price mb-0">{favourite.favourite_game.steam_price > favourite.favourite_game.g2a_price ? favourite.favourite_game.g2a_price : favourite.favourite_game.steam_price} €</p>
                 <button type="button" className="favourite-btn fs-5" onClick={(e) => {
                     e.stopPropagation(),
                         e.preventDefault(),
