@@ -1,4 +1,3 @@
-
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -7,7 +6,7 @@
     padding: 10px 20px;
     color: white;
     width: 100%;
-    /* position: fixed; */
+    height: 71px;
 }
 
 /* Logo */
@@ -80,6 +79,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    margin-bottom: 0px;
 }
 
 .game-image-search {
@@ -142,9 +142,38 @@
     transform: scale(0.95);
 }
 
+/* botón del signup */
+.btn-orange {
+    background: linear-gradient(to bottom, #FFA726, #FB8C00);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: background 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.btn-orange:hover {
+    background: linear-gradient(to bottom, rgb(255, 152, 0), #F57C00);
+    transform: scale(1.05);
+}
+
+.btn-orange:hover {
+    transform: scale(0.95);
+}
 
 /* Estilosdropdown y formulario */
-.signup-dropdown, .login-dropdown {
+.signup-dropdown {
+    background-color: #FFD392; /* Fondo verde claro */
+    border-radius: 8px; /* Bordes redondeados */
+    padding: 15px;
+    width: 270px; /*  ancho del dropdown */
+    box-sizing: border-box;  
+}
+
+.login-dropdown {
     background-color: #c8e6c9; /* Fondo verde claro */
     border-radius: 8px; /* Bordes redondeados */
     padding: 15px;
@@ -155,6 +184,22 @@
 .signup-form, .login-form {
     display: flex;
     flex-direction: column;
+}
+
+.btn-submit-signup {
+    background-color: #C07200; /* Verde más oscuro */
+    color: white;
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.btn-submit-signup:hover {
+    background-color: #AF6800;
+    color: rgb(228, 228, 228);
 }
 
 .form-group {
@@ -195,16 +240,10 @@ input::placeholder {
 
 .btn-submit:hover {
     background-color: #2e7d32; /* verde oscuro en hover */
+    color: rgb(228, 228, 228);
 }
 
-.btn-green {
-    background-color: #66bb6a;
-    color: white;
-}
 
-.btn-green:hover {
-    background-color: #4caf50;
-}
 
 .dropdown-menu-end {
     left: auto;
@@ -225,3 +264,94 @@ input::placeholder {
     right: 0;
     width: 300px;
 }
+
+@media (max-width: 991px) {
+    .dropdown-menu-end {
+        right: -137px;
+    };
+    .dropdown-menu-end-no-overflow {
+        right: -137px;
+    }
+}
+
+.dropdown-menu-end-small {
+    left: auto;
+    right: 0;
+    width: 100px;
+}
+
+
+.grey-hover:hover {
+    /* transform: scale(1.1); */
+    border-radius: 5px;
+    background: lightgray;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+.menu-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1001;
+    width: 300px;
+    text-align: center;
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+.eye-button {
+    position: absolute;
+    top: 58%;
+    display: inline;
+    right: 15px;
+    border: 0px;
+    background: white;
+}
+
+.eye-button:hover {
+    transform: scale(1.05);
+}
+
+.offcanvas-bg {
+    background-color: #333;
+}
+
+.text-grey{
+    color: grey;
+}
+
+.text-grey:hover {
+    color: lightgray;
+}
+
+  .custom-close-button {
+    right: 0;
+    position: absolute;
+    background: #333;
+    border: none;
+    color: gray;
+    margin: 20px;
+    border-radius: 5px;
+  }
+
+.custom-close-button:hover {
+    color: lightgray;
+}  

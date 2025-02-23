@@ -224,17 +224,24 @@ const getState = ({ getStore, getActions, setStore }) => {
 					});
 
 
-					if (!response.ok) throw new Error("Error en las credenciales");
+					if (!response.ok) {
+						const errorData = await response.json();
+						console.error("Error en el registro:", errorData);
+						return errorData;
+					}
 
 					const data = await response.json();
 					localStorage.setItem("token", data.token);
-					setStore({ user: data.user, token: data.token, logedIn: true });
+					setStore({ user: data.user, token: data.token});
 
-					return true;
+					return 200;
 				} catch (error) {
 					console.error(error);
 					return false;
 				}
+			},
+			setLogedInTrue: () => {
+				setStore({logedIn: true})
 			},
 			logout: () => {
 				localStorage.removeItem("token");
@@ -255,16 +262,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 						},
 						body: JSON.stringify({ email, password }),
 					});
-
+				
 					if (!response.ok) {
 						const errorData = await response.json();
 						console.error("Error en el registro:", errorData);
-						return false;
+						return errorData;
 					}
 
 					const data = await response.json();
 					console.log("Registro exitoso:", data);
-					return true;
+					return 201;
 				} catch (error) {
 					console.error("Error en la petición:", error);
 					return false;

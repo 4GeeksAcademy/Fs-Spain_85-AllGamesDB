@@ -323,15 +323,29 @@ def get_search_request():
 
 @api.route('/signup', methods=['POST'])
 def signup():
-    data = request.get_json()
+    request_data = request.get_json()
+    required_data = ["email", "password"]
+    for item in required_data:
+        if item not in request_data:
+            return jsonify({"error": f"Missing information: {item}"}), 400
+    email = request_data.get("email").lower()
+    password = request_data.get("password")
+    # validar el email
+    email_regex = re.compile(r'^[[A-Za-z0-9\._%+\-]+@[A-Za-z0-9\.\-]+\.[A-Za-z]{2,}$')
+    if not bool(email_regex.match(email)):
+        return jsonify({"error": "the email is not valid"}), 400
     # Verificar si el email ya está registrado
-    existing_user = User.query.filter_by(email=data["email"]).first()
+    existing_user = User.query.filter_by(email=email).first()
     if existing_user:
         return jsonify({"msg": "El usuario ya existe"}), 400
+    # Validar longitud de contraseña
+    password_regex = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@#$%^&+=]{8,}$'
+    if not re.fullmatch(password_regex, password):
+        return jsonify({"error": "password isn't valid"}), 400
 
     # Crear nuevo usuario
-    new_user = User(email=data["email"])
-    new_user.set_password(data["password"])  # Hashear contraseña
+    new_user = User(email=email)
+    new_user.set_password(password)  # Hashear contraseña
     
     response = jsonify({"msg": "Usuario registrado con éxito"})
     response.headers["Access-Control-Allow-Origin"] = "*"
@@ -347,11 +361,12 @@ def signup():
 @api.route("/login", methods=["POST"])
 def login():
     data = request.get_json()
+    email = data.get("email").lower()
     if not data or "email" not in data or "password" not in data:
-        return jsonify({"msg": "Email and password are required"}), 400
-    user = User.query.filter_by(email=data["email"]).first()
-    # if not user or not user.check_password(data["password"]):
-    #     return jsonify({"msg": "Wrong credentials"}), 401
+        return jsonify({"error": "Email and password are required"}), 400
+    user = User.query.filter_by(email=email).first()
+    if not user or not user.check_password(data["password"]):
+        return jsonify({"error": "Wrong credentials"}), 401
     
     # Creamos el token de acceso
     access_token = create_access_token(identity=user.email)
