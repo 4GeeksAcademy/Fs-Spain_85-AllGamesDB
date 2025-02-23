@@ -1,38 +1,47 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
+import { Favorites } from "../component/Favorites";
 
 const Dashboard = () => {
-    const { actions } = useContext(Context);
+    const { store, actions } = useContext(Context);
     const navigate = useNavigate();
     const [userData, setUserData] = useState(null);
 
-    // ejecuta cuando el componente se monta no olvidar
     useEffect(() => {
-        const token = localStorage.getItem('token');
-
+        const token = localStorage.getItem("token");
         if (!token) {
-            navigate('/login');  // Si no hay token al login
+            navigate("/login");
         } else {
             setUserData({ email: "user@example.com", username: "Username" });
+            actions.fetchFavourites();
         }
-    }, [navigate]);
+    }, [navigate, actions]);
 
-    // Función logout
     const handleLogout = () => {
-        // Action de logout store
         actions.logout();
+        navigate("/");// modificado para redirigir a home
+    };
 
-        // login después de cerrar sesión
-        navigate('/login');
+    const handleChangePassword = () => {
+
+        navigate("/changepassword");
     };
 
     return (
         <div>
-            <h1>Welcome</h1>
             {userData ? (
-                <div>
-                    <button onClick={handleLogout} className="btn btn-danger">Logout</button>
+                <div >
+                    {/* <button onClick={handleLogout} className="btn btn-danger">
+                        Logout
+                    </button> */}
+                    <h2></h2>
+                    <Favorites /> {/* componente */}
+                    <div className="position-relative d-flex">
+                    <button onClick={handleChangePassword} className="btn btn-danger mx-auto">
+                        Change Password
+                    </button>
+                    </div>
                 </div>
             ) : (
                 <p>Loading...</p>
@@ -45,24 +54,3 @@ export default Dashboard;
 
 
 
-
-
-
-
-
-
-// import React, { useContext } from "react";
-// import { Context } from "../store/appContext";
-
-// const Dashboard = () => {
-//     const { store, actions } = useContext(Context);
-
-//     return (
-//         <div>
-//             <h2>Welcome, {store.user ? store.user.name : "Usuario"}</h2>
-//             <button className="btn btn-danger" onClick={actions.logout}>Close Sesion</button>
-//         </div>
-//     );
-// };
-
-// export default Dashboard;

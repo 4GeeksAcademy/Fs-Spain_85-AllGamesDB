@@ -16,6 +16,8 @@ import Login from "./component/Login";
 import Dashboard from "./pages/Dashboard";
 import PrivateRoute from "./component/PrivateRoute";
 import Signup from "./pages/Signup";
+import { Favorites } from "./component/Favorites";
+import ChangePassword from "./component/ChangePassword";
 
 const Layout = () => {
     const basename = process.env.BASENAME || "";
@@ -27,6 +29,9 @@ const Layout = () => {
             <BrowserRouter basename={basename}>
                 <ScrollToTop>
                     <Navbar />
+                    <div style={{paddingTop:"71px"}}>
+
+                    
                     <Routes>
 
                         <Route element={<Home />} path="/" />
@@ -37,6 +42,9 @@ const Layout = () => {
                         <Route element={<GameSearchList />} path="/allgames" />
                         <Route element={<Signup />} path="/signup" />
                         <Route element={<Login />} path="/login" />
+                        <Route element={<Favorites />} path="/favorites" />
+                        <Route element={<ChangePassword />} path="/changepassword" />
+
 
                         {/* Ruta protegida */}
                         <Route element={
@@ -46,6 +54,7 @@ const Layout = () => {
                         } path="/dashboard" />
                         <Route element={<h1>Not found!</h1>} path="*" />
                     </Routes>
+                    </div>
                     <Footer />
                 </ScrollToTop>
             </BrowserRouter>

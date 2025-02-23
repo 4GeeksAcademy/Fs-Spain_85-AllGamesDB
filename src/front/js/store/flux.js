@@ -236,22 +236,30 @@ const getState = ({ getStore, getActions, setStore }) => {
 					});
 
 
-					if (!response.ok) throw new Error("Error en las credenciales");
+					if (!response.ok) {
+						const errorData = await response.json();
+						console.error("Error en el registro:", errorData);
+						return errorData;
+					}
 
 					const data = await response.json();
 					localStorage.setItem("token", data.token);
-					setStore({ user: data.user, token: data.token, logedIn: true });
+					setStore({ user: data.user, token: data.token});
 
-					return true;
+					return 200;
 				} catch (error) {
 					console.error(error);
 					return false;
 				}
 			},
+			setLogedInTrue: () => {
+				setStore({logedIn: true})
+			},
 			logout: () => {
 				localStorage.removeItem("token");
-				setStore({ user: null, 
-					token: null, 
+				setStore({
+					user: null,
+					token: null,
 					logedIn: false,
 					currentSearchPage: 1
 				});//borra token cierra sesion, resetea la búsqueda
@@ -266,21 +274,46 @@ const getState = ({ getStore, getActions, setStore }) => {
 						},
 						body: JSON.stringify({ email, password }),
 					});
-
+				
 					if (!response.ok) {
 						const errorData = await response.json();
 						console.error("Error en el registro:", errorData);
-						return false;
+						return errorData;
 					}
 
 					const data = await response.json();
 					console.log("Registro exitoso:", data);
-					return true;
+					return 201;
 				} catch (error) {
 					console.error("Error en la petición:", error);
 					return false;
 				}
 			},
+
+
+			changePassword: async (oldPassword, newPassword) => {
+				try {
+					const token = localStorage.getItem("token");
+					const response = await fetch(`${process.env.BACKEND_URL}/api/update-password`, {
+						method: "PUT",
+						headers: {
+							"Content-Type": "application/json",
+							Authorization: `Bearer ${token}`,
+						},
+						body: JSON.stringify({ old_password: oldPassword, new_password: newPassword }),
+					});
+					const data = await response.json(); // Obtener la respuesta JSON
+					return data
+				} catch (error) {
+					console.error("Error changing password:", error);
+					return { success: false, message: "Error al actualizar la contraseña." };
+				}
+			},
+
+
+
+
+
 			fetchFavourites: async function fetchFavourites() {
 				const store = getStore();
 				let token = localStorage.getItem("token");
@@ -319,8 +352,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					})
 					console.log(response);
 					if (response.status == 422) {
-						setStore({logedIn: false}),
-						alert("Your session has expired, please, log in again.")
+						setStore({ logedIn: false }),
+							alert("Your session has expired, please, log in again.")
 					}
 					const data = await response.json();
 					console.log(data);
@@ -343,8 +376,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					})
 					console.log(response);
 					if (response.status == 422) {
-						setStore({logedIn: false}),
-						alert("Your session has expired, please, log in again.")
+						setStore({ logedIn: false }),
+							alert("Your session has expired, please, log in again.")
 					}
 					const data = await response.json();
 					console.log(data);
@@ -363,10 +396,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 			deleteLocalFavourite: function deleteLocalFavourite(game) {
 				const store = getStore();
 				console.log("game", game);
-				
+
 				let resultantFavourites = store.favouriteGames.filter((favourite) => {
 					console.log(favourite.favourite_game);
-					
+
 					return favourite.favourite_game.id !== game.id
 				})
 				setStore({ ...store, favouriteGames: resultantFavourites })
