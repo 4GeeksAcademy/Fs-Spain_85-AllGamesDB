@@ -163,7 +163,7 @@ def get_page_games():
 
 @api.route("games/carrousel", methods=["GET"])
 def get_info_carrousel():
-    relevant_games_url = f"{BACKEND_URL}/api/games/"
+    relevant_games_url = f"{BACKEND_URL}/api/games"
     new_games_url = f"{BACKEND_URL}/api/games?order_by=release:desc"
 
     try:
