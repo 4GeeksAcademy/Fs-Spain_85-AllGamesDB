@@ -464,6 +464,44 @@ def delete_favourite():
     db.session.commit()
     return response, 200
 
+@api.route("/update-password", methods=["PUT"])
+@jwt_required()
+def update_password():
+    current_user_email = get_jwt_identity()
+    user = User.query.filter_by(email=current_user_email).first()
+
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+
+    data = request.get_json()
+    old_password = data.get("old_password")
+    new_password = data.get("new_password")
+
+    if not old_password or not new_password:
+        return jsonify({"error": "New and old passwords are required"}), 400
+
+    if not user.check_password(old_password):
+        return jsonify({"error": "Wrong password"}), 401
+    
+    if old_password == new_password:
+        return jsonify({"error": "New password can't be your actual password"})
+    
+    password_regex = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@#$%^&+=]{8,}$'
+    if not re.fullmatch(password_regex, new_password):
+        return jsonify({"error": "Invalid password, it must contain at least 8 characters, one uppercase letter, one lowercase letter, and one number."}), 400
+
+    user.set_password(new_password)
+    db.session.commit()
+    
+    response = jsonify({"msg": "Password updated"})
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+
+    return response, 200
+
+
+
 
 # #enpoint para el carrusel de juegos mas populares
 # @api.route("/games/popular", methods=['GET'])

@@ -4,6 +4,7 @@ import "../../styles/styles/navbar.css";
 import { Context } from '../store/appContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 
+
 export const Navbar = () => {
     const [query, setQuery] = useState("");
     const { store, actions } = useContext(Context);
