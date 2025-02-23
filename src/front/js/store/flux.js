@@ -276,21 +276,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 				try {
 					const token = localStorage.getItem("token");
 					const response = await fetch(`${process.env.BACKEND_URL}/api/update-password`, {
-						method: "POST",
+						method: "PUT",
 						headers: {
 							"Content-Type": "application/json",
 							Authorization: `Bearer ${token}`,
 						},
 						body: JSON.stringify({ old_password: oldPassword, new_password: newPassword }),
 					});
-
 					const data = await response.json(); // Obtener la respuesta JSON
-
-					if (response.ok) {
-						return { success: true, message: "Contraseña actualizada con éxito." };
-					} else {
-						return { success: false, message: data.message || "Error al actualizar la contraseña." };
-					}
+					return data
 				} catch (error) {
 					console.error("Error changing password:", error);
 					return { success: false, message: "Error al actualizar la contraseña." };

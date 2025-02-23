@@ -10,7 +10,7 @@ import requests
 from math import ceil
 from sqlalchemy import func, asc, desc, cast, DateTime
 from sqlalchemy.orm import aliased
-
+import re
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
 from flask_bcrypt import Bcrypt
 from app import jwt
@@ -449,30 +449,41 @@ def delete_favourite():
     db.session.commit()
     return response, 200
 
-@api.route("/api/update-password", methods=["POST"])
+@api.route("/update-password", methods=["PUT"])
 @jwt_required()
 def update_password():
     current_user_email = get_jwt_identity()
     user = User.query.filter_by(email=current_user_email).first()
 
     if not user:
-        return jsonify({"message": "Usuario no encontrado"}), 404
+        return jsonify({"message": "User not found"}), 404
 
     data = request.get_json()
     old_password = data.get("old_password")
     new_password = data.get("new_password")
 
     if not old_password or not new_password:
-        return jsonify({"message": "Contraseña actual y nueva son requeridas"}), 400
+        return jsonify({"error": "New and old passwords are required"}), 400
 
-    if not bcrypt.check_password_hash(user.password, old_password):
-        return jsonify({"message": "Contraseña actual incorrecta"}), 401
+    if not user.check_password(old_password):
+        return jsonify({"error": "Wrong password"}), 401
+    
+    if old_password == new_password:
+        return jsonify({"error": "New password can't be your actual password"})
+    
+    password_regex = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@#$%^&+=]{8,}$'
+    if not re.fullmatch(password_regex, new_password):
+        return jsonify({"error": "Invalid password, it must contain at least 8 characters, one uppercase letter, one lowercase letter, and one number."}), 400
 
-    hashed_password = bcrypt.generate_password_hash(new_password).decode('utf-8')
-    user.password = hashed_password
+    user.set_password(new_password)
     db.session.commit()
+    
+    response = jsonify({"msg": "Password updated"})
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
 
-    return jsonify({"message": "Contraseña actualizada con éxito"}), 200
+    return response, 200
 
 
 

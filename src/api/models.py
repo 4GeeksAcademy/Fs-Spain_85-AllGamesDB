@@ -5,7 +5,8 @@ from typing import List
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from flask_bcrypt import Bcrypt
+bcrypt = Bcrypt()
 
 
 db = SQLAlchemy()
@@ -27,10 +28,10 @@ class User(db.Model):
     # last_login: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     def set_password(self, password):
-        self.password = generate_password_hash(password)
+        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
 
     def check_password(self, password):
-        return check_password_hash(self.password, password)
+        return bcrypt.check_password_hash(self.password, password)
 
     def serialize(self):
         return {

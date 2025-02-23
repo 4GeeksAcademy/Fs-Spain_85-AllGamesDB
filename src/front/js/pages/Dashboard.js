@@ -30,17 +30,18 @@ const Dashboard = () => {
 
     return (
         <div>
-            <h1>Welcome</h1>
             {userData ? (
-                <div>
-                    <button onClick={handleLogout} className="btn btn-danger">
+                <div >
+                    {/* <button onClick={handleLogout} className="btn btn-danger">
                         Logout
-                    </button>
+                    </button> */}
                     <h2></h2>
                     <Favorites /> {/* componente */}
-                    <button onClick={handleChangePassword} className="btn btn-danger">
+                    <div className="position-relative d-flex">
+                    <button onClick={handleChangePassword} className="btn btn-danger mx-auto">
                         Change Password
                     </button>
+                    </div>
                 </div>
             ) : (
                 <p>Loading...</p>
