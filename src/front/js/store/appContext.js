@@ -32,6 +32,8 @@ const injectContext = PassedComponent => {
 			state.actions.fetchGames();
 			state.actions.fetchSearchGames();
 			state.actions.fetchTags();
+			state.actions.getCarrouselInfo();
+
 
 			// <---- calling this function from the flux.js actions
 			

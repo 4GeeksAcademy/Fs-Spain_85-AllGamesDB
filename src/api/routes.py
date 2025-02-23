@@ -1,7 +1,7 @@
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
-from flask import Flask, request, jsonify, url_for, Blueprint
+from flask import Flask, request, jsonify, url_for, Blueprint, abort
 from api.models import db, User, Games, Tags, Favourites, tags_games_association_table
 from api.utils import generate_sitemap, APIException
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
@@ -15,7 +15,8 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 from flask_bcrypt import Bcrypt
 from app import jwt
 from datetime import datetime
-
+from dotenv import load_dotenv
+import os, json
 
 api = Blueprint('api', __name__)
 bcrypt = Bcrypt()
@@ -25,6 +26,9 @@ bcrypt = Bcrypt()
 # Allow CORS requests to this API
 CORS(api)#proteccion solo cuando permito
 
+load_dotenv()
+
+BACKEND_URL = os.getenv("BACKEND_URL")
 
 @api.route('/hello', methods=['POST', 'GET'])
 def handle_hello():
@@ -157,6 +161,46 @@ def get_page_games():
 
     return jsonify(result_data), 200
 
+@api.route("games/carrousel", methods=["GET"])
+def get_info_carrousel():
+    relevant_games_url = f"{BACKEND_URL}/api/games/"
+    new_games_url = f"{BACKEND_URL}/api/games?order_by=release:desc"
+
+    try:
+        relevant_games_response = requests.get(relevant_games_url)
+        relevant_games = relevant_games_response.json()["result"][:5]
+
+        new_games_response = requests.get(new_games_url)
+        new_games = new_games_response.json()["result"]
+
+        relevant_game_ids = {game["id"] for game in relevant_games}
+
+        filtered_new_games = []
+        for game in new_games:
+            if game["id"] not in relevant_game_ids:
+                filtered_new_games.append(game)
+                if len(filtered_new_games) >= 5:
+                    break
+        result_data = {
+            "relevant_games": relevant_games,
+            "new_games": filtered_new_games
+        }
+
+        return jsonify(result_data), 200
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@api.route("/carrousel", methods=["GET"])
+def get_carrousel_data():
+    try:
+        with open("all_games_carrousel.json", "r") as f:
+            carrousel_data = json.load(f)
+        return jsonify(carrousel_data), 200
+    except FileNotFoundError:
+        abort(404, description="Carrousel data not found. Please run the 'flask get-carrousel-info' command first.")
+    except json.JSONDecodeError:
+        abort(500, description="Invalid JSON data in the carrousel file.")
 
 @api.route("/games", methods=['POST'])
 def post_game():
@@ -282,7 +326,6 @@ def fetch_steam_data(appId):
 @api.route('/steam/<int:appId>', methods=['GET'])
 def get_steam_data(appId):
     data = fetch_steam_data(appId)
-    
     if data:
         response = jsonify(data)
         response.headers["Access-Control-Allow-Origin"] = "*"
