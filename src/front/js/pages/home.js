@@ -1,21 +1,20 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
 import { GameList } from "../component/GameList";
+import { useNavigate } from "react-router-dom";
 import "../../styles/home.css";
 
 export const Home = () => {
     const { store, actions } = useContext(Context);
     const [screenshotView, setScreenshotView] = useState(null)
-    const [hoveredGameId, setHoveredGameId] = useState(null); // Track hovered game by app_id
+    const [hoveredGameId, setHoveredGameId] = useState(null);
+    const [background, setBackground] = useState(null)
 
-    useEffect(() => {
-        console.log(hoveredGameId);
-    }, [hoveredGameId]);
-
+    const navigate = useNavigate()
 
     return (
         <div className="home-container">
-                        <div className="carousel-wrapper position-relative">
+            <div className="carousel-wrapper position-relative">
                 <div id="carouselExampleIndicators" className="carousel slide m-auto">
                     <div className="carousel-indicators">
                         <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
@@ -32,7 +31,6 @@ export const Home = () => {
                                         <div className="d-flex">
                                             <div className="carousel-main-image-container" onMouseEnter={() => setHoveredGameId(game.app_id)} onMouseLeave={() => setHoveredGameId(null)}>
                                                 <img src={`https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${game.app_id}/capsule_616x353.jpg`} alt={`${game.name}`} className={`carousel-main-image ${screenshotView || hoveredGameId === game.app_id ? 'hidden' : ''}`}/>
-
                                                 {screenshotView && (
                                                     <img src={screenshotView} alt={`${game.name}`} className="carousel-main-image" />
                                                 )}
@@ -40,7 +38,6 @@ export const Home = () => {
                                                     <video autoPlay loop muted className="carousel-video">
                                                         <source src={game.detailed_info.movies[0].mp4.max.replace("http://", "https://")} type="video/mp4" />
                                                         <source src={game.detailed_info.movies[0].webm.max.replace("http://", "https://")} type="video/webm" />
-                                                        Your browser does not support the video tag.
                                                     </video>
                                                 )}
                                             </div>
@@ -53,16 +50,17 @@ export const Home = () => {
                                                             <div className="col-6" key={index}>
                                                                 <img className="carousel-screenshot" src={screenshot.path_thumbnail} alt={`${game.name} Screenshot ${index}`} onMouseEnter={(e) => setScreenshotView(e.target.src)} onMouseLeave={() => setScreenshotView(null)}/>
                                                             </div>
-                                                        ))}
+                                                        ))
+                                                    }
                                                 </div>
-                                                <p className="carousel-price">{game.steam_price > game.g2a_price ? game.g2a_price : game.steam_price} €</p>
-                                                <div className="d-flex justify-content-center my-auto">
+                                                <div className="d-flex justify-content-center my-auto flex-wrap">
                                                     <span className="d-flex gap-1 carousel-tags">
-                                                        {game.game_tags ? game.game_tags.slice(0, 3).map((tag, index) => (
-                                                            <button key={index} className="btn-green">{tag.tag_name}</button>
+                                                        {game.game_tags ? game.game_tags.slice(0, 9).map((tag, index) => (
+                                                            <button key={index} className="btn-green" onClick={() => {navigate("/allgames"), actions.updateSearchParameters(1, [tag.tag_name], 0, 90, 0, 100, 2000, 2025)}}>{tag.tag_name}</button>
                                                         )) : ""}
                                                     </span>
                                                 </div>
+                                                <p className="carousel-price">{game.steam_price > game.g2a_price ? game.g2a_price : game.steam_price} €</p>
                                             </div>
                                         </div>
                                     ) : (
