@@ -14,7 +14,7 @@ const Signup = () => {
         const result = await actions.signup(email, password);
         if (result) {
             console.log("Redirigiendo al login...");
-            navigate("/login");
+            navigate("/");
         } else {
             console.error("Error en el registro, no se pudo redirigir.");
         }

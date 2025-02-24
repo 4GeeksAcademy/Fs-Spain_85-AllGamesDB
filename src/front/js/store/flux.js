@@ -404,6 +404,25 @@ const getState = ({ getStore, getActions, setStore }) => {
 				})
 				setStore({ ...store, favouriteGames: resultantFavourites })
 			},
+			tokenVerify: async function tokenVerify() {
+				let token = localStorage.getItem("token");
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/token-verify`, {
+						method: "GET",
+						headers: { Authorization: `Bearer ${token}` }
+					});
+					console.log(response.status);
+					
+					if (response.status != 200) {
+						setStore({ ...store, logedIn: false })
+						return false 
+					}
+					return true
+				} catch (error) {
+					console.log(error);
+					return
+				}
+			}
 		}
 	};
 };

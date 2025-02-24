@@ -545,19 +545,21 @@ def update_password():
 
 
 
+#enpoint para validación de token
+@api.route("/token-verify", methods=['GET'])
+@jwt_required()
+def token_verify():
+    email = get_jwt_identity()
+    try:
+        user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one()
+    except NoResultFound:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+    
+    response = jsonify({"msg": "valid token"})
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    return response, 200
 
-# #enpoint para el carrusel de juegos mas populares
-# @api.route("/games/popular", methods=['GET'])
-# def get_popular_games():
-#     """Retunr 10 most popular games"""
-#     try:
-#         popular_games = db.session.scalars(
-#             db.select(Games).order_by(Games.score.desc()).limit(10)#filtra de 10
-#         ).all()
-#         results = [game.serialize() for game in popular_games]
-
-#         return jsonify({"results": results}), 200
-#     except Exception as e:
-#         return jsonify({"error": f"Error obtaining games: {str(e)}"}), 500
 
     
