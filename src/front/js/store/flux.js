@@ -311,6 +311,23 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 
+			sendResetEmail: async (email) => {
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "/forgot-password", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify({ email }),
+					});
+					const data = await response.json();
+					if (!response.ok) throw new Error(data.error);
+					return { msg: data.message };
+				} catch (error) {
+					return { error: error.message };
+				}
+			},
+
 
 
 

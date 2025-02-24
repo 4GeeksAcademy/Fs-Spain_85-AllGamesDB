@@ -18,12 +18,13 @@ from datetime import datetime
 from dotenv import load_dotenv
 import os, json
 
+
+
 api = Blueprint('api', __name__)
 bcrypt = Bcrypt()
 
 
 
-# Allow CORS requests to this API
 CORS(api)#proteccion solo cuando permito
 
 load_dotenv()
@@ -562,4 +563,39 @@ def token_verify():
     return response, 200
 
 
-    
+@api.route('/forgot-password', methods=['POST'])
+def forgot_password():
+    data = request.get_json()
+    email = data.get('email')
+
+    user = find_user_by_email(email)
+    if not user:
+        return jsonify({"error": "No register email"}), 404
+    token = serializer.dumps(email, salt='password-reset-salt')
+
+    reset_link = f"https://jubilant-barnacle-jj4xq9g5r4gjhqq9j-3001.app.github.dev/reset-password/{token}"
+    send_email(email, reset_link)
+    return jsonify({"message": "An email has been send with instructions"}), 200
+
+def find_user_by_email(email):
+    try:
+        user = User.query.filter_by(email=email).one_or_none()
+        return user
+    except Exception as e:
+        print(f"Error finding user by email: {e}")
+        return None
+
+def send_email(to_email, reset_link):
+    from_email = os.environ.get("EMAIL_USER")
+    password = os.environ.get("EMAIL_PASSWORD")
+    subject = "Restore Password"
+    body = f"To restore your password, click here: {reset_link}"
+
+    try:
+      server = smtplib.SMTP("smtp.gmail.com", 587)
+      server.starttls()
+      server.login(from_email, password)
+      server.sendmail(from_email, to_email, f"Subject: {subject}\n\n{body}")
+      server.quit()
+    except Exception as e:
+        print(f"Error sending email: {e}")

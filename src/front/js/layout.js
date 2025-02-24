@@ -18,6 +18,9 @@ import PrivateRoute from "./component/PrivateRoute";
 import Signup from "./pages/Signup";
 import { Favorites } from "./component/Favorites";
 import ChangePassword from "./component/ChangePassword";
+import ForgotPassword from "./component/ForgotPassword";
+import ResetPassword from "./component/ResetPassword";
+import { RequestEmailReset } from "./component/RequestEmailReset";
 
 const Layout = () => {
     const basename = process.env.BASENAME || "";
@@ -44,7 +47,10 @@ const Layout = () => {
                         <Route element={<Login />} path="/login" />
                         <Route element={<Favorites />} path="/favorites" />
                         <Route element={<ChangePassword />} path="/changepassword" />
-
+                        <Route element={<ForgotPassword />} path="/forgot-password" />
+                        <Route element={<ForgotPassword />} path="/forgot-password"  />
+                        <Route element={<ResetPassword />} path="/reset-password/:email" />
+                        <Route element={<RequestEmailReset />} path="/request-email-reset" />
 
                         {/* Ruta protegida */}
                         <Route element={

@@ -4,16 +4,13 @@
 		"node": "16.x"
 	},
 	"version": "1.0.1",
-	"description": "",
+	"description": "Build web applications using React.js for the front end and python/flask for your backend API.",
 	"main": "index.js",
 	"scripts": {
 		"start": "webpack-dev-server --config webpack.dev.js --port 3000",
 		"build": "webpack --config webpack.prod.js"
 	},
-	"author": {
-		"name": "Alejandro Sanchez",
-		"url": "http://alesanchezr.com/"
-	},
+	"author": "Alejandro Sanchez (http://alesanchezr.com/)",
 	"contributors": [
 		{
 			"name": "Alejandro Sanchez",
@@ -73,12 +70,31 @@
 		]
 	},
 	"dependencies": {
+		"@emailjs/browser": "^4.4.1",
+		"bcryptjs": "^3.0.2",
+		"cors": "^2.8.5",
+		"dotenv": "^16.4.7",
+		"express": "^4.21.2",
+		"jsonwebtoken": "^9.0.2",
 		"newman": "^6.2.1",
+		"nodemailer": "^6.10.0",
 		"prop-types": "^15.6.1",
 		"rc-slider": "^11.1.8",
 		"react": "^16.8.4",
 		"react-dom": "^16.8.4",
 		"react-polyfills": "0.0.1",
 		"react-router-dom": "^6.3.0"
-	}
+	},
+	"directories": {
+		"doc": "docs"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/4GeeksAcademy/Fs-Spain_85-AllGamesDB.git"
+	},
+	"keywords": [],
+	"bugs": {
+		"url": "https://github.com/4GeeksAcademy/Fs-Spain_85-AllGamesDB/issues"
+	},
+	"homepage": "https://github.com/4GeeksAcademy/Fs-Spain_85-AllGamesDB#readme"
 }

@@ -356,6 +356,7 @@ export const Navbar = () => {
                                                     {loginMessage.text}
                                                 </div>
                                                 <button type="submit" className="btn btn-submit">Login</button>
+                                                <Link to="/reset-password/:email" className="forgot-password-link">Forgot your password?</Link>
                                             </form>
                                         </div>
                                     )}
@@ -398,8 +399,7 @@ export const Navbar = () => {
                             </div>
                         }
                     </div>
-                    {/* fin de los botones del offcanvas */}
-                    {/* inicio del searchbar para el offcanvas */}
+
                     <div className={`search-container my-1 w-75 mx-auto `}>
                         <input
                             type="text"
@@ -426,10 +426,9 @@ export const Navbar = () => {
                                 : ""}
                         </ul>
                     </div>
-                    {/* fin del searchbar del offcanvas */}
+
                 </div>
-                {/* fin del offcanvas */}
-                {/* inicio de searchbar */}
+
                 <div className="search-container my-1 d-lg-block d-none">
                     <input
                         type="text"
@@ -500,7 +499,7 @@ export const Navbar = () => {
                                                     eye-button`}
                                                     type="button" onClick={handleShowPassword}></button>
                                             </div>
-                                            {/* manejo de mensaje al hacer el signup */}
+
                                             <div className={`alert ${signupMessage.type === ""
                                                 ? ""
                                                 : signupMessage.type === "error"
@@ -514,8 +513,7 @@ export const Navbar = () => {
                                     </div>
                                 )}
                             </div>
-                            {/* fin botón signup */}
-                            {/* inicio botón login */}
+
                             <div className="dropdown">
                                 <button className="btn btn-green" onClick={toggleLogin}>Login</button>
                                 {isLoginOpen && (
@@ -557,12 +555,13 @@ export const Navbar = () => {
                                                 {loginMessage.text}
                                             </div>
                                             <button type="submit" className="btn btn-submit">Login</button>
+                                            <Link to="request-email-reset" className="forgot-password-link">Forgot your password?</Link>
                                         </form>
                                     </div>
                                 )}
                             </div>
                         </div>
-                        // para cuando se está logado
+
                         : <div className="nav-buttons d-flex flex-row">
                             {store.favouriteGames.length > 0
                                 ? <div className="dropdown position-relative">
