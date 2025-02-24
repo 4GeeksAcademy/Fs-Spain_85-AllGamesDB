@@ -101,6 +101,20 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log(error)
 				}
 			},
+			storeFetchGames: async (page) => {
+				if (page === undefined) page = 1;
+				const store = getStore();
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/games?page=${page}`);
+					const data = await response.json()
+					console.log(data);
+
+					setStore({ videogames: data.result })
+
+				} catch (error) {
+					console.log(error)
+				}
+			},
 			fetchTags: async () => {
 				try {
 					const response = await fetch(`${process.env.BACKEND_URL}/api/tags/names`);

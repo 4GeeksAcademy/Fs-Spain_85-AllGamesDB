@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Context } from '../store/appContext';
 import '../../styles/styles/gameList.css';
@@ -6,6 +6,7 @@ import '../../styles/styles/gameList.css';
 export const GameList = () => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
+    const [page, setPage] = useState(2)
 
     const handleGameClick = (game) => {
         actions.setSpecificVideogameSteamId(game);
@@ -28,11 +29,20 @@ export const GameList = () => {
         actions.deleteFavourite(game.id);
         return
     }
-
+    // no carga por debajo, solo actualiza a la página siguiente y no se resetea la página a la que ha llegado, 
+    // revisar como se obtienen las tags ya que por ahí está dando problema, 
+    // añadir reseteo de las páginas que ha terminado cargando cuando se cambie de vista
+    const handleViewMoreClick = () => {
+        actions.storeFetchGames(page)
+        let newPage = page + 1
+        setPage(newPage)
+        console.log(newPage);
+        
+    }
 
     return (
         <div className="game-list-container d-flex flex-column">
-            {/* <div className="filters">
+            <div className="filters">
                 <ul className="nav nav-tabs">
                     <li className="nav-item">
                         <a className="nav-link active" href="#">Rating</a>
@@ -47,8 +57,8 @@ export const GameList = () => {
                         <a className="nav-link" href="#">Surprise me</a>
                     </li>
                 </ul>
-                <button className="btn btn-secondary advanced-search">Advance search</button>
-            </div> */}
+                <button className="btn btn-secondary advanced-search" onClick={() => navigate("/allgames")}>Advance search</button>
+            </div>
 
             <div className="games-table">
                 {Array.isArray(store.videogames) && store.videogames.length > 0 ? (
@@ -85,7 +95,7 @@ export const GameList = () => {
                 )}
             </div>
             <div className='m-auto mt-2'>
-                <button className='btn btn-warning' onClick={() => navigate("/allgames")} role="button">View more!</button>
+                <button className='btn btn-warning' onClick={handleViewMoreClick} role="button">View more!</button>
             </div>
         </div>
     );
