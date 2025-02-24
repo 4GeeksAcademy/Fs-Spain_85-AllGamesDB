@@ -32,7 +32,7 @@ export const GameList = () => {
 
     return (
         <div className="game-list-container d-flex flex-column">
-            <div className="filters">
+            {/* <div className="filters">
                 <ul className="nav nav-tabs">
                     <li className="nav-item">
                         <a className="nav-link active" href="#">Rating</a>
@@ -48,7 +48,7 @@ export const GameList = () => {
                     </li>
                 </ul>
                 <button className="btn btn-secondary advanced-search">Advance search</button>
-            </div>
+            </div> */}
 
             <div className="games-table">
                 {Array.isArray(store.videogames) && store.videogames.length > 0 ? (

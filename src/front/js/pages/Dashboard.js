@@ -6,35 +6,33 @@ import { Favorites } from "../component/Favorites";
 const Dashboard = () => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
-    const [userData, setUserData] = useState(null);
+    // const [userData, setUserData] = useState(null);
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            navigate("/login");
-        } else {
-            setUserData({ email: "user@example.com", username: "Username" });
-            actions.fetchFavourites();
+        const tokenVerify = async () => {
+            const result = await actions.tokenVerify();
+            if (!result && store.logedIn) {
+                navigate("/");
+                alert("Your session has expired, please, log in again.");
+                actions.logout();
+            } 
+            else if (!result){
+                navigate("/");
+                actions.logout();
+            }
+            return
         }
+        tokenVerify();
     }, [navigate, actions]);
 
-    const handleLogout = () => {
-        actions.logout();
-        navigate("/");// modificado para redirigir a home
-    };
-
     const handleChangePassword = () => {
-
         navigate("/changepassword");
     };
 
     return (
         <div>
-            {userData ? (
+            {/* {userData ? ( */}
                 <div >
-                    {/* <button onClick={handleLogout} className="btn btn-danger">
-                        Logout
-                    </button> */}
                     <h2></h2>
                     <Favorites /> {/* componente */}
                     <div className="position-relative d-flex">
@@ -43,14 +41,11 @@ const Dashboard = () => {
                     </button>
                     </div>
                 </div>
-            ) : (
+            {/* ) : (
                 <p>Loading...</p>
-            )}
+            )} */}
         </div>
     );
 };
 
 export default Dashboard;
-
-
-

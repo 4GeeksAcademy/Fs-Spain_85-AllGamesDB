@@ -17,7 +17,7 @@ export const Favorites = () => {
 
     function gamePriceComparer(game) {
         if (game.steam_price > game.g2a_price) return game.g2a_price + " €";
-        else return game.steam_price + ` € ${<i className="fa-brands fa-steam"></i>}`;
+        else return game.steam_price + ` €`;
     }
 
     const deletefavouriteClick = async (game) => {
@@ -46,6 +46,7 @@ export const Favorites = () => {
                                 </div>
                                 <button className="favourite-btn me-3 fs-5" onClick={(e) => {
                                     e.stopPropagation();
+                                    e.preventDefault();
                                     deletefavouriteClick(game);
                                 }}>
                                     💔
