@@ -218,6 +218,29 @@
     transform: scale(0.95);
 }
 
+.btn-less-tags {
+    background: linear-gradient(to bottom, #6DDA9E , #4FB77F);
+    color: white;
+    border: none;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: background 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 6px 12px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-less-tags:hover {
+    background: linear-gradient(to bottom, #5FCB8D , #3E9F6E);
+    transform: scale(1.05);
+}
+
+.btn-less-tags:active {
+    transform: scale(0.95);
+}
+
 .btn-offcanvas {
     width: 50px ;
     height: 50px;
