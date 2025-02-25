@@ -12,6 +12,11 @@ export const Home = () => {
 
     const navigate = useNavigate()
 
+    const handleGameClick = (game) => {
+        actions.setSpecificVideogameSteamId(game);
+        navigate(`/game/${game.id}`);
+    };
+
     return (
         <div className="home-container">
             <div className="carousel-wrapper position-relative">
@@ -42,7 +47,7 @@ export const Home = () => {
                                                 )}
                                             </div>
                                             <div className="carousel-info-panel position-relative">
-                                                <h3 className="carousel-title">{game.name}</h3>
+                                                <h3 className="carousel-title" onClick={() => {handleGameClick(game)}}>{game.name}</h3>
                                                 <div className="d-flex flex-wrap carousel-screenshot-wrapper">
                                                     {game.detailed_info?.screenshots
                                                         ?.slice(0, 4)
@@ -69,8 +74,10 @@ export const Home = () => {
                                 </div>
                             ))
                         ) : (
-                            <div className="carousel-item active">
-                                <p>No relevant games available.</p>
+                            <div className="carousel-item active d-flex m-auto">
+                                <div className="d-flex m-auto p-5">
+                                    <div className="loader d-flex"></div>
+                                </div>
                             </div>
                         )}
                     </div>

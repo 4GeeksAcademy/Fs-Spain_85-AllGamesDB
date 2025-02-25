@@ -88,14 +88,25 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 
-			fetchGames: async (page) => {
+			fetchGames: async (page, orderBy) => {
 				if (page === undefined) page = 1;
-				try {
-					const response = await fetch(`${process.env.BACKEND_URL}/api/games?page=${page}`);
-					const data = await response.json()
-					console.log(data);
+				if (orderBy === undefined) {
+					try {
+						const response = await fetch(`${process.env.BACKEND_URL}/api/games?page=${page}`);
+						const data = await response.json()
+						setStore({ videogames: data.result })
+						console.log(getStore().videogames);
+						
 
+					} catch (error) {
+						console.log(error)
+					}
+				}
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/games?page=${page}&order_by=${orderBy}:${orderBy === "rating" ? "desc" : "asc"}`);
+					const data = await response.json()
 					setStore({ videogames: data.result })
+					console.log(getStore().videogames);
 
 				} catch (error) {
 					console.log(error)

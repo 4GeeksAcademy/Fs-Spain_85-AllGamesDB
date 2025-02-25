@@ -119,6 +119,7 @@ export const GameSearchList = () => {
                             }
                             <div className="d-flex my-1 justify-content-center col-12" >
                                 <button className="m-auto btn-more-tags" onClick={() => setNumberOfTagsShown(numberOfTagsShown + 20)}>Show More Tags ({store.tags.length - numberOfTagsShown})...</button>
+                                <button className={`m-auto btn-less-tags ${numberOfTagsShown >= 40 ? "" : "d-none"}`} onClick={() => setNumberOfTagsShown(numberOfTagsShown - 20)}>Show Less Tags</button>
                             </div>
                         </>
                         :
@@ -182,7 +183,6 @@ export const GameSearchList = () => {
                     <h4>Order By:</h4>
                     <select onChange={(e) => setSetOrderBy(e.target.value)} value={orderBy} className="select-container">
                             <option value="relevant:asc">Most Relevant</option>
-                            <option value="relevant:desc">Least Relevant</option>
                             <option value="price:asc">Lowest Price</option>
                             <option value="price:desc">Highest Price</option>
                             <option value="release:asc">Oldest Releases</option>
@@ -226,6 +226,7 @@ export const GameSearchList = () => {
                             }
                             <div className="d-flex my-1 justify-content-center col-12" >
                                 <button className="m-auto btn-more-tags" onClick={() => setNumberOfTagsShown(numberOfTagsShown + 20)}>Show More Tags ({store.tags.length - numberOfTagsShown})...</button>
+                                <button className="m-auto btn-less-tags" onClick={() => setNumberOfTagsShown(numberOfTagsShown + 20)}>Show More Tags ({store.tags.length - numberOfTagsShown})...</button>
                             </div>
                         </>
                         :
@@ -290,7 +291,6 @@ export const GameSearchList = () => {
 
                     <select onChange={(e) => setSetOrderBy(e.target.value)} value={orderBy} className="select-container">
                             <option value="relevant:asc">Most Relevant</option>
-                            <option value="relevant:desc">Least Relevant</option>
                             <option value="price:asc">Lowest Price</option>
                             <option value="price:desc">Highest Price</option>
                             <option value="release:asc">Oldest Releases</option>
@@ -337,7 +337,9 @@ export const GameSearchList = () => {
                     ))
 
                 ) : (
-                    <p>No games found!</p>
+                    <div className="d-flex m-auto vh-100">
+                        <div className="loader d-flex"></div>
+                    </div>
                 )}
 
                 {/* Pagination 1024px - 1440px*/}
