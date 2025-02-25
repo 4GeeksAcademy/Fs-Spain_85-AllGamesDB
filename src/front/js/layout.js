@@ -19,6 +19,8 @@ import Signup from "./pages/Signup";
 import { Favorites } from "./component/Favorites";
 import ChangePassword from "./component/ChangePassword";
 
+import "../styles/layout.css"
+
 const Layout = () => {
     const basename = process.env.BASENAME || "";
 
@@ -29,7 +31,7 @@ const Layout = () => {
             <BrowserRouter basename={basename}>
                 <ScrollToTop>
                     <Navbar />
-                    <div style={{paddingTop:"71px"}}>
+                    <div className="vh-100 pages-wrapper">
 
                     
                     <Routes>
