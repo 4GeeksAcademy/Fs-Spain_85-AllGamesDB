@@ -80,8 +80,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 							image: resultSteam.header_image
 						}
 					})
-					// console.log(store.selectedGame);
-
 					return data[appId].data
 				} catch (error) {
 					console.error("Error al obtener los juegos:", error);

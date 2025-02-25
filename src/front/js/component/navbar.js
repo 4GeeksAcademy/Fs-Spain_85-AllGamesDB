@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import "../../styles/styles/navbar.css";
 import { Context } from '../store/appContext';
 import { useNavigate, useLocation } from 'react-router-dom';
-import "/workspaces/Fs-Spain_85-AllGamesDB/src/front/img/allgamesdb-high-resolution-logo-transparent.png"
+import "/workspaces/Fs-Spain_85-AllGamesDB/src/front/img/allgames_transparent.png"
 
 
 export const Navbar = () => {
@@ -202,7 +202,6 @@ export const Navbar = () => {
     useEffect(() => {
         const handleClickOutside = (e) => {
             if (e.target.parentElement == null) return;
-            console.log(e.target);
             if (isFavouritesOpen
                 && e.target.className !== "favourite-btn fs-5 fa-solid fa-heart-crack"
                 // && e.target.parentElement.className !== "dropdown-item" 
@@ -246,8 +245,11 @@ export const Navbar = () => {
 
     return (
         <nav className="navbar fixed-top">
-            <div className="container">
-                <Link to="/" className="logo">AllGamesDB</Link>
+            <div className="container pe-0">
+                <div className="d-flex justify-content-center text-center ">
+                    <img src="/allgames_transparent.png" className="img-logo"/>
+                    <Link to="/" className="logo my-auto">AllGamesDB</Link>
+                </div>
                 {/* botón habilitador del offcanvas */}
                 <button className="navbar-toggler d-lg-none fa-solid fa-bars text-grey"
                     type="button"

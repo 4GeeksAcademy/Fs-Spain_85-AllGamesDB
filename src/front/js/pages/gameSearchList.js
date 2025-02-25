@@ -395,7 +395,6 @@ export const GameSearchList = () => {
                 <div className="d-flex d-md-none">
                     <nav aria-label="..." className="m-auto">
                         <ul className="pagination align-middle my-2">
-
                             <li className="page-item" onClick={() => actions.handlePagination(1)}>
                                 <a className="page-link" href="#">{"<<"}</a>
                             </li>

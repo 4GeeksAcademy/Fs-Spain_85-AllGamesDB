@@ -230,6 +230,9 @@
     .carousel-main-image-container {
         height: 400px;
     }
+    .carousel-wrapper {
+        margin-top: 0px;
+    }
 }
 
 @media (min-width: 320px) and (max-width: 425px) {
@@ -259,5 +262,9 @@
         width: 100%;
         object-fit: cover;
         transition: opacity 0.45s ease;
+    }
+
+    .carousel-wrapper {
+        margin-top: 0px;
     }
 }

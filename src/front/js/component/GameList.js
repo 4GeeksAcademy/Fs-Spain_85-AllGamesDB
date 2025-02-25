@@ -122,7 +122,7 @@ export const GameList = () => {
                             />
                             <div className="game-info">
                                 <h4 className='game-title'>{game.name}</h4>
-                                <div className='tags d-flex gap-2'>{game.game_tags.slice(0, 3).map((tag, index) =>
+                                <div className='tags d-flex gap-2 mb-2'>{game.game_tags.slice(0, 3).map((tag, index) =>
                                     <button key={index} className="btn-green-tags">{tag.tag_name}</button>
                                  )}
                                 </div>
