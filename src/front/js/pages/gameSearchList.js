@@ -102,7 +102,7 @@ export const GameSearchList = () => {
     }
 
     return (
-        <div className="d-flex">
+        <div className="d-flex game-search-list-container">
             <div className="search-editor border d-flex row pt-2">
                 <h4>Tags: </h4>
                 <div className="d-flex flex-wrap pe-0 gap-2">

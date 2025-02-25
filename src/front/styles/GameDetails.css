@@ -1,3 +1,7 @@
+.game-details-container {
+    background: #f5f5f5;
+}
+
 
 /* clase para el círculo del rating */
 .fluid-ratio{
@@ -6,6 +10,7 @@
     min-width: 78px;
     aspect-ratio: 1/1;
     text-align: center;
+    background: white;
 }
 
 /* clases para botones favoritos */
@@ -22,6 +27,19 @@
     font-family: "Font Awesome 6 Free";
     font-weight: 900;
     }
+
+.table-border-background {
+    background: white;
+    border: 1px solid #4D8573;
+}
+
+td {
+    border: 1px solid #4D8573;
+}
+
+.table-head {
+    border-bottom: 3px solid #367D56;
+}
 
 /* clases para botones de visitar la store de las páginas */
 .btn-orange {

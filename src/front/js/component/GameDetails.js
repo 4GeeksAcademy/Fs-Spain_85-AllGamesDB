@@ -41,7 +41,7 @@ export const GameDetails = () => {
     }
 
     return (
-        <div className='row w-100 mx-auto text-center justify-content-center'>
+        <div className='row w-100 mx-auto text-center justify-content-center game-details-container'>
             <div className='mt-5 d-flex flex-column col-lg-5 col-11 mx-auto d-none d-lg-block'>
                 <img src={game.image} alt={game.name} className='mb-2'/>
                 <p>{game.shortDescription}</p>
@@ -63,14 +63,14 @@ export const GameDetails = () => {
                              
                             : ""}
                 </div>
-                <table className='table table-bordered border-primary mt-3'>
-                    <thead>
+                <table className='table table-bordered table-border-background mt-3'>
+                    <thead className='table-head'>
                         <tr>
                             <th scope="col">Steam</th>
                             <th scope="col">G2A</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody className='table-body'>
                         <tr>
                             <td>{game.steam_price} €</td>
                             <td>{game.g2a_price} €</td>

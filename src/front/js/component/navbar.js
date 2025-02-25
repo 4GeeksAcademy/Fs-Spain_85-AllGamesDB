@@ -202,12 +202,12 @@ export const Navbar = () => {
         const handleClickOutside = (e) => {
             if (e.target.parentElement == null) return;
             console.log(e.target);
-            if (isFavouritesOpen 
+            if (isFavouritesOpen
                 && e.target.className !== "favourite-btn fs-5 fa-solid fa-heart-crack"
                 // && e.target.parentElement.className !== "dropdown-item" 
             ) {
-                    setIsFavouritesOpen(false);
-                    return
+                setIsFavouritesOpen(false);
+                return
             }
         };
         document.addEventListener('click', handleClickOutside);
@@ -373,14 +373,14 @@ export const Navbar = () => {
                                             onClick={() => setIsFavouritesOpen(!isFavouritesOpen)}
                                             aria-expanded={isFavouritesOpen}
                                             data-bs-boundary="viewport">
-                                            ⭐ Favoritos
+                                            Favoritos
                                         </button>
                                         <ul className={`dropdown-menu ${favouriteOverflowClass} ${isFavouritesOpen ? "show" : ""} `}>
                                             {liFavouriteGames}
                                         </ul>
                                     </div>
                                     : <button className="btn btn-green dropdown-toggle invisible" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        ⭐ Favoritos
+                                        Favoritos
                                     </button>}
                                 <div className="dropdown">
                                     <button className="btn btn-green dropdown-toggle"
@@ -574,14 +574,14 @@ export const Navbar = () => {
                                         onClick={() => setIsFavouritesOpen(!isFavouritesOpen)}
                                         aria-expanded={isFavouritesOpen}
                                         data-bs-boundary="viewport">
-                                        ⭐ Favoritos
+                                        Favoritos
                                     </button>
                                     <ul data-bs-boundary="viewport" className={`dropdown-menu ${favouriteOverflowClass} ${isFavouritesOpen ? "show" : ""} `}>
                                         {liFavouriteGames}
                                     </ul>
                                 </div>
                                 : <button className="btn btn-green dropdown-toggle invisible" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    ⭐ Favoritos
+                                    Favoritos
                                 </button>}
                             <div className="dropdown">
                                 <button className="btn btn-green dropdown-toggle"

@@ -130,7 +130,7 @@ export const GameList = () => {
                 )}
             </div>
             <div className='m-auto mt-2'>
-                <button className='mt-3 btn btn-orange' onClick={() => handleViewMore()} role="button">View more!</button>
+                <button className='mt-3 btn btn-orange-vmore' onClick={() => handleViewMore()} role="button">View more!</button>
             </div>
         </div>
     );
