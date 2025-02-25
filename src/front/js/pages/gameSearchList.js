@@ -102,7 +102,7 @@ export const GameSearchList = () => {
     }
 
     return (
-        <div className="d-flex">
+        <div className="d-flex game-search-list-container">
             <div className="search-editor border d-flex row pt-2">
                 <h4>Tags: </h4>
                 <div className="d-flex flex-wrap pe-0 gap-2">
@@ -119,6 +119,7 @@ export const GameSearchList = () => {
                             }
                             <div className="d-flex my-1 justify-content-center col-12" >
                                 <button className="m-auto btn-more-tags" onClick={() => setNumberOfTagsShown(numberOfTagsShown + 20)}>Show More Tags ({store.tags.length - numberOfTagsShown})...</button>
+                                <button className={`m-auto btn-less-tags ${numberOfTagsShown >= 40 ? "" : "d-none"}`} onClick={() => setNumberOfTagsShown(numberOfTagsShown - 20)}>Show Less Tags</button>
                             </div>
                         </>
                         :
@@ -182,7 +183,6 @@ export const GameSearchList = () => {
                     <h4>Order By:</h4>
                     <select onChange={(e) => setSetOrderBy(e.target.value)} value={orderBy} className="select-container">
                             <option value="relevant:asc">Most Relevant</option>
-                            <option value="relevant:desc">Least Relevant</option>
                             <option value="price:asc">Lowest Price</option>
                             <option value="price:desc">Highest Price</option>
                             <option value="release:asc">Oldest Releases</option>
@@ -226,6 +226,7 @@ export const GameSearchList = () => {
                             }
                             <div className="d-flex my-1 justify-content-center col-12" >
                                 <button className="m-auto btn-more-tags" onClick={() => setNumberOfTagsShown(numberOfTagsShown + 20)}>Show More Tags ({store.tags.length - numberOfTagsShown})...</button>
+                                <button className="m-auto btn-less-tags" onClick={() => setNumberOfTagsShown(numberOfTagsShown + 20)}>Show More Tags ({store.tags.length - numberOfTagsShown})...</button>
                             </div>
                         </>
                         :
@@ -290,7 +291,6 @@ export const GameSearchList = () => {
 
                     <select onChange={(e) => setSetOrderBy(e.target.value)} value={orderBy} className="select-container">
                             <option value="relevant:asc">Most Relevant</option>
-                            <option value="relevant:desc">Least Relevant</option>
                             <option value="price:asc">Lowest Price</option>
                             <option value="price:desc">Highest Price</option>
                             <option value="release:asc">Oldest Releases</option>
@@ -316,19 +316,20 @@ export const GameSearchList = () => {
                             <img src={`https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${game.app_id}/capsule_231x87.jpg`} alt={game.name} className="game-image" />
                             <div className="game-info">
                                 <h4 className='game-title'>{game.name}</h4>
-                                <p className='tags'>{game.game_tags.slice(0, 3).map((tag) => tag.tag_name).join(', ')}</p>
+                                <div className='tags d-flex gap-2'>{game.game_tags.slice(0, 3).map((tag, index) =>
+                                    <button key={index} className="btn-green-tags">{tag.tag_name}</button>
+                                 )}
+                                </div>
                             </div>
                             {store.logedIn == true 
                             ? store.favouriteGames.some((fav) => fav.favourite_game.app_id === game.app_id) 
-                            ? <button className="favourite-btn me-3 fs-5" onClick={(e) => {
+                            ? <button className="favourite-btn me-3 fa-solid fa-heart-crack" onClick={(e) => {
                                 e.stopPropagation(),
                                 deletefavouriteClick(game)}}>
-                                   💔
                            </button> 
-                           : <button className="favourite-btn me-3 fs-5" onClick={(e) => {
+                           : <button className="favourite-btn me-3 fa-regular fa-heart" onClick={(e) => {
                                  e.stopPropagation(),
                                 addfavouriteClick(game)}}>
-                                    ❤️
                             </button> 
                              
                             : ""}
@@ -337,7 +338,9 @@ export const GameSearchList = () => {
                     ))
 
                 ) : (
-                    <p>No games found!</p>
+                    <div className="d-flex m-auto vh-100 justify-content-center align-items-center">
+                        <div className="loader d-flex"></div>
+                    </div>
                 )}
 
                 {/* Pagination 1024px - 1440px*/}

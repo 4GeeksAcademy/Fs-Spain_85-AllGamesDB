@@ -22,6 +22,8 @@ import ForgotPassword from "./component/ForgotPassword";
 import ResetPassword from "./component/ResetPassword";
 import { RequestEmailReset } from "./component/RequestEmailReset";
 
+import "../styles/layout.css"
+
 const Layout = () => {
     const basename = process.env.BASENAME || "";
 
@@ -32,7 +34,7 @@ const Layout = () => {
             <BrowserRouter basename={basename}>
                 <ScrollToTop>
                     <Navbar />
-                    <div style={{paddingTop:"71px"}}>
+                    <div className="vh-100 pages-wrapper">
 
                     
                     <Routes>

@@ -87,15 +87,34 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error("Error al obtener los juegos:", error);
 				}
 			},
-
-			fetchGames: async (page) => {
-				if (page === undefined) page = 1;
+			fetchGameById: async(id) => {
 				try {
-					const response = await fetch(`${process.env.BACKEND_URL}/api/games?page=${page}`);
+					const response = await fetch(`${process.env.BACKEND_URL}/api/game/${id}`);
 					const data = await response.json()
-					console.log(data);
+					setStore({ ...getStore(), selectedGame: data })
+				}catch(error) {
+					console.log(error);
+				}
+			},
+			fetchGames: async (page, orderBy) => {
+				if (page === undefined) page = 1;
+				if (orderBy === undefined) {
+					try {
+						const response = await fetch(`${process.env.BACKEND_URL}/api/games?page=${page}`);
+						const data = await response.json()
+						setStore({ videogames: data.result })
+						console.log(getStore().videogames);
+						
 
+					} catch (error) {
+						console.log(error)
+					}
+				}
+				try {
+					const response = await fetch(`${process.env.BACKEND_URL}/api/games?page=${page}&order_by=${orderBy}:${orderBy === "price" ? "asc" : "desc"}`);
+					const data = await response.json()
 					setStore({ videogames: data.result })
+					console.log(getStore().videogames);
 
 				} catch (error) {
 					console.log(error)

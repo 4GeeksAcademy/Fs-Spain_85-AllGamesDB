@@ -41,7 +41,7 @@ export const GameDetails = () => {
     }
 
     return (
-        <div className='row w-100 mx-auto text-center justify-content-center'>
+        <div className='row w-100 mx-auto text-center justify-content-center game-details-container'>
             <div className='mt-5 d-flex flex-column col-lg-5 col-11 mx-auto d-none d-lg-block'>
                 <img src={game.image} alt={game.name} className='mb-2'/>
                 <p>{game.shortDescription}</p>
@@ -52,37 +52,35 @@ export const GameDetails = () => {
                     <h1>{game.name}</h1>
                     {store.logedIn == true 
                             ? store.favouriteGames.some((fav) => fav.favourite_game.app_id === game.app_id) 
-                            ? <button className="favourite-btn" onClick={(e) => {
+                            ? <button className="favourite-btn fa-solid fa-heart-crack" onClick={(e) => {
                                 e.stopPropagation(),
                                 deletefavouriteClick(game)}}>
-                                   💔
                            </button> 
-                           : <button className="favourite-btn" onClick={(e) => {
+                           : <button className="favourite-btn fa-regular fa-heart" onClick={(e) => {
                                  e.stopPropagation(),
                                 addfavouriteClick(game)}}>
-                                    ❤️
                             </button> 
                              
                             : ""}
                 </div>
-                <table className='table table-bordered border-primary mt-3'>
-                    <thead>
+                <table className='table table-bordered table-border-background mt-3'>
+                    <thead className='table-head'>
                         <tr>
                             <th scope="col">Steam</th>
                             <th scope="col">G2A</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody className='table-body'>
                         <tr>
                             <td>{game.steam_price} €</td>
                             <td>{game.g2a_price} €</td>
                         </tr>
                         <tr>
                             <td>
-                                <a className='btn btn-warning' href={`https://store.steampowered.com/app/${store.selectedGame.app_id}`} role="button" target="_blank">Visit store</a>
+                                <a className='btn btn-orange' href={`https://store.steampowered.com/app/${store.selectedGame.app_id}`} role="button" target="_blank">Visit store</a>
                             </td>
                             <td>
-                                <a className='btn btn-warning' href={`https://www.g2a.com/es/${store.selectedGame.g2a_url}`} role="button" target="_blank">Visit store</a>
+                                <a className='btn btn-orange' href={`https://www.g2a.com/es/${store.selectedGame.g2a_url}`} role="button" target="_blank">Visit store</a>
                             </td>
                         </tr>
                         <tr>

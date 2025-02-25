@@ -76,6 +76,14 @@
     }
 }
 
+.game-search-list-container {
+    background: #f5f5f5;
+}
+
+.game-row {
+    background: white;
+}
+
 .games-search-table {
     margin: 50px 30px 50px 30px;
     padding-bottom: 0px;
@@ -103,10 +111,14 @@
     background: none;
     border: none;
     font-size: 20px;
+    color: #4FB77F;
     }
 
 .favourite-btn:hover {
     transform: scale(1.1);
+    content: "\f004";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
     }
 
 /* Buttons for search-box */
@@ -211,6 +223,29 @@
 }
 
 .btn-more-tags:active {
+    transform: scale(0.95);
+}
+
+.btn-less-tags {
+    background: linear-gradient(to bottom, #6DDA9E , #4FB77F);
+    color: white;
+    border: none;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: background 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 6px 12px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-less-tags:hover {
+    background: linear-gradient(to bottom, #5FCB8D , #3E9F6E);
+    transform: scale(1.05);
+}
+
+.btn-less-tags:active {
     transform: scale(0.95);
 }
 
