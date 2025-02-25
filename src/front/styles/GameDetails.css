@@ -1,3 +1,5 @@
+
+/* clase para el círculo del rating */
 .fluid-ratio{
     position: relative;
     width: 10%;
@@ -6,12 +8,35 @@
     text-align: center;
 }
 
+/* clases para botones favoritos */
 .favourite-btn {
     background: none;
     border: none;
     font-size: 20px;
+    color: #4FB77F;
     }
 
 .favourite-btn:hover {
     transform: scale(1.1);
+    content: "\f004";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
     }
+
+/* clases para botones de visitar la store de las páginas */
+.btn-orange {
+    background: linear-gradient(to bottom, #FFA726, #FB8C00);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: background 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.btn-orange:hover {
+    background: linear-gradient(to bottom, rgb(255, 152, 0), #F57C00);
+    transform: scale(1.05);
+}

@@ -320,15 +320,13 @@ export const GameSearchList = () => {
                             </div>
                             {store.logedIn == true 
                             ? store.favouriteGames.some((fav) => fav.favourite_game.app_id === game.app_id) 
-                            ? <button className="favourite-btn me-3 fs-5" onClick={(e) => {
+                            ? <button className="favourite-btn me-3 fa-solid fa-heart-crack" onClick={(e) => {
                                 e.stopPropagation(),
                                 deletefavouriteClick(game)}}>
-                                   💔
                            </button> 
-                           : <button className="favourite-btn me-3 fs-5" onClick={(e) => {
+                           : <button className="favourite-btn me-3 fa-regular fa-heart" onClick={(e) => {
                                  e.stopPropagation(),
                                 addfavouriteClick(game)}}>
-                                    ❤️
                             </button> 
                              
                             : ""}

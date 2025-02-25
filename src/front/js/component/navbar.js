@@ -187,12 +187,11 @@ export const Navbar = () => {
                     alt={favourite.favourite_game.name} className="game-image-search my-auto" />
                 <p data-bs-dismiss="offcanvas" aria-label="Close" className="game-name my-auto me-2">{favourite.favourite_game.name} </p>
                 <p data-bs-dismiss="offcanvas" aria-label="Close" className="price mb-0">{favourite.favourite_game.steam_price > favourite.favourite_game.g2a_price ? favourite.favourite_game.g2a_price : favourite.favourite_game.steam_price} €</p>
-                <button type="button" className="favourite-btn fs-5" onClick={(e) => {
+                <button type="button" className="favourite-btn fs-5 fa-solid fa-heart-crack" onClick={(e) => {
                     e.stopPropagation(),
                         e.preventDefault(),
                         deletefavouriteClick(favourite)
                 }}>
-                    💔
                 </button>
             </a>
         </li>
@@ -202,9 +201,13 @@ export const Navbar = () => {
     useEffect(() => {
         const handleClickOutside = (e) => {
             if (e.target.parentElement == null) return;
-            if (isFavouritesOpen && e.target.parentElement.className !== "dropdown-item"
-                || e.target.className !== "favourite-btn fs-5" && e.target.parentElement.className == "dropdown-item" && isFavouritesOpen) {
-                setIsFavouritesOpen(false);
+            console.log(e.target);
+            if (isFavouritesOpen 
+                && e.target.className !== "favourite-btn fs-5 fa-solid fa-heart-crack"
+                // && e.target.parentElement.className !== "dropdown-item" 
+            ) {
+                    setIsFavouritesOpen(false);
+                    return
             }
         };
         document.addEventListener('click', handleClickOutside);

@@ -52,15 +52,13 @@ export const GameDetails = () => {
                     <h1>{game.name}</h1>
                     {store.logedIn == true 
                             ? store.favouriteGames.some((fav) => fav.favourite_game.app_id === game.app_id) 
-                            ? <button className="favourite-btn" onClick={(e) => {
+                            ? <button className="favourite-btn fa-solid fa-heart-crack" onClick={(e) => {
                                 e.stopPropagation(),
                                 deletefavouriteClick(game)}}>
-                                   💔
                            </button> 
-                           : <button className="favourite-btn" onClick={(e) => {
+                           : <button className="favourite-btn fa-regular fa-heart" onClick={(e) => {
                                  e.stopPropagation(),
                                 addfavouriteClick(game)}}>
-                                    ❤️
                             </button> 
                              
                             : ""}
@@ -79,10 +77,10 @@ export const GameDetails = () => {
                         </tr>
                         <tr>
                             <td>
-                                <a className='btn btn-warning' href={`https://store.steampowered.com/app/${store.selectedGame.app_id}`} role="button" target="_blank">Visit store</a>
+                                <a className='btn btn-orange' href={`https://store.steampowered.com/app/${store.selectedGame.app_id}`} role="button" target="_blank">Visit store</a>
                             </td>
                             <td>
-                                <a className='btn btn-warning' href={`https://www.g2a.com/es/${store.selectedGame.g2a_url}`} role="button" target="_blank">Visit store</a>
+                                <a className='btn btn-orange' href={`https://www.g2a.com/es/${store.selectedGame.g2a_url}`} role="button" target="_blank">Visit store</a>
                             </td>
                         </tr>
                         <tr>
