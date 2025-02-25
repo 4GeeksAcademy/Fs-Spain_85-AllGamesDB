@@ -2,6 +2,25 @@
     background: #f5f5f5;
 }
 
+/* clases para botón view more */
+.btn-orange-vmore {
+    background: linear-gradient(to bottom, #FFA726, #FB8C00);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: background 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.btn-orange:hover {
+    background: linear-gradient(to bottom, rgb(255, 152, 0), #F57C00);
+    transform: scale(1.05);
+}
+
+/* clases para carousel */
 .carousel-item {
     background: #222222;
 }
