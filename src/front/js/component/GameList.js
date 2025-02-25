@@ -22,6 +22,12 @@ export const GameList = () => {
         navigate(`/game/${game.id}`);
     };
 
+    const handleRandomGame = async() => {
+        let randomGame = Math.floor(Math.random()* store.numberOfPagesFromSearch * 10 - 10)
+        await actions.fetchGameById(randomGame)
+        navigate(`/game/${randomGame}`);
+    }
+
     const handleViewMore = () => {
         if(activeTab === "Relevance") {
             actions.updateSearchParameters(1, [], 0, 90, 0, 100, 2000, 2025)
@@ -31,6 +37,9 @@ export const GameList = () => {
         }
         if(activeTab === "Price") {
             actions.updateSearchParameters(1, [], 0, 90, 0, 100, 2000, 2025, "price:asc")
+        }
+        if(activeTab === "Release") {
+            actions.updateSearchParameters(1, [], 0, 90, 0, 100, 2000, 2025, "release:desc")
         }
         window.scrollTo({ top: 0, behavior: "smooth" });
         navigate("/allgames");
@@ -67,9 +76,12 @@ export const GameList = () => {
                     <li className="nav-item">
                         <a className={`nav-link ${activeTab === "Price" ? "active" : ""}`} onClick={() => {handleTabClick("Price"), actions.fetchGames(1, "price")}}>Price</a>      
                     </li>
+                    <li className="nav-item">
+                        <a className={`nav-link ${activeTab === "Release" ? "active" : ""}`} onClick={() => {handleTabClick("Release"), actions.fetchGames(1, "release")}}>Release</a>      
+                    </li>
                 </ul>
                 <div className="surprise-wrapper">
-                        <button className="btn-surprise-green" onClick={() => {navigate()}}>Surprise me!</button>
+                        <button className="btn-surprise-green" onClick={() => {handleRandomGame()}}>Surprise me!</button>
                 </div>
             </div>
             <div className="games-table">

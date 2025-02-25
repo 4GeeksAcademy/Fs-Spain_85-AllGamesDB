@@ -161,6 +161,15 @@ def get_page_games():
 
     return jsonify(result_data), 200
 
+@api.route("/game/<int:id>", methods=['GET'])
+def get_game_by_id(id):
+    try:
+        game = db.session.query(Games).filter_by(id=id).one()
+        return jsonify(game.serialize()), 200
+    except Exception as e: 
+        return jsonify({"error": str(e)}), 500
+
+
 @api.route("games/carrousel", methods=["GET"])
 def get_info_carrousel():
     relevant_games_url = f"{BACKEND_URL}/api/games"
