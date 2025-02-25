@@ -96,7 +96,7 @@ export const GameList = () => {
                             <div className="game-info">
                                 <h4 className='game-title'>{game.name}</h4>
                                 <div className='tags d-flex gap-2'>{game.game_tags.slice(0, 3).map((tag, index) =>
-                                    <button key={index} className="btn-green-tags" onClick={() => {navigate("/allgames"), actions.updateSearchParameters(1, [tag.tag_name], 0, 90, 0, 100, 2000, 2025)}}>{tag.tag_name}</button>
+                                    <button key={index} className="btn-green-tags">{tag.tag_name}</button>
                                  )}
                                 </div>
                             </div>

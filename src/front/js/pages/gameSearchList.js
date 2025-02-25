@@ -316,7 +316,10 @@ export const GameSearchList = () => {
                             <img src={`https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${game.app_id}/capsule_231x87.jpg`} alt={game.name} className="game-image" />
                             <div className="game-info">
                                 <h4 className='game-title'>{game.name}</h4>
-                                <p className='tags'>{game.game_tags.slice(0, 3).map((tag) => tag.tag_name).join(', ')}</p>
+                                <div className='tags d-flex gap-2'>{game.game_tags.slice(0, 3).map((tag, index) =>
+                                    <button key={index} className="btn-green-tags">{tag.tag_name}</button>
+                                 )}
+                                </div>
                             </div>
                             {store.logedIn == true 
                             ? store.favouriteGames.some((fav) => fav.favourite_game.app_id === game.app_id) 
@@ -337,7 +340,7 @@ export const GameSearchList = () => {
                     ))
 
                 ) : (
-                    <div className="d-flex m-auto vh-100">
+                    <div className="d-flex m-auto vh-100 justify-content-center align-items-center">
                         <div className="loader d-flex"></div>
                     </div>
                 )}
