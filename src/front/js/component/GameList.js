@@ -13,6 +13,22 @@ export const GameList = () => {
         setActiveTab(tabName);
     };
 
+    const handleFilterChange = (tab) => {
+        handleTabClick(tab);
+    
+        if (tab === "Relevance") {
+            actions.fetchGames();
+        } else if (tab === "Rating") {
+            actions.fetchGames(1, "rating");
+        } else if (tab === "Price") {
+            actions.fetchGames(1, "price");
+        } else if (tab === "Release") {
+            actions.fetchGames(1, "release");
+        } else {
+            actions.fetchGames();
+        }
+    };
+
     useEffect(() => {
         actions.fetchGames()
     }, [])
@@ -65,23 +81,34 @@ export const GameList = () => {
 
     return (
         <div className="game-list-container d-flex flex-column">
-            <div className="filters">
+            <div className="filters game-list-nav-big-screen">
                 <ul className="nav nav-tabs">
                     <li className="nav-item">
-                        <a className={`nav-link ${activeTab === "Relevance" ? "active" : ""}`} onClick={() => {handleTabClick("Relevance"), actions.fetchGames()}}>Relevance</a>    
+                        <a className={`nav-link ${activeTab === "Relevance" ? "active" : ""}`} onClick={() => {handleTabClick("Relevance"), handleFilterChange("Relevance")}}>Relevance</a>    
                     </li>
                     <li className="nav-item">
-                        <a className={`nav-link ${activeTab === "Rating" ? "active" : ""}`} onClick={() => {handleTabClick("Rating"), actions.fetchGames(1, "rating")}}>Rating</a>  
+                        <a className={`nav-link ${activeTab === "Rating" ? "active" : ""}`} onClick={() => {handleTabClick("Rating"), handleFilterChange("Rating")}}>Rating</a>  
                     </li>
                     <li className="nav-item">
-                        <a className={`nav-link ${activeTab === "Price" ? "active" : ""}`} onClick={() => {handleTabClick("Price"), actions.fetchGames(1, "price")}}>Price</a>      
+                        <a className={`nav-link ${activeTab === "Price" ? "active" : ""}`} onClick={() => {handleTabClick("Price"), handleFilterChange("Price")}}>Price</a>      
                     </li>
                     <li className="nav-item">
-                        <a className={`nav-link ${activeTab === "Release" ? "active" : ""}`} onClick={() => {handleTabClick("Release"), actions.fetchGames(1, "release")}}>Release</a>      
+                        <a className={`nav-link ${activeTab === "Release" ? "active" : ""}`} onClick={() => {handleTabClick("Release"), handleFilterChange("Release")}}>Release</a>      
                     </li>
                 </ul>
                 <div className="surprise-wrapper">
                         <button className="btn-surprise-green" onClick={() => {handleRandomGame()}}>Surprise me!</button>
+                </div>
+            </div>
+            <div className="filters game-list-nav-small-screen">
+                <select className="form-select m-0" onChange={(e) => {handleTabClick(e.target.value), handleFilterChange(e.target.value)}}>
+                    <option value="Relevance">Relevance</option>
+                    <option value="Rating">Rating</option>
+                    <option value="Price">Price</option>
+                    <option value="Release">Release</option>
+                </select>
+                <div className="surprise-wrapper">
+                    <button className="btn-surprise-green" onClick={() => handleRandomGame()}>Surprise me!</button>
                 </div>
             </div>
             <div className="games-table">

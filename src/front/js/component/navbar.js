@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import "../../styles/styles/navbar.css";
 import { Context } from '../store/appContext';
 import { useNavigate, useLocation } from 'react-router-dom';
+import "/workspaces/Fs-Spain_85-AllGamesDB/src/front/img/allgamesdb-high-resolution-logo-transparent.png"
 
 
 export const Navbar = () => {
@@ -243,7 +244,7 @@ export const Navbar = () => {
     return (
         <nav className="navbar fixed-top">
             <div className="container">
-                <Link to="/" className="logo">All <span>Games DB</span></Link>
+                <Link to="/" className="logo">AllGamesDB</Link>
                 {/* botón habilitador del offcanvas */}
                 <button className="navbar-toggler d-lg-none fa-solid fa-bars text-grey"
                     type="button"

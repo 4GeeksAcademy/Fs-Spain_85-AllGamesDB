@@ -11,10 +11,28 @@
 
 /* Logo */
 .logo {
-    font-size: 20px;
-    font-weight: bold;
-    text-decoration: none;
+    font-family: "Orbitron", serif;
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-style: normal;
+    font-size: 24px;
     color: white;
+    text-decoration: none;
+}
+
+.logo:hover {
+    transform: scale(1.1);
+    color: #4FB77F;
+}
+
+.logo:active {
+    transform: scale(0.9);
+    color: #4FB77F;
+}
+
+.img-logo {
+    width: 50px;
+    height: auto;
 }
 
 /* Alineación de los elementos a la derecha */
@@ -54,12 +72,8 @@
     transition: background-color 0.2s ease;
 }
 
-.dropdown-menu li:nth-last-child(n-1) {
-    display: flex;
-    align-items: center;
-    padding: 8px 10px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
+.dropdown-menu li:last-child {
+    border-bottom: none;
 }
 
 .dropdown-menu a:hover {

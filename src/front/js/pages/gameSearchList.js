@@ -226,7 +226,7 @@ export const GameSearchList = () => {
                             }
                             <div className="d-flex my-1 justify-content-center col-12" >
                                 <button className="m-auto btn-more-tags" onClick={() => setNumberOfTagsShown(numberOfTagsShown + 20)}>Show More Tags ({store.tags.length - numberOfTagsShown})...</button>
-                                <button className="m-auto btn-less-tags" onClick={() => setNumberOfTagsShown(numberOfTagsShown + 20)}>Show More Tags ({store.tags.length - numberOfTagsShown})...</button>
+                                <button className={`m-auto btn-less-tags ${numberOfTagsShown >= 40 ? "" : "d-none"}`} onClick={() => setNumberOfTagsShown(numberOfTagsShown - 20)}>Show Less Tags</button>
                             </div>
                         </>
                         :
