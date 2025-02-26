@@ -17,6 +17,8 @@ from app import jwt
 from datetime import datetime
 from dotenv import load_dotenv
 import os, json
+import base64
+from app import serializer
 
 
 
@@ -382,6 +384,7 @@ def signup():
         if item not in request_data:
             return jsonify({"error": f"Missing information: {item}"}), 400
     email = request_data.get("email").lower()
+    print("aquiiiiiiiiiiiiii",email)
     password = request_data.get("password")
     # validar el email
     email_regex = re.compile(r'^[[A-Za-z0-9\._%+\-]+@[A-Za-z0-9\.\-]+\.[A-Za-z]{2,}$')
@@ -575,36 +578,43 @@ def token_verify():
 @api.route('/forgot-password', methods=['POST'])
 def forgot_password():
     data = request.get_json()
-    email = data.get('email')
+    email = data.get('email').lower()
 
-    user = find_user_by_email(email)
-    if not user:
-        return jsonify({"error": "No register email"}), 404
-    token = serializer.dumps(email, salt='password-reset-salt')
-
-    reset_link = f"https://jubilant-barnacle-jj4xq9g5r4gjhqq9j-3001.app.github.dev/reset-password/{token}"
-    send_email(email, reset_link)
-    return jsonify({"message": "An email has been send with instructions"}), 200
-
-def find_user_by_email(email):
     try:
-        user = User.query.filter_by(email=email).one_or_none()
-        return user
+        user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one()
     except Exception as e:
         print(f"Error finding user by email: {e}")
         return None
+    if not user:
+        return jsonify({"error": "No register email"}), 404
+    token = serializer.dumps(email, salt='password-reset-salt')
+    tokenURLsafe = base64.urlsafe_b64encode(token.encode()).decode()
 
-def send_email(to_email, reset_link):
-    from_email = os.environ.get("EMAIL_USER")
-    password = os.environ.get("EMAIL_PASSWORD")
-    subject = "Restore Password"
-    body = f"To restore your password, click here: {reset_link}"
+    reset_link = f"{os.environ.get('FRONTEND_URL')}/reset-password/{tokenURLsafe}"
 
+    response = jsonify({"msg": "Email sent, check your inbox.", "reset_link": reset_link})
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    return response, 200
+
+@api.route('/reset-password/<token>', methods=['POST'])
+def reset_password(token):
     try:
-      server = smtplib.SMTP("smtp.gmail.com", 587)
-      server.starttls()
-      server.login(from_email, password)
-      server.sendmail(from_email, to_email, f"Subject: {subject}\n\n{body}")
-      server.quit()
+        decoded_token = base64.urlsafe_b64decode(token).decode()
+        email = serializer.loads(decoded_token, salt='password-reset-salt', max_age=3600) # 1h de validez
+        try:
+            user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one()
+        except:
+            print("user not found")
+            return jsonify({"error": "user not found"}), 404
+        new_password = request.json.get('password')
+        password_regex = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@#$%^&+=]{8,}$'
+        if not re.fullmatch(password_regex, new_password):
+            return jsonify({"error": "Invalid password, it must contain at least 8 characters, one uppercase letter, one lowercase letter, and one number."}), 400
+        user.set_password(new_password)
+        db.session.commit()
+
+        return jsonify({"message": "Contraseña actualizada"}), 200
     except Exception as e:
-        print(f"Error sending email: {e}")
+        return jsonify({"error": "Token inválido o expirado"}), 400

@@ -20,7 +20,6 @@ import { Favorites } from "./component/Favorites";
 import ChangePassword from "./component/ChangePassword";
 import ForgotPassword from "./component/ForgotPassword";
 import ResetPassword from "./component/ResetPassword";
-import { RequestEmailReset } from "./component/RequestEmailReset";
 
 import "../styles/layout.css"
 
@@ -41,7 +40,7 @@ const Layout = () => {
 
                         <Route element={<Home />} path="/" />
                         <Route element={<Demo />} path="/demo" />
-                        <Route element={<Single />} path="/single/:theid" />
+                        {/* <Route element={<Single />} path="/single/:theid" /> */}
                         <Route element={<Videogames />} path="/videogames" />
                         <Route element={<GameDetails />} path="/game/:id" />
                         <Route element={<GameSearchList />} path="/allgames" />
@@ -50,9 +49,7 @@ const Layout = () => {
                         <Route element={<Favorites />} path="/favorites" />
                         <Route element={<ChangePassword />} path="/changepassword" />
                         <Route element={<ForgotPassword />} path="/forgot-password" />
-                        <Route element={<ForgotPassword />} path="/forgot-password"  />
-                        <Route element={<ResetPassword />} path="/reset-password/:email" />
-                        <Route element={<RequestEmailReset />} path="/request-email-reset" />
+                        <Route element={<ResetPassword />} path="/reset-password/:token" />
 
                         {/* Ruta protegida */}
                         <Route element={

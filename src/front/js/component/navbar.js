@@ -359,7 +359,7 @@ export const Navbar = () => {
                                                     {loginMessage.text}
                                                 </div>
                                                 <button type="submit" className="btn btn-submit">Login</button>
-                                                <Link to="/reset-password/:email" className="forgot-password-link">Forgot your password?</Link>
+                                                <Link to="forgot-password" className="forgot-password-link" onClick={() => setIsLoginOpen(false)}>Forgot your password?</Link>
                                             </form>
                                         </div>
                                     )}
@@ -558,7 +558,7 @@ export const Navbar = () => {
                                                 {loginMessage.text}
                                             </div>
                                             <button type="submit" className="btn btn-submit">Login</button>
-                                            <Link to="request-email-reset" className="forgot-password-link">Forgot your password?</Link>
+                                            <Link to="forgot-password" className="forgot-password-link" onClick={() => setIsLoginOpen(false)}>Forgot your password?</Link>
                                         </form>
                                     </div>
                                 )}

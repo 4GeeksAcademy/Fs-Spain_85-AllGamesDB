@@ -9,7 +9,7 @@ const ResetPassword = () => {
     const [message, setMessage] = useState("");
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
-    const email = searchParams.get('email');
+    // const email = searchParams.get('email');
 
     const handleReset = async (e) => {
         e.preventDefault();
@@ -19,41 +19,44 @@ const ResetPassword = () => {
         }
         try {
       
-            const response = await resetPassword(token, password);
-            setMessage("Password reset successfully.");
-         
-            setTimeout(() => {
-                navigate("/login");
-            }, 2000);
+            const response = await resetPassword(password);
+            console.log(response);
+            
+            if (response.msg) setMessage("Password reset successfully.");
+            else if (response.error) setMessage("Failed to reset password. Please try again later.")
+            // setTimeout(() => {
+            //     navigate("/login");
+            // }, 2000);
         } catch (error) {
             setMessage("Failed to reset password. Please try again.");
             console.error("Reset password error:", error);
         }
     };
+    
 
-    const resetPassword = async (token, password) => {
-
-        const response = await fetch(`/api/reset-password/${token}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ password })
-        })
-        if (!response.ok) {
-            throw new Error('Failed to reset password');
-        }
-        return response.json();
+const resetPassword = async (newPassword) => {
+    const response = await fetch(`${process.env.BACKEND_URL}/api/reset-password/${token}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ password: newPassword })
+    });
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Reset failed");
     }
+    return await response.json();
+};
 
-    useEffect(() => {
-        console.log("Token recibido:", token);
-    }, [token]);
+    // useEffect(() => {
+    //     console.log("Token recibido:", token);
+    // }, [token]);
 
     return (
         <div>
             <h2>Restore Password</h2>
-            {email && <p>Email: {email}</p>}
+            {/* {email && <p>Email: {email}</p>} */}
             <p>New password</p>
             <form onSubmit={handleReset}>
                 <input
@@ -78,3 +81,19 @@ const ResetPassword = () => {
 };
 
 export default ResetPassword;
+
+
+// const resetPassword = async (token, password) => {
+
+    //     const response = await fetch(`/api/reset-password/${token}`, {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         },
+    //         body: JSON.stringify({ password })
+    //     })
+    //     if (!response.ok) {
+    //         throw new Error('Failed to reset password');
+    //     }
+    //     return response.json();
+    // }
