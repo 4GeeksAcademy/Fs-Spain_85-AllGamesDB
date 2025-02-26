@@ -10,3 +10,9 @@ cd ../..
 pipenv install
 
 pipenv run upgrade
+
+pipenv shell
+
+flask insert-game-tag-data
+
+flask insert-game-data
