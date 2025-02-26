@@ -9,6 +9,8 @@ const ChangePassword = () => {
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [message, setMessage] = useState({ type: "", text: "" });
+    const [newPasswordInputType, setNewPasswordInputType] = useState("password")
+    const [confirmPasswordInputType, setConfirmPasswordInputType] = useState("password")
 
     const handleChangePassword = async (e) => {
         e.preventDefault();
@@ -43,6 +45,15 @@ const ChangePassword = () => {
 
     }, [message.text])
 
+    const handleShowNewPassword = () => {
+        if (newPasswordInputType === "password") setNewPasswordInputType("text");
+        else setNewPasswordInputType("password")
+    }
+
+    const handleShowConfirmPassword = () => {
+        if (confirmPasswordInputType === "password") setConfirmPasswordInputType("text");
+        else setConfirmPasswordInputType("password")
+    }
 
     return (
         <div className="mx-auto mt-5 col-lg-4 col-md-6 col-11 change-password-container">
@@ -57,24 +68,40 @@ const ChangePassword = () => {
                     onChange={(e) => setOldPassword(e.target.value)}
                     required
                 />
-                <label className="mt-2" htmlFor="newPassword">New password:</label>
-                <input
-                    id="newPassword"
-                    type="password"
-                    placeholder="New password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    required
-                />
-                <label className="mt-2" htmlFor="confirmPassword">Confirm new password:</label>
-                <input
-                    id="confirmPassword"
-                    type="password"
-                    placeholder="Confirm new password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                />
+                <div className="position-relative">
+
+                    <label className="mt-2" htmlFor="newPassword">New password:</label>
+                    <input
+                        id="newPassword"
+                        type={`${newPasswordInputType}`}
+                        placeholder="New password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        required
+                    />
+                    <button className={`fa-regular ${confirmPasswordInputType === "password"
+                        ? "fa-eye-slash"
+                        : "fa-eye"} 
+                                                    eye-button-restore`}
+                        type="button" onClick={handleShowNewPassword}></button>
+                </div>
+                <div className="position-relative">
+
+                    <label className="mt-2" htmlFor="confirmPassword">Confirm new password:</label>
+                    <input
+                        id="confirmPassword"
+                        type={`${confirmPasswordInputType}`}
+                        placeholder="Confirm new password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        required
+                    />
+                    <button className={`fa-regular ${confirmPasswordInputType === "password"
+                        ? "fa-eye-slash"
+                        : "fa-eye"} 
+                                                    eye-button-restore`}
+                        type="button" onClick={handleShowConfirmPassword}></button>
+                </div>
                 <div className={`alert mt-3 ${message.type === "" ? "d-none" : message.type === "error" ? "alert-danger" : "alert-success"}`} role="alert">
                     {message.text}
                 </div>

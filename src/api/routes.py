@@ -17,13 +17,16 @@ from app import jwt
 from datetime import datetime
 from dotenv import load_dotenv
 import os, json
+import base64
+from app import serializer
+
+
 
 api = Blueprint('api', __name__)
 bcrypt = Bcrypt()
 
 
 
-# Allow CORS requests to this API
 CORS(api)#proteccion solo cuando permito
 
 load_dotenv()
@@ -381,6 +384,7 @@ def signup():
         if item not in request_data:
             return jsonify({"error": f"Missing information: {item}"}), 400
     email = request_data.get("email").lower()
+    print("aquiiiiiiiiiiiiii",email)
     password = request_data.get("password")
     # validar el email
     email_regex = re.compile(r'^[[A-Za-z0-9\._%+\-]+@[A-Za-z0-9\.\-]+\.[A-Za-z]{2,}$')
@@ -571,4 +575,45 @@ def token_verify():
     return response, 200
 
 
-    
+@api.route('/forgot-password', methods=['POST'])
+def forgot_password():
+    data = request.get_json()
+    email = data.get('email').lower()
+
+    try:
+        user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one()
+    except Exception as e:
+        print(f"Error finding user by email: {e}")
+        return None
+    if not user:
+        return jsonify({"error": "No register email"}), 404
+    token = serializer.dumps(email, salt='password-reset-salt')
+    tokenURLsafe = base64.urlsafe_b64encode(token.encode()).decode()
+
+    reset_link = f"{os.environ.get('FRONTEND_URL')}/reset-password/{tokenURLsafe}"
+
+    response = jsonify({"msg": "Email sent, check your inbox.", "reset_link": reset_link})
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    return response, 200
+
+@api.route('/reset-password/<token>', methods=['POST'])
+def reset_password(token):
+    try:
+        decoded_token = base64.urlsafe_b64decode(token).decode()
+        email = serializer.loads(decoded_token, salt='password-reset-salt', max_age=3600) # 1h de validez
+        try:
+            user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one()
+        except:
+            return jsonify({"error": "user not found"}), 404
+        new_password = request.json.get('password')
+        password_regex = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@#$%^&+=]{8,}$'
+        if not re.fullmatch(password_regex, new_password):
+            return jsonify({"error": "Invalid password, it must contain at least 8 characters, one uppercase letter, one lowercase letter, and one number."}), 400
+        user.set_password(new_password)
+        db.session.commit()
+
+        return jsonify({"msg": "New password setted."}), 200
+    except:
+        return jsonify({"error": "Invalid token, the token only lasts 1 hour."}), 400

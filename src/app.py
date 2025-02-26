@@ -12,6 +12,7 @@ from api.models import db
 from api.admin import setup_admin
 from api.commands import setup_commands
 from flask_jwt_extended import JWTManager
+from itsdangerous import URLSafeTimedSerializer
 
 app = Flask(__name__)
 
@@ -20,6 +21,7 @@ app = Flask(__name__)
 
 app.config["JWT_SECRET_KEY"] = "manubrio-esternal"
 jwt = JWTManager(app)
+serializer = URLSafeTimedSerializer(os.environ.get("SECRET_KEY"))
 
 from api.routes import api
 

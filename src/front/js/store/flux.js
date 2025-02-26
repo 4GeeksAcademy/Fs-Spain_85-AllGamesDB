@@ -322,10 +322,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 
-
-
-
-
 			fetchFavourites: async function fetchFavourites() {
 				const store = getStore();
 				let token = localStorage.getItem("token");
