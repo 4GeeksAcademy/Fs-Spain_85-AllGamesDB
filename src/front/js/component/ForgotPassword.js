@@ -55,22 +55,23 @@ const ForgotPassword = () => {
     }
 
     return (
-        <div>
-            <h2>Password recovery</h2>
-            <form onSubmit={sendEmail}>
+        <div className="mx-auto mt-5 col-lg-4 col-md-6 col-11">
+            <h2 className="text-center">Password recovery</h2>
+            <form className="text-center" onSubmit={sendEmail}>
+                <label className="mt-2" htmlFor="email">Email:</label>
                 <input
+                    id="email"
                     type="email"
                     placeholder="Email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                 />
-                <div className={`alert ${message.type === '' ? '' : message.type === "error" ? "alert-danger" : 'alert-success'}`} role="alert">
+                <div className={`alert mt-3 mb-0 ${message.type === '' ? 'd-none' : message.type === "error" ? "alert-danger" : 'alert-success'}`} role="alert">
                     {message.text}
                 </div>
-                <button className="btn btn-primary" type="submit">Send</button>
+                <button className="btn btn-green mt-3" type="submit">Send</button>
             </form>
-            {/* {message && <p>{message}</p>} */}
         </div>
     );
 };

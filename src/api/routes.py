@@ -606,7 +606,6 @@ def reset_password(token):
         try:
             user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one()
         except:
-            print("user not found")
             return jsonify({"error": "user not found"}), 404
         new_password = request.json.get('password')
         password_regex = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@#$%^&+=]{8,}$'
@@ -615,6 +614,6 @@ def reset_password(token):
         user.set_password(new_password)
         db.session.commit()
 
-        return jsonify({"message": "Contraseña actualizada"}), 200
-    except Exception as e:
-        return jsonify({"error": "Token inválido o expirado"}), 400
+        return jsonify({"msg": "New password setted."}), 200
+    except:
+        return jsonify({"error": "Invalid token, the token only lasts 1 hour."}), 400

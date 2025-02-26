@@ -28,7 +28,7 @@ export const GameSearchList = () => {
     const handleRatingChange = (newRatingValue) => {
         setRatingValue(newRatingValue);
     };
-    
+
     const navigate = useNavigate();
 
     // Save and delete new added tags in state
@@ -79,7 +79,7 @@ export const GameSearchList = () => {
             "relevant:asc"
         );
         console.log(activeTags);
-        
+
     };
 
     // Handles navigation for clicked games
@@ -182,15 +182,15 @@ export const GameSearchList = () => {
                 <div className="mb-5 p-2">
                     <h4>Order By:</h4>
                     <select onChange={(e) => setSetOrderBy(e.target.value)} value={orderBy} className="select-container">
-                            <option value="relevant:asc">Most Relevant</option>
-                            <option value="price:asc">Lowest Price</option>
-                            <option value="price:desc">Highest Price</option>
-                            <option value="release:asc">Oldest Releases</option>
-                            <option value="release:desc">Newest Releases</option>
-                            <option value="rating:asc">Lowest Rated</option>
-                            <option value="rating:desc">Highest Rated</option>
+                        <option value="relevant:asc">Most Relevant</option>
+                        <option value="price:asc">Lowest Price</option>
+                        <option value="price:desc">Highest Price</option>
+                        <option value="release:asc">Oldest Releases</option>
+                        <option value="release:desc">Newest Releases</option>
+                        <option value="rating:asc">Lowest Rated</option>
+                        <option value="rating:desc">Highest Rated</option>
                     </select>
-                </div>   
+                </div>
 
                 <div className="d-flex gap-2 justify-content-center mb-3">
                     <button className="btn-search-green col-5" onClick={() => actions.updateSearchParameters(1, activeTags, priceValue[0], priceValue[1], ratingValue[0], ratingValue[1], yearValue[0], yearValue[1], orderBy)}>Search</button>
@@ -211,85 +211,85 @@ export const GameSearchList = () => {
                     <button type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                 </div>
                 <div className="offcanvas-body d-lg-none d-flex flex-column">
-                <h4>Tags: </h4>
-                <div className="d-flex flex-wrap pe-0 gap-2">
-                    {store.tags.length > 0 ?
-                        <>
-                            {store.tags
-                                .sort((gameA, gameB) => gameB[1] - gameA[1])
-                                .slice(0, numberOfTagsShown)
-                                .map((tag, index) => (
-                                    <div key={index} className={`my-1 align-content-center`} onClick={() => toggleTag(tag[0])}>
-                                        <button className={`m-auto p-1 ${activeTags.includes(tag[0]) ? "btn-green" : "btn-gray"}`}>{tag[0]} ({tag[1]})</button>
-                                    </div>
-                                ))
-                            }
-                            <div className="d-flex my-1 justify-content-center col-12" >
-                                <button className="m-auto btn-more-tags" onClick={() => setNumberOfTagsShown(numberOfTagsShown + 20)}>Show More Tags ({store.tags.length - numberOfTagsShown})...</button>
-                                <button className={`m-auto btn-less-tags ${numberOfTagsShown >= 40 ? "" : "d-none"}`} onClick={() => setNumberOfTagsShown(numberOfTagsShown - 20)}>Show Less Tags</button>
+                    <h4>Tags: </h4>
+                    <div className="d-flex flex-wrap pe-0 gap-2">
+                        {store.tags.length > 0 ?
+                            <>
+                                {store.tags
+                                    .sort((gameA, gameB) => gameB[1] - gameA[1])
+                                    .slice(0, numberOfTagsShown)
+                                    .map((tag, index) => (
+                                        <div key={index} className={`my-1 align-content-center`} onClick={() => toggleTag(tag[0])}>
+                                            <button className={`m-auto p-1 ${activeTags.includes(tag[0]) ? "btn-green" : "btn-gray"}`}>{tag[0]} ({tag[1]})</button>
+                                        </div>
+                                    ))
+                                }
+                                <div className="d-flex my-1 justify-content-center col-12" >
+                                    <button className="m-auto btn-more-tags" onClick={() => setNumberOfTagsShown(numberOfTagsShown + 20)}>Show More Tags ({store.tags.length - numberOfTagsShown})...</button>
+                                    <button className={`m-auto btn-less-tags ${numberOfTagsShown >= 40 ? "" : "d-none"}`} onClick={() => setNumberOfTagsShown(numberOfTagsShown - 20)}>Show Less Tags</button>
+                                </div>
+                            </>
+                            :
+                            <div className="d-flex m-auto">
+                                <div className="loader d-flex"></div>
+                            </div>}
+                    </div>
+
+                    <div className="mb-5">
+                        <h4>Price:</h4>
+                        <div className="m-auto d-flex">
+                            <input className="slider-input" value={`${priceValue[0]}€`} readOnly ></input>
+                            <div className="slider-container">
+                                <Slider
+                                    range
+                                    value={priceValue}
+                                    onChange={handlePriceChange}
+                                    min={0}
+                                    max={90}
+                                />
                             </div>
-                        </>
-                        :
-                        <div className="d-flex m-auto">
-                            <div className="loader d-flex"></div>
-                        </div>}
-                </div>
-
-                <div className="mb-5">
-                    <h4>Price:</h4>
-                    <div className="m-auto d-flex">
-                        <input className="slider-input" value={`${priceValue[0]}€`} readOnly ></input>
-                        <div className="slider-container">
-                            <Slider
-                                range
-                                value={priceValue}
-                                onChange={handlePriceChange}
-                                min={0}
-                                max={90}
-                            />
+                            <input className="slider-input" value={`${priceValue[1]}€`} readOnly ></input>
                         </div>
-                        <input className="slider-input" value={`${priceValue[1]}€`} readOnly ></input>
                     </div>
-                </div>
 
-                <div className="mb-5">
-                    <h4>Rating:</h4>
-                    <div className="m-auto d-flex">
-                        <input className="slider-input" value={ratingValue[0]} readOnly ></input>
-                        <div className="slider-container">
-                            <Slider
-                                range
-                                value={ratingValue}
-                                onChange={handleRatingChange}
-                                min={0}
-                                max={100}
-                            />
+                    <div className="mb-5">
+                        <h4>Rating:</h4>
+                        <div className="m-auto d-flex">
+                            <input className="slider-input" value={ratingValue[0]} readOnly ></input>
+                            <div className="slider-container">
+                                <Slider
+                                    range
+                                    value={ratingValue}
+                                    onChange={handleRatingChange}
+                                    min={0}
+                                    max={100}
+                                />
+                            </div>
+                            <input className="slider-input" value={ratingValue[1]} readOnly ></input>
                         </div>
-                        <input className="slider-input" value={ratingValue[1]} readOnly ></input>
                     </div>
-                </div>
 
-                <div className="mb-5">
-                    <h4>Year:</h4>
-                    <div className="m-auto d-flex">
-                        <input className="slider-input" value={yearValue[0]} readOnly ></input>
-                        <div className="slider-container">
-                            <Slider
-                                range
-                                value={yearValue}
-                                onChange={handleYearChange}
-                                min={2000}
-                                max={2025}
-                            />
+                    <div className="mb-5">
+                        <h4>Year:</h4>
+                        <div className="m-auto d-flex">
+                            <input className="slider-input" value={yearValue[0]} readOnly ></input>
+                            <div className="slider-container">
+                                <Slider
+                                    range
+                                    value={yearValue}
+                                    onChange={handleYearChange}
+                                    min={2000}
+                                    max={2025}
+                                />
+                            </div>
+                            <input className="slider-input" value={yearValue[1]} readOnly ></input>
                         </div>
-                        <input className="slider-input" value={yearValue[1]} readOnly ></input>
                     </div>
-                </div>
 
-                <div className="mb-5">
-                    <h4>Order By:</h4>
+                    <div className="mb-5">
+                        <h4>Order By:</h4>
 
-                    <select onChange={(e) => setSetOrderBy(e.target.value)} value={orderBy} className="select-container">
+                        <select onChange={(e) => setSetOrderBy(e.target.value)} value={orderBy} className="select-container">
                             <option value="relevant:asc">Most Relevant</option>
                             <option value="price:asc">Lowest Price</option>
                             <option value="price:desc">Highest Price</option>
@@ -297,13 +297,13 @@ export const GameSearchList = () => {
                             <option value="release:desc">Newest Releases</option>
                             <option value="rating:asc">Lowest Rated</option>
                             <option value="rating:desc">Highest Rated</option>
-                    </select>
-                </div>   
+                        </select>
+                    </div>
 
-                <div className="d-flex gap-2 justify-content-center">
-                    <button className="btn-search-green col-5" onClick={() => actions.updateSearchParameters(1, activeTags, priceValue[0], priceValue[1], ratingValue[0], ratingValue[1], yearValue[0], yearValue[1], orderBy)}>Search</button>
-                    <button className="btn-reset-orange col-5" data-bs-dismiss="offcanvas" aria-label="Close" onClick={resetParameters}>Reset Parameters</button>
-                </div>
+                    <div className="d-flex gap-2 justify-content-center">
+                        <button className="btn-search-green col-5" data-bs-dismiss="offcanvas" aria-label="Close" onClick={() => actions.updateSearchParameters(1, activeTags, priceValue[0], priceValue[1], ratingValue[0], ratingValue[1], yearValue[0], yearValue[1], orderBy)}>Search</button>
+                        <button className="btn-reset-orange col-5" data-bs-dismiss="offcanvas" aria-label="Close" onClick={resetParameters}>Reset Parameters</button>
+                    </div>
                 </div>
             </div>
 
@@ -318,22 +318,28 @@ export const GameSearchList = () => {
                                 <h4 className='game-title'>{game.name}</h4>
                                 <div className='tags d-flex gap-2'>{game.game_tags.slice(0, 3).map((tag, index) =>
                                     <button key={index} className="btn-green-tags">{tag.tag_name}</button>
-                                 )}
+                                )}
                                 </div>
                             </div>
-                            {store.logedIn == true 
-                            ? store.favouriteGames.some((fav) => fav.favourite_game.app_id === game.app_id) 
-                            ? <button className="favourite-btn me-3 fa-solid fa-heart-crack" onClick={(e) => {
-                                e.stopPropagation(),
-                                deletefavouriteClick(game)}}>
-                           </button> 
-                           : <button className="favourite-btn me-3 fa-regular fa-heart" onClick={(e) => {
-                                 e.stopPropagation(),
-                                addfavouriteClick(game)}}>
-                            </button> 
-                             
-                            : ""}
-                            <button className="price-btn">{game.steam_price > game.g2a_price ? game.g2a_price : game.steam_price} €</button>
+                            {store.logedIn == true
+                                ? store.favouriteGames.some((fav) => fav.favourite_game.app_id === game.app_id)
+                                    ? <div>
+                                        <button className="favourite-btn px-3 fa-solid fa-heart-crack" onClick={(e) => {
+                                            e.stopPropagation(),
+                                                deletefavouriteClick(game)
+                                        }}>
+                                        </button>
+                                        <button className="price-btn">{game.steam_price > game.g2a_price ? game.g2a_price : game.steam_price} €</button>
+                                    </div>
+                                    : <div>
+                                        <button className="favourite-btn px-3 fa-regular fa-heart" onClick={(e) => {
+                                            e.stopPropagation(),
+                                                addfavouriteClick(game)
+                                        }}>
+                                        </button>
+                                        <button className="price-btn">{game.steam_price > game.g2a_price ? game.g2a_price : game.steam_price} €</button>
+                                    </div>
+                                : ""}
                         </div>
                     ))
 

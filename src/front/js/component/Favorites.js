@@ -44,13 +44,14 @@ export const Favorites = () => {
                                     <h4 className='game-title'>{game.name}</h4>
                                     <p className='tags'>{game.game_tags.slice(0, 3).map((tag) => tag.tag_name).join(', ')}</p>
                                 </div>
-                                <button className="favourite-btn me-3 fa-solid fa-heart-crack" onClick={(e) => {
-                                    e.stopPropagation();
-                                    e.preventDefault();
-                                    deletefavouriteClick(game);
-                                }}>
-                                </button>
-                                <button className="price-btn">{gamePriceComparer(game)}</button>
+                                <div>
+                                    <button className="favourite-btn px-3 fa-solid fa-heart-crack" onClick={(e) => {
+                                        e.stopPropagation(),
+                                            deletefavouriteClick(game)
+                                    }}>
+                                    </button>
+                                    <button className="price-btn">{gamePriceComparer(game)}</button>
+                                </div>
                             </div>
                         );
                     })

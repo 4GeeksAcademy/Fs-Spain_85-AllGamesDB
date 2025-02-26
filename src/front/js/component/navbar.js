@@ -188,7 +188,7 @@ export const Navbar = () => {
                     alt={favourite.favourite_game.name} className="game-image-search my-auto" />
                 <p data-bs-dismiss="offcanvas" aria-label="Close" className="game-name my-auto me-2">{favourite.favourite_game.name} </p>
                 <p data-bs-dismiss="offcanvas" aria-label="Close" className="price mb-0">{favourite.favourite_game.steam_price > favourite.favourite_game.g2a_price ? favourite.favourite_game.g2a_price : favourite.favourite_game.steam_price} €</p>
-                <button type="button" className="favourite-btn fs-5 fa-solid fa-heart-crack" onClick={(e) => {
+                <button type="button" className="favourite-btn ps-2 pe-0 fs-5 fa-solid fa-heart-crack" onClick={(e) => {
                     e.stopPropagation(),
                         e.preventDefault(),
                         deletefavouriteClick(favourite)
@@ -203,7 +203,7 @@ export const Navbar = () => {
         const handleClickOutside = (e) => {
             if (e.target.parentElement == null) return;
             if (isFavouritesOpen
-                && e.target.className !== "favourite-btn fs-5 fa-solid fa-heart-crack"
+                && e.target.className !== "favourite-btn ps-2 pe-0 fs-5 fa-solid fa-heart-crack"
                 // && e.target.parentElement.className !== "dropdown-item" 
             ) {
                 setIsFavouritesOpen(false);
@@ -247,7 +247,7 @@ export const Navbar = () => {
         <nav className="navbar fixed-top">
             <div className="container pe-0">
                 <div className="d-flex justify-content-center text-center ">
-                    <img src="/allgames_transparent.png" className="img-logo"/>
+                    <img src="/allgames_transparent.png" className="img-logo" />
                     <Link to="/" className="logo my-auto">AllGamesDB</Link>
                 </div>
                 {/* botón habilitador del offcanvas */}
@@ -362,7 +362,11 @@ export const Navbar = () => {
                                                     {loginMessage.text}
                                                 </div>
                                                 <button type="submit" className="btn btn-submit">Login</button>
-                                                <Link to="forgot-password" className="forgot-password-link" onClick={() => setIsLoginOpen(false)}>Forgot your password?</Link>
+                                                <Link to="forgot-password" 
+                                                className="forgot-password-link" 
+                                                onClick={() => setIsLoginOpen(false)} 
+                                                data-bs-dismiss="offcanvas" aria-label="Close"
+                                                >Forgot your password?</Link>
                                             </form>
                                         </div>
                                     )}
@@ -394,8 +398,12 @@ export const Navbar = () => {
                                         Profile
                                     </button>
                                     <ul className={`dropdown-menu dropdown-menu-end-small ${isProfileOpen ? "show" : ""}`}>
-                                        <li className="grey-hover justify-content-center" onClick={(e) => { e.preventDefault(), navigate("/dashboard") }}>dashboard</li>
+                                        <li className="grey-hover justify-content-center"
+                                            data-bs-dismiss="offcanvas" aria-label="Close"
+                                            onClick={(e) => { e.preventDefault(), navigate("/dashboard") }}
+                                        >dashboard</li>
                                         <li className="grey-hover justify-content-center border-0"
+                                            data-bs-dismiss="offcanvas" aria-label="Close"
                                             onClick={() => { setIsProfileOpen(false), handleLogout() }}
                                         >Logout</li>
 
@@ -561,7 +569,10 @@ export const Navbar = () => {
                                                 {loginMessage.text}
                                             </div>
                                             <button type="submit" className="btn btn-submit">Login</button>
-                                            <Link to="forgot-password" className="forgot-password-link" onClick={() => setIsLoginOpen(false)}>Forgot your password?</Link>
+                                            <Link to="forgot-password" 
+                                            className="forgot-password-link" 
+                                            onClick={() => setIsLoginOpen(false)} 
+                                            >Forgot your password?</Link>
                                         </form>
                                     </div>
                                 )}
