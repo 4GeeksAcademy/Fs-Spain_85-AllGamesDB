@@ -58,7 +58,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const store = getStore();
 				setStore({ ...store, selectedGame: game });
 				console.log(store.selectedGame.app_id);
-
 			},
 			fetchGameDetails: async (appId) => {
 				const store = getStore();
@@ -67,22 +66,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 					// console.log(response);
 					if (!response.ok) throw new Error("Error en la respuesta de la API");
 					const data = await response.json();
-					// console.log(data);
-					console.log(data[appId].data.name);
 					let resultSteam = data[appId].data
 					setStore({
 						...store,
 						selectedGame: {
 							...store.selectedGame,
-							shortDescription: resultSteam.short_description,
-							screenshots: resultSteam.screenshots,
-							movies: resultSteam.movies,
-							image: resultSteam.header_image
+							detailedInfo: resultSteam
 						}
 					})
-					// console.log(store.selectedGame);
-
-					return data[appId].data
+					console.log(getStore().selectedGame);
+					
 				} catch (error) {
 					console.error("Error al obtener los juegos:", error);
 				}

@@ -329,7 +329,7 @@ def post_tag():
     return jsonify({"Added tags": added_tags})
 
 def fetch_steam_data(appId):
-    url = f"https://store.steampowered.com/api/appdetails?appids={appId}"
+    url = f"https://store.steampowered.com/api/appdetails?appids={appId}&l=english"
     response = requests.get(url)  
     if response.status_code == 200:
         return response.json()
