@@ -9,6 +9,10 @@ cd ../..
 
 pipenv install
 
+pipenv run delete-all-tag-data
+
+pipenv run delete-all-game-data
+
 pipenv run flask insert-game-tag-data
 
 pipenv run flask insert-game-data
