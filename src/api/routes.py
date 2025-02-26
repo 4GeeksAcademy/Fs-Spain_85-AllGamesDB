@@ -206,7 +206,8 @@ def get_info_carrousel():
 @api.route("/carrousel", methods=["GET"])
 def get_carrousel_data():
     try:
-        with open("all_games_carrousel.json", "r") as f:
+        file_path = os.path.join(os.path.dirname(__file__), "all_games_carrousel.json")
+        with open(file_path, "r") as f:
             carrousel_data = json.load(f)
         return jsonify(carrousel_data), 200
     except FileNotFoundError:
