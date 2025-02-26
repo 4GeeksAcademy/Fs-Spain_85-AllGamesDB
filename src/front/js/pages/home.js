@@ -47,7 +47,7 @@ export const Home = () => {
                                                 )}
                                             </div>
                                             <div className="carousel-info-panel position-relative">
-                                                <h3 className="carousel-title" onClick={() => {handleGameClick(game)}}>{game.name}</h3>
+                                                <span className="carousel-title" onClick={() => {handleGameClick(game)}}>{game.name}</span>
                                                 <div className="d-flex flex-wrap carousel-screenshot-wrapper">
                                                     {game.detailed_info?.screenshots
                                                         ?.slice(0, 4)

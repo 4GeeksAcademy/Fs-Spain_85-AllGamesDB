@@ -7,6 +7,13 @@ export const GameDetails = () => {
     const { store, actions } = useContext(Context);
     const { id } = useParams();
     const [gameTags, setGameTags] = useState("");
+    const [colorRatingCircle, setColorRatingCircle] = useState(null)
+
+    const getRatingColor = (rating) => {
+        if (rating >= 80) return "success"
+        if (rating >= 60) return "warning"
+        if (rating < 60) return "danger"
+    }
 
     useEffect(() => {
         actions.fetchGameDetails(store.selectedGame["app_id"]);
@@ -42,12 +49,14 @@ export const GameDetails = () => {
 
     return (
         <div className='row w-100 mx-auto text-center justify-content-center game-details-container'>
-            <div className='mt-5 d-flex flex-column col-lg-5 col-11 mx-auto d-none d-lg-block'>
+                <div className="parallax-background">
+                    <img src={`https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${game.app_id}/library_hero.jpg`} className="parallax-image"/>                   
+                </div>
+            <div className='mt-5 d-flex flex-column col-lg-5 col-11 mx-auto d-none d-lg-block '>
                 <img src={game.image} alt={game.name} className='mb-2'/>
-                <p>{game.shortDescription}</p>
                 {/* Details*/}
             </div>
-            <div className='mt-5 d-flex flex-column col-lg-5 col-11 mx-auto'>
+            <div className='game-details-box mt-5 d-flex flex-column mx-auto'>
                 <div className='d-flex flex-rowd-flex flex-row justify-content-around align-items-center'>
                     <h1>{game.name}</h1>
                     {store.logedIn == true 
@@ -60,7 +69,6 @@ export const GameDetails = () => {
                                  e.stopPropagation(),
                                 addfavouriteClick(game)}}>
                             </button> 
-                             
                             : ""}
                 </div>
                 <table className='table table-bordered table-border-background mt-3'>
@@ -84,20 +92,25 @@ export const GameDetails = () => {
                             </td>
                         </tr>
                         <tr>
-                            <td colSpan="2">Tags:{gameTags}.</td>
+                            <td colSpan="2">Tags:
+                                <div className='tags d-flex flex-wrap gap-2 mb-2'>{game.game_tags.map((tag, index) =>
+                                    <button key={index} className="btn-all-green-tags">{tag.tag_name}</button>
+                                 )}
+                                </div>
+                            </td>
                         </tr>
                     </tbody>
 
                 </table>
-                <div className='d-flex justify-content-center align-items-center  mx-auto border border-success border-4 rounded-circle fluid-ratio'>
+                <div className={`d-flex justify-content-center align-items-center  mx-auto border border-${getRatingColor(game.score)} border-4 rounded-circle fluid-ratio`}>
                     {game.score} %
                 </div>
             </div>
             <div className='mt-5 d-flex flex-column col-lg-5 col-11 mx-auto d-block d-lg-none'>
                 <img src={game.image} alt={game.name} />
                 <p>{game.shortDescription}</p>
-                {/* Details*/}
             </div>
+            <div className="detailed-information" dangerouslySetInnerHTML={{__html: game.detailedInfo ? game.detailedInfo.detailed_description : "loading",}}/>
         </div>
     );
 };
