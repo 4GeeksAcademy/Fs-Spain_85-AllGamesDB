@@ -1,14 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
-import { Navbar } from "../component/navbar";
 import { useNavigate } from 'react-router-dom';
 import Slider from 'rc-slider';
-import "/workspaces/Fs-Spain_85-AllGamesDB/src/front/styles/gamesearchlist.css";
+import "../../styles/gamesearchlist.css"
 
 
 export const GameSearchList = () => {
     const { store, actions } = useContext(Context);
-    const [favouriteInStore, setfavouriteInStore] = useState([])
     const [numberOfTagsShown, setNumberOfTagsShown] = useState(20)
     const [activeTags, setActiveTags] = useState(store.queryParams.tags || []);
     const [priceValue, setPriceValue] = useState([store.queryParams.min_price || 0, store.queryParams.max_price || 90]);
