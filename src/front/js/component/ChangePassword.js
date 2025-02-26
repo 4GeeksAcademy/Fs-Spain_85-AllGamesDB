@@ -79,7 +79,7 @@ const ChangePassword = () => {
                         onChange={(e) => setNewPassword(e.target.value)}
                         required
                     />
-                    <button className={`fa-regular ${confirmPasswordInputType === "password"
+                    <button className={`fa-regular ${newPasswordInputType === "password"
                         ? "fa-eye-slash"
                         : "fa-eye"} 
                                                     eye-button-restore`}
