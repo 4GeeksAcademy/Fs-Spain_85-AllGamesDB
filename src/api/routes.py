@@ -541,7 +541,7 @@ def update_password():
         return jsonify({"error": "Wrong password"}), 401
     
     if old_password == new_password:
-        return jsonify({"error": "New password can't be your actual password"})
+        return jsonify({"error": "New password can't be your current password"})
     
     password_regex = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@#$%^&+=]{8,}$'
     if not re.fullmatch(password_regex, new_password):
@@ -615,6 +615,6 @@ def reset_password(token):
         user.set_password(new_password)
         db.session.commit()
 
-        return jsonify({"msg": "New password setted."}), 200
+        return jsonify({"msg": "New password set."}), 200
     except:
         return jsonify({"error": "Invalid token, the token only lasts 1 hour."}), 400
