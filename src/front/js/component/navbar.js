@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import "../../styles/styles/navbar.css";
 import { Context } from '../store/appContext';
 import { useNavigate, useLocation } from 'react-router-dom';
-import "/workspaces/Fs-Spain_85-AllGamesDB/src/front/img/allgames_transparent.png"
+import "../../img/allgames_transparent.png"
 
 
 export const Navbar = () => {
