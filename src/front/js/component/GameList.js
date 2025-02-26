@@ -40,6 +40,7 @@ export const GameList = () => {
 
     const handleRandomGame = async() => {
         let randomGame = Math.floor(Math.random()* store.numberOfPagesFromSearch * 10 - 10)
+        if (randomGame < 1) randomGame = Math.floor(Math.random()*10)
         await actions.fetchGameById(randomGame)
         navigate(`/game/${randomGame}`);
     }
@@ -123,7 +124,7 @@ export const GameList = () => {
                             <div className="game-info">
                                 <h4 className='game-title'>{game.name}</h4>
                                 <div className='tags d-flex gap-2 mb-2'>{game.game_tags.slice(0, 3).map((tag, index) =>
-                                    <button key={index} className="btn-green-tags">{tag.tag_name}</button>
+                                    <button key={index} className="btn-all-green-tags">{tag.tag_name}</button>
                                  )}
                                 </div>
                             </div>
