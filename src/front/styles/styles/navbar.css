@@ -288,6 +288,11 @@ input::placeholder {
     width: 300px;
 }
 
+.dropdown-fix{
+    right: 0px;
+    width: 300px;
+}
+
 @media (max-width: 991px) {
     .dropdown-menu-end {
         right: -137px;
