@@ -76,7 +76,7 @@ export const GameSearchList = () => {
             2025,
             "relevant:asc"
         );
-        console.log(activeTags);
+        // console.log(activeTags);
 
     };
 

@@ -87,7 +87,7 @@ export const GameDetails = () => {
                                             className={`carousel-item ${index === 0 ? 'active' : ''}`}
                                         >
                                             <video controls className="d-block w-100 carousel-details-video">
-                                                <source src={movie.mp4["max"]} type="video/mp4" />
+                                                <source src={movie.mp4["max"].replace("http://", "https://")} type="video/mp4" />
                                             </video>
                                         </div>
                                     ))}
@@ -133,26 +133,25 @@ export const GameDetails = () => {
                     <table className='table table-bordered table-border-background my-2 mx-auto'>
                         <thead className='table-head'>
                             <tr>
-                                <th scope="col" className="text-center">Steam</th>
-                                <th scope="col" className="text-center">G2A</th>
+                                <th scope="col">Steam</th>
+                                <th scope="col">G2A</th>
                             </tr>
                         </thead>
                         <tbody className='table-body'>
                             <tr>
-                                <td className="text-center">{game.steam_price} €</td>
-                                <td className="text-center">{game.g2a_price} €</td>
+                                <td>{game.steam_price} €</td>
+                                <td>{game.g2a_price} €</td>
                             </tr>
                             <tr>
-                                <td className="text-center">
-                                    <a className='btn btn-orange w-100' href={`https://store.steampowered.com/app/${store.selectedGame.app_id}`} role="button" target="_blank">Visit store</a>
+                                <td>
+                                    <a className='btn btn-orange' href={`https://store.steampowered.com/app/${store.selectedGame.app_id}`} role="button" target="_blank">Visit store</a>
                                 </td>
-                                <td className="text-center">
-                                    <a className='btn btn-orange w-100' href={`https://www.g2a.com/es/${store.selectedGame.g2a_url}`} role="button" target="_blank">Visit store</a>
+                                <td>
+                                    <a className='btn btn-orange' href={`https://www.g2a.com/es/${store.selectedGame.g2a_url}`} role="button" target="_blank">Visit store</a>
                                 </td>
                             </tr>
                             <tr>
-                                <td colSpan="2" className="text-center">
-                                    Tags:
+                                <td colSpan="2">Tags:
                                     <div className='tags d-flex flex-wrap gap-2 mb-2 justify-content-center'>
                                         {game.game_tags.map((tag, index) => (
                                             <button key={index} className="btn-all-green-tags">{tag.tag_name}</button>
@@ -161,13 +160,6 @@ export const GameDetails = () => {
                                 </td>
                             </tr>
                         </tbody>
-                        <tr>
-                            <td colSpan="2" className="text-center">
-                                <div className={`d-flex justify-content-center align-items-center mt-1 mx-auto border border-${getRatingColor(game.score)} border-4 rounded-circle fluid-ratio`}>
-                                    {game.score}
-                                </div>
-                            </td>
-                        </tr>
                     </table>
                     {store.logedIn == true
                                 ? store.favouriteGames.some((fav) => fav.favourite_game.app_id === game.app_id)

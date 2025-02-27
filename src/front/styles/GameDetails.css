@@ -225,6 +225,15 @@
     font-size: 12px;
 }
 
+.btn-all-green-tags:hover {
+    background: linear-gradient(to bottom, #5FCB8D, #3E9F6E);
+    transform: scale(1.05);
+}
+
+.btn-all-green-tags:active {
+    transform: scale(0.95);
+}
+
 /* clase para el círculo del rating */
 .fluid-ratio {
     position: relative;

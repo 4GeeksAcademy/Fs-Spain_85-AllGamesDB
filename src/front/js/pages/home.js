@@ -8,7 +8,6 @@ export const Home = () => {
     const { store, actions } = useContext(Context);
     const [screenshotView, setScreenshotView] = useState(null)
     const [hoveredGameId, setHoveredGameId] = useState(null);
-    const [background, setBackground] = useState(null)
 
     const navigate = useNavigate()
 
