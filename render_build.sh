@@ -9,6 +9,8 @@ cd ../..
 
 pipenv install
 
+pipenv run flask db stamp head
+
 pipenv run migrate
 
 pipenv run upgrade
