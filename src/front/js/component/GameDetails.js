@@ -154,7 +154,7 @@ export const GameDetails = () => {
                                 <td colSpan="2">Tags:
                                     <div className='tags d-flex flex-wrap gap-2 mb-2 justify-content-center'>
                                         {game.game_tags.map((tag, index) => (
-                                            <button key={index} className="btn-all-green-tags">{tag.tag_name}</button>
+                                            <button key={index} className="btn-all-green-tags"onClick={() => {navigate("/allgames"), actions.updateSearchParameters(1, [tag.tag_name], 0, 90, 0, 100, 2000, 2025)}}>{tag.tag_name}</button>
                                         ))}
                                     </div>
                                 </td>

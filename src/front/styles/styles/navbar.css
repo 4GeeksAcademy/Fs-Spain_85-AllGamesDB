@@ -295,6 +295,10 @@ input::placeholder {
     .dropdown-menu-end-no-overflow {
         right: -137px;
     }
+    .dropdown-fix {
+        right: -137px;
+        width: 300px;
+    }
 }
 
 .dropdown-menu-end-small {

@@ -221,7 +221,7 @@ export const Navbar = () => {
 
     // useeffect apra manejar la existencia de overflow el dropdown de favoritos
     useEffect(() => {
-        if (store.favouriteGames.length < 6) setFavouriteOverflowClass("dropdown-menu-end-no-overflow");
+        if (store.favouriteGames.length < 6) setFavouriteOverflowClass("dropdown-fix");
         else setFavouriteOverflowClass("dropdown-menu-end")
     }, [store.favouriteGames])
 
