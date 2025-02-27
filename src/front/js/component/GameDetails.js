@@ -159,6 +159,13 @@ export const GameDetails = () => {
                                     </div>
                                 </td>
                             </tr>
+                            <tr>
+                                <td colSpan="2">
+                                    <div className={`d-flex justify-content-center align-items-center mx-auto border border-${getRatingColor(game.score)} border-4 rounded-circle fluid-ratio`}>
+                                        {game.score}
+                                    </div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                     {store.logedIn == true
