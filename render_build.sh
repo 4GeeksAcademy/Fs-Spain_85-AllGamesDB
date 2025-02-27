@@ -14,7 +14,3 @@ pipenv run flask db stamp head
 pipenv run migrate
 
 pipenv run upgrade
-
-pipenv run flask insert-game-tag-data
-
-pipenv run flask insert-game-data
