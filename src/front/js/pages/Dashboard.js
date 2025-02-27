@@ -36,7 +36,7 @@ const Dashboard = () => {
                     <h2></h2>
                     <Favorites /> {/* componente */}
                     <div className="position-relative d-flex">
-                    <button onClick={handleChangePassword} className="btn btn-danger mx-auto">
+                    <button onClick={handleChangePassword} className="btn btn-orange mx-auto">
                         Change Password
                     </button>
                     </div>

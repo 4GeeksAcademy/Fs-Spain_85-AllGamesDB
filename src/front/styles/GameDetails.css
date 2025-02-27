@@ -23,28 +23,198 @@
     object-fit: cover;
 }
 
+.btn-green-back {
+    background: linear-gradient(to bottom, #6DDA9E, #4FB77F);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: background 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+    position: fixed;
+    left: 10px;
+    z-index: 5;
+}
+
+.btn-green-back :hover {
+    background: linear-gradient(to bottom, #5FCB8D, #3E9F6E);
+    transform: scale(1.05);
+}
+
+.btn-green-back :active {
+    transform: scale(0.95);
+}
+
+.carousel-details-indicators {
+    position: absolute;
+    bottom: -20px;
+}
+
+.carousel-wrapperdetails-prev,
+.carousel-wrapperdetails-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: auto;
+    background: linear-gradient(to bottom, #6DDA9E, #4FB77F);
+    padding: 10px;
+    border-radius: 8px;
+    transition: background 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+    height: fit-content;
+}
+
+.carousel-wrapperdetails-prev:hover,
+.carousel-wrapperdetails-next:hover {
+    background: linear-gradient(to bottom, #5FCB8D, #3E9F6E);
+}
+
+.carousel-wrapperdetails-prev:active,
+.carousel-wrapperdetails-next:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.carousel-wrapperdetails-prev {
+    /* left: -60px; */
+}
+
+.carousel-wrapperdetails-next {
+    /* right: -60px; */
+}
+
+.carousel-icondetails-prev,
+.carousel-icondetails-next {
+    filter: invert(1);
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+    background: linear-gradient(to bottom, #5FCB8D, #3E9F6E);
+}
+
+.carousel-details-wrapper {
+    position: relative;
+    width: 60%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.carousel-details-image-wrapper{
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.carousel-details-image {
+    position: relative;
+    width: 100%;
+    height: 550px;
+    object-fit: contain;
+}
+
+.carousel-details-video {
+    position: relative;
+    width: 100%;
+    height: 550px;
+    object-fit: contain;
+}
+
+/* Loader animation */
+.loader-carousel-details {
+    width: 70px;
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.75s, visibility 0.75s;
+    margin: auto;
+}
+
+.loader-hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.loader-carousel-details::after {
+    content: "";
+    width: 100%;
+    height: 100%;
+    border: 12px solid #dddddd;
+    border-top-color: #4FB77F;
+    border-radius: 50%;
+    animation: loading 0.75s ease infinite;
+}
+
+.wrapper-loader-carousel-details{
+    height: 550px;
+    width: 800px;
+}
+
 .game-details-container {
     position: relative;
     z-index: 1;
 }
 
-.game-details-box {
-    background-color: rgba(0, 0, 0, 0.7);
+.top-details-container {
+    background-color: rgba(0, 0, 0, 0.85);
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     padding: 20px;
     color: #f5f5f5;
     margin-top: 20px;
     border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 80%;
+}
+
+.game-details-box {
     width: 30%;
 }
 
-.game-details-box .table {
+.table-border-background {
+    width: 90%;
+    margin: 0 auto;
+    border-collapse: separate;
+    border-spacing: 0;
     border-radius: 10px;
     overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.btn-all-green-tags{
+.table-border-background th,
+.table-border-background td {
+    padding: 12px;
+    border: 1px solid #444;
+}
+
+.table-border-background th {
+    background-color: #333;
+    color: #f5f5f5;
+    font-weight: bold;
+}
+
+.table-border-background td {
+    background-color: #222;
+    color: #f5f5f5;
+}
+
+.table-border-background .btn-orange {
+    background-color: #ff6f00;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.tags {
+    margin-top: 8px;
+}
+
+.btn-all-green-tags {
     background: linear-gradient(to bottom, #6DDA9E, #4FB77F);
     color: white;
     border: none;
@@ -56,58 +226,54 @@
 }
 
 /* clase para el círculo del rating */
-.fluid-ratio{
+.fluid-ratio {
     position: relative;
-    width: 10%;
-    min-width: 78px;
+    width: 65px;
+    height: 65px;
     aspect-ratio: 1/1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     text-align: center;
+    font-weight: 700;
+    border-width: 4000px;
+    border-style: solid;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .border-success {
-    background-color: #6DDA9E;
-    color: #f5f5f5;
+    border-color: #6DDA9E;
+    color: #6DDA9E;
 }
 
 .border-warning {
-    background-color: #FFA726;
-    color: #f5f5f5;
+    border-color: #FFA726;
+    color: #FFA726;
 }
 
 .border-danger {
-    background-color: rgb(255, 61, 61);
-    color: #f5f5f5;
+    border-color: #FF5252;
+    color: #FF5252;
 }
 
+
 /* clases para botones favoritos */
-.favourite-btn {
+.favourite-details-btn {
     background: none;
     border: none;
-    font-size: 20px;
+    font-size: 26px;
     color: #4FB77F;
 }
 
-.favourite-btn:hover {
+.favourite-details-btn:hover {
     transform: scale(1.1);
     content: "\f004";
     font-family: "Font Awesome 6 Free";
     font-weight: 900;
 }
 
-.table-border-background {
-    color: #f5f5f5;
-    border: 1px solid #4D8573;
-    width: 90%;
-    margin: 0 auto;
-}
-
-td {
-    border: 1px solid #4D8573;
-}
-
-.table-head {
-    border: 1px solid #4D8573;
-}
 
 /* clases para botones de visitar la store de las páginas */
 .btn-orange {
@@ -127,12 +293,19 @@ td {
     transform: scale(1.05);
 }
 
+.image-details-header{
+    width: 100%;
+    max-width: 400px;
+    display: block;
+    margin: 0 auto;
+}
+
 .detailed-information {
     width: 80%;
     max-width: 1000px;
     margin: 0 auto;
     padding: 20px;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.85);
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     text-align: left;
@@ -147,7 +320,118 @@ td {
 
 .detailed-information img {
     width: 100%;
-    max-width: 800px;
+    max-width: 700px;
     display: block;
     margin: 0 auto;
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .top-details-container {
+        width: 95%;
+    }
+    .game-details-box {
+        width: 35%;
+    }
+    .image-details-header {
+        max-width: 300px;
+    }
+    .detailed-information{
+        width: 95%;
+    } 
+}
+
+@media (min-width: 426px) and (max-width: 768px) {
+    .top-details-container {
+        flex-direction: column !important;
+        padding-top: 0px;
+        width: 95%;
+    }
+
+    .image-details-header {
+        max-width: 550px;
+    }
+
+    .carousel-details-wrapper{
+        width: 100%;
+    }
+
+    .carousel-details-video {
+        width: 100%;
+    }
+
+    .wrapper-loader-carousel-details{
+        width: 100%;
+    }
+
+    .game-details-box {
+        width: 80%;
+        padding-top: 50px;
+    }
+
+    .carousel-details-image-wrapper {
+        margin: 0px;
+    }
+
+    .carousel-details-image {
+        width: 100%;
+    }
+
+    .detailed-information{
+        width: 95%;
+    }   
+}
+
+@media (min-width: 320px) and (max-width: 425px) {
+    .top-details-container {
+        flex-direction: column !important;
+        padding: 0px;
+        width: 95%;
+    }
+
+    .image-details-header {
+        max-width: 400px;
+        width: 90%;
+    }
+
+    .carousel-details-wrapper{
+        width: 100%;
+    }
+
+    .carousel-details-video {
+        width: 95%;
+        height: 300px;
+    }
+
+    .wrapper-loader-carousel-details{
+        width: 100%;
+    }
+
+    .game-details-box {
+        width: 100%;
+        padding-top: 30px;
+    }
+
+    .carousel-details-image-wrapper {
+        margin: 0px;
+    }
+
+    .carousel-details-image {
+        width: 100%;
+        height: 300px;
+
+    }
+
+    .detailed-information{
+        width: 95%;
+    }
+
+    .favourite-details-btn{
+        padding-bottom: 10px;
+    }
+
+    .carousel-wrapperdetails-prev,
+    .carousel-wrapperdetails-next {
+        padding: 3px;
+    }
+
 }

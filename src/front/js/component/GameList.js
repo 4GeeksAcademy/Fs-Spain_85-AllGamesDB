@@ -35,6 +35,7 @@ export const GameList = () => {
 
     const handleGameClick = (game) => {
         actions.setSpecificVideogameSteamId(game);
+        window.scrollTo({ top: 0, behavior: "smooth" })
         navigate(`/game/${game.id}`);
     };
 
@@ -42,6 +43,7 @@ export const GameList = () => {
         let randomGame = Math.floor(Math.random()* store.numberOfPagesFromSearch * 10 - 10)
         if (randomGame < 1) randomGame = Math.floor(Math.random()*10)
         await actions.fetchGameById(randomGame)
+        window.scrollTo({ top: 0, behavior: "smooth" })
         navigate(`/game/${randomGame}`);
     }
 
@@ -130,7 +132,7 @@ export const GameList = () => {
                             </div>
                             {store.logedIn == true
                                 ? store.favouriteGames.some((fav) => fav.favourite_game.app_id === game.app_id)
-                                    ? <div>
+                                    ? <div className="price-favourites">
 
                                         <button className="favourite-btn px-3 fa-solid fa-heart-crack" onClick={(e) => {
                                             e.stopPropagation(),
@@ -139,8 +141,7 @@ export const GameList = () => {
                                         </button>
                                         <button className="price-btn">{gamePriceComparer(game)}</button>
                                     </div>
-                                    : <div>
-
+                                    : <div className="price-favourites">
                                         <button className="favourite-btn px-3 fa-regular fa-heart" onClick={(e) => {
                                             e.stopPropagation(),
                                                 addfavouriteClick(game)

@@ -106,8 +106,8 @@ const ChangePassword = () => {
                     {message.text}
                 </div>
                 <div className="d-flex justify-content-around mt-3">
-                    <button onClick={() => navigate("/dashboard")} className="btn btn-link">Go back home</button>
-                    <button type="submit" className="btn btn-green">Change password</button>
+                    <button onClick={() => navigate("/dashboard")} className="btn btn-green">Go back home</button>
+                    <button type="submit" className="btn btn-orange">Change password</button>
                 </div>
             </form>
         </div>

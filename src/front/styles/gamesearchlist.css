@@ -18,11 +18,19 @@
     .search-editor {
         display: none !important;
     }
+
+    .price-favourites {
+        flex-direction: row-reverse;
+        display: flex;
+    }
 }
 
 @media (max-width: 832px) and (min-width: 425px) {
     .tags {
         display: none;
+    }
+    .price-favourites {
+        display: flex;
     }
 
 }
@@ -55,6 +63,9 @@
     }
     .search-editor {
         width: 30%;
+    }
+    .price-favourites {
+        display: flex;
     }
 }
 
