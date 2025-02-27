@@ -9,10 +9,10 @@ cd ../..
 
 pipenv install
 
-pipenv run flask insert-game-tag-data
-
-pipenv run flask insert-game-data
-
 pipenv run migrate
 
 pipenv run upgrade
+
+pipenv run flask insert-game-tag-data
+
+pipenv run flask insert-game-data
