@@ -9,7 +9,7 @@ const ForgotPassword = () => {
         e.preventDefault();
         try {
             const { msg, error, reset_link } = await sendResetEmail(email);
-            console.log(reset_link);
+            // console.log(reset_link);
             
             if (error) throw new Error(error);
             const templateParams = {
@@ -23,7 +23,7 @@ const ForgotPassword = () => {
                 "Im9eQP_idqJxWGipT"
             );
             // setMessage(msg);
-            console.log("Email enviado", result);
+            // console.log("Email enviado", result);
             if (error) setMessage({type: "msg", text: error});
             else setMessage({type: "msg", text: "Email sent, check your inbox."});
             // setMessage("Email sent, check your inbox.");
@@ -34,7 +34,7 @@ const ForgotPassword = () => {
     };
 
     async function sendResetEmail(email) {
-        console.log(email);
+        // console.log(email);
         try {
             const response = await fetch(`${process.env.BACKEND_URL}/api/forgot-password`, {
                 method: "POST",

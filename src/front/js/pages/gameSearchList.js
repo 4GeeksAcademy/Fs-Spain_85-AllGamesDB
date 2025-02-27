@@ -76,13 +76,14 @@ export const GameSearchList = () => {
             2025,
             "relevant:asc"
         );
-        console.log(activeTags);
+        // console.log(activeTags);
 
     };
 
     // Handles navigation for clicked games
     const handleGameClick = (game) => {
         actions.setSpecificVideogameSteamId(game)
+        window.scrollTo({ top: 0, behavior: "smooth" })
         navigate(`/game/${game.id}`);
     };
 
@@ -314,14 +315,14 @@ export const GameSearchList = () => {
                             <img src={`https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${game.app_id}/capsule_231x87.jpg`} alt={game.name} className="game-image" />
                             <div className="game-info">
                                 <h4 className='game-title'>{game.name}</h4>
-                                <div className='tags d-flex gap-2'>{game.game_tags.slice(0, 3).map((tag, index) =>
+                                <div className='tags d-flex gap-2 mb-2'>{game.game_tags.slice(0, 3).map((tag, index) =>
                                     <button key={index} className="btn-green-tags">{tag.tag_name}</button>
                                 )}
                                 </div>
                             </div>
                             {store.logedIn == true
                                 ? store.favouriteGames.some((fav) => fav.favourite_game.app_id === game.app_id)
-                                    ? <div>
+                                    ? <div className="price-favourites">
                                         <button className="favourite-btn px-3 fa-solid fa-heart-crack" onClick={(e) => {
                                             e.stopPropagation(),
                                                 deletefavouriteClick(game)
@@ -329,7 +330,7 @@ export const GameSearchList = () => {
                                         </button>
                                         <button className="price-btn">{game.steam_price > game.g2a_price ? game.g2a_price : game.steam_price} €</button>
                                     </div>
-                                    : <div>
+                                    : <div className="price-favourites">
                                         <button className="favourite-btn px-3 fa-regular fa-heart" onClick={(e) => {
                                             e.stopPropagation(),
                                                 addfavouriteClick(game)
@@ -337,7 +338,7 @@ export const GameSearchList = () => {
                                         </button>
                                         <button className="price-btn">{game.steam_price > game.g2a_price ? game.g2a_price : game.steam_price} €</button>
                                     </div>
-                                : ""}
+                                : <button className="price-btn">{game.steam_price > game.g2a_price ? game.g2a_price : game.steam_price} €</button>}
                         </div>
                     ))
 

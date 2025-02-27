@@ -8,7 +8,6 @@ export const Home = () => {
     const { store, actions } = useContext(Context);
     const [screenshotView, setScreenshotView] = useState(null)
     const [hoveredGameId, setHoveredGameId] = useState(null);
-    const [background, setBackground] = useState(null)
 
     const navigate = useNavigate()
 
@@ -20,7 +19,7 @@ export const Home = () => {
     return (
         <div className="home-container">
             <div className="carousel-wrapper position-relative">
-                <div id="carouselExampleIndicators" className="carousel slide m-auto">
+                <div id="carouselExampleIndicators" className="carousel slide carousel-home m-auto">
                     <div className="carousel-indicators">
                         <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
                         <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
@@ -31,7 +30,7 @@ export const Home = () => {
                     <div className="carousel-inner justify-content-center">
                         {store.carousel && store.carousel.relevant_games && store.carousel.relevant_games.length > 0 ? (
                             store.carousel.relevant_games.map((game, index) => (
-                                <div key={game.app_id} className={`carousel-item ${index === 0 ? 'active' : ''}`}>
+                                <div key={game.app_id} className={`carousel-item carousel-home-item ${index === 0 ? 'active' : ''}`}>
                                     {game.detailed_info ? (
                                         <div className="d-flex">
                                             <div className="carousel-main-image-container" onMouseEnter={() => setHoveredGameId(game.app_id)} onMouseLeave={() => setHoveredGameId(null)}>
@@ -74,19 +73,19 @@ export const Home = () => {
                                 </div>
                             ))
                         ) : (
-                            <div className="carousel-item active d-flex m-auto">
+                            <div className="carousel-home-item active d-flex m-auto">
                                 <div className="d-flex m-auto p-5">
                                     <div className="loader d-flex"></div>
                                 </div>
                             </div>
                         )}
                     </div>
-                    <button className="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-                        <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <button className="carousel-control-prev carousel-wrapperhome-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                        <span className="carousel-control-prev-icon carousel-iconhome-prev" aria-hidden="true"></span>
                         <span className="visually-hidden">Previous</span>
                     </button>
-                    <button className="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-                        <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                    <button className="carousel-control-next carousel-wrapperhome-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                        <span className="carousel-control-next-icon carousel-iconhome-next" aria-hidden="true"></span>
                         <span className="visually-hidden">Next</span>
                     </button>
                 </div>

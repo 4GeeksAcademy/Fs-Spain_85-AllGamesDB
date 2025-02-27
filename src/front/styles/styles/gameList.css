@@ -58,14 +58,21 @@
         transition: background 0.3s ease, transform 0.2s ease;
         cursor: pointer;
     }
+    .price-favourites {
+        flex-direction: row-reverse;
+        display: flex;
+    }
 }
 
 @media (min-width: 576px) and (max-width: 991px) {
     .game-list-container {
-        width: 90%;
+        width: 95%;
     }
     .game-list-nav-small-screen {
         display: none!important;
+    }
+    .price-favourites {
+        display: flex;
     }
 }
 
@@ -171,7 +178,6 @@
 .games-table {
     border: 1px solid #ccc;
     border-radius: 0px 0px 8px 8px;
-    padding: 10px;
 }
 
 .game-row {
