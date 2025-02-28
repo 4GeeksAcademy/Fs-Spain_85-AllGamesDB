@@ -9,6 +9,8 @@ cd ../..
 
 pipenv install
 
+pipenv run reset_db
+
 pipenv run flask db stamp head
 
 pipenv run migrate
